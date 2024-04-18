@@ -1,5 +1,6 @@
 package com.techphantomexample.usermicroservice.model;
 
+import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 
 @Entity
@@ -9,13 +10,9 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private  int userId;
-    @Column(name="FullName")
     private String userFullName;
-    @Column(name="Email")
     private  String userEmail;
-    @Column(name="Password")
     private String userPassword;
-    @Column(name="Role")
     private String userRole;
 
     public User() {

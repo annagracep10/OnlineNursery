@@ -1,6 +1,7 @@
 package com.techphantomexample.usermicroservice.services;
 import com.techphantomexample.usermicroservice.model.User;
 import com.techphantomexample.usermicroservice.repository.UserRepository;
+import io.micrometer.common.util.StringUtils;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,11 +23,16 @@ public class UserServicesImp implements UserService
 
     @Override
     public String createUser(User user) {
+        String userFullName = user.getUserFullName();
         String userEmail = user.getUserEmail();
         String userPassword = user.getUserPassword();
         String userRole = user.getUserRole();
 
-        if (userEmail == null || !isValidEmail(userEmail)) {
+        if (StringUtils.isBlank(userFullName) ||StringUtils.isBlank(userEmail) || StringUtils.isBlank(userPassword) || StringUtils.isBlank(userRole)) {
+            return "All fields are required";
+        }
+
+        if (!isValidEmail(userEmail)) {
             return "Invalid email address";
         }
 

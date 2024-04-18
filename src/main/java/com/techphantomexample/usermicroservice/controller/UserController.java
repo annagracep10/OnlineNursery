@@ -43,15 +43,15 @@ public class UserController
     }
     // Read specific user
     @GetMapping("{userId}")
-    public ResponseEntity<User> getUserDetails(@PathVariable("userId") int userId) {
+    public ResponseEntity<?> getUserDetails(@PathVariable("userId") int userId) {
         User user = userService.getUser(userId);
         if (user != null) {
             return ResponseEntity.ok().body(user);
         } else {
-            return ResponseEntity.notFound().build();
+            CreateResponse response = new CreateResponse("User not found", HttpStatus.NOT_FOUND.value());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
     }
-
     @PutMapping("{userId}")
     public ResponseEntity<CreateResponse> updateUserDetails(@PathVariable("userId") int userId, @RequestBody User user) {
         String result = userService.updateUser(userId, user);

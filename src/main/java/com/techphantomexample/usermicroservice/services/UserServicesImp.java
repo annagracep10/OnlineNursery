@@ -96,10 +96,13 @@ public class UserServicesImp implements UserService
         return "User Not Found";
     }
 
-
     @Override
     public User getUser(int userId) {
-        return userRepository.findById(userId).get();
+        if (userRepository.existsById(userId))
+        {
+            return userRepository.findById(userId).get();
+        }
+        return null;
     }
 
     @Override

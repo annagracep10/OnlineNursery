@@ -113,6 +113,8 @@ public class UserServicesImp implements UserService
 
     @Override
     public List<User> getAllUsers() {
+
+        userRepository.findAll();
         return userRepository.findAll();
     }
 

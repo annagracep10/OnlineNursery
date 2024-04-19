@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -37,9 +38,15 @@ public class UserController
 
     // Read all users in DB
     @GetMapping
-    public ResponseEntity<List<User>> getAllUserDetails() {
+    public ResponseEntity<?> getAllUserDetails() {
         List<User> users = userService.getAllUsers();
-        return ResponseEntity.ok().body(users);
+        if (users.isEmpty()) {
+            CreateResponse response = new CreateResponse("User not found", HttpStatus.NOT_FOUND.value());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        } else {
+            return ResponseEntity.ok().body(users);
+        }
+
     }
     // Read specific user
     @GetMapping("{userId}")

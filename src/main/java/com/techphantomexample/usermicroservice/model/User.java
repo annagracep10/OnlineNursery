@@ -1,6 +1,5 @@
 package com.techphantomexample.usermicroservice.model;
 
-import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 
 @Entity

@@ -2,15 +2,18 @@ package com.techphantomexample.usermicroservice.controller;
 
 import com.techphantomexample.usermicroservice.model.User;
 import com.techphantomexample.usermicroservice.services.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 
 import java.util.Collections;
 import java.util.List;
 
 @RestController
 @RequestMapping("/user")
+@Tag(name = "User Controller")
 public class UserController
 {
     UserService userService;

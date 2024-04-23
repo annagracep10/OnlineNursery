@@ -1,6 +1,7 @@
 package com.techphantomexample.usermicroservice.services;
 
 import com.techphantomexample.usermicroservice.model.User;
+import com.techphantomexample.usermicroservice.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.LogManager;
 
@@ -9,6 +10,7 @@ import java.util.Arrays;
 @Slf4j
 public class UserOperationException extends RuntimeException
 {
+
 
     private static final org.apache.logging.log4j.Logger log = LogManager.getLogger(UserOperationException.class);
 
@@ -22,7 +24,7 @@ public class UserOperationException extends RuntimeException
         log.error(message, cause);
     }
 
-    public static void validateUser(User user) {
+    public static void validateUser(User user ,UserRepository userRepository ) {
         if (isNullOrEmpty(user.getUserFullName()) || isNullOrEmpty(user.getUserEmail()) || isNullOrEmpty(user.getUserPassword()) || isNullOrEmpty(user.getUserRole())) {
             throw new UserOperationException("All fields are required");
 
@@ -32,7 +34,7 @@ public class UserOperationException extends RuntimeException
             throw new UserOperationException("Invalid email address");
         }
 
-        if (existsByEmail(user.getUserEmail())) {
+        if (existsByEmail(user.getUserEmail(), userRepository)) {
             throw new UserOperationException("User with provided Email ID exists");
         }
 
@@ -51,9 +53,8 @@ public class UserOperationException extends RuntimeException
         return email.matches(emailRegex);
     }
 
-    private static boolean existsByEmail(String userEmail) {
-        // Simulate existence check
-        return false;
+    private static boolean existsByEmail(String userEmail, UserRepository userRepository) {
+        return userRepository.existsByUserEmail(userEmail);
     }
 
     private static boolean isValidPassword(String password) {

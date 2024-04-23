@@ -28,7 +28,7 @@ public class UserServicesImp implements UserService
     @Override
     public String createUser(User user) {
         try {
-            UserOperationException.validateUser(user);
+            UserOperationException.validateUser(user , userRepository);
             user.setUserPassword(BCrypt.hashpw(user.getUserPassword(), BCrypt.gensalt()));
             userRepository.save(user);
             return "User Created successfully";
@@ -49,7 +49,7 @@ public class UserServicesImp implements UserService
 
             User existingUser = userRepository.findById(userId).get();
 
-            UserOperationException.validateUser(newUserDetails);
+            UserOperationException.validateUser(newUserDetails, userRepository);
 
             existingUser.setUserFullName(newUserDetails.getUserFullName());
             existingUser.setUserEmail(newUserDetails.getUserEmail());

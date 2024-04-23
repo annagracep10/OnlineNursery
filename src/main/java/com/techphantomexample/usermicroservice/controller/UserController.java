@@ -74,8 +74,6 @@ public class UserController
         }
     }
 
-
-
     @DeleteMapping("{userId}")
     public ResponseEntity<CreateResponse> deleteUser(@PathVariable int userId) {
         try {

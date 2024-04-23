@@ -82,14 +82,17 @@ public class UserServicesImp implements UserService
 
     @Override
     public String deleteUser(int userId) {
-        if (userRepository.existsById(userId))
-        {
+        try {
+            if (!userRepository.existsById(userId)) {
+                throw new UserOperationException("User with ID " + userId + " does not exist");
+            }
             userRepository.deleteById(userId);
-            log.info("User deleted");
             return "User Deleted Successfully";
+        } catch (UserOperationException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new UserOperationException("Error deleting user", e);
         }
-        log.info("User does not exists");
-        return "User Not Found";
     }
 
     @Override

@@ -80,16 +80,17 @@ public class UserController
 
 
     @DeleteMapping("{userId}")
-    public ResponseEntity<CreateResponse> deleteUserDetails(@PathVariable("userId") int userId) {
-        String result = userService.deleteUser(userId);
-        HttpStatus httpStatus;
-        if (result.equals("User Deleted Successfully")) {
-            httpStatus = HttpStatus.OK;
-        } else {
-            httpStatus = HttpStatus.NOT_FOUND;
+    public ResponseEntity<CreateResponse> deleteUser(@PathVariable int userId) {
+        try {
+            String response = userService.deleteUser(userId);
+            return ResponseEntity.status(HttpStatus.OK).body(new CreateResponse(response, HttpStatus.OK.value()));
+        } catch (UserOperationException e) {
+            if (e.getMessage().contains("User with ID")) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new CreateResponse(e.getMessage(), HttpStatus.NOT_FOUND.value()));
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new CreateResponse(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value()));
+            }
         }
-        CreateResponse response = new CreateResponse(result, httpStatus.value());
-        return ResponseEntity.status(httpStatus).body(response);
     }
 }
 

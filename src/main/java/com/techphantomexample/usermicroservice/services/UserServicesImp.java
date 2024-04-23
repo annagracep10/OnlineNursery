@@ -94,13 +94,14 @@ public class UserServicesImp implements UserService
 
     @Override
     public User getUser(int userId) {
-        if (userRepository.existsById(userId))
-        {
-            log.info("User found and returned");
+        try {
+            if (!userRepository.existsById(userId)) {
+                return null; // Return null if user does not exist
+            }
             return userRepository.findById(userId).get();
+        } catch (Exception e) {
+            throw new UserOperationException("Error retrieving user", e);
         }
-        log.info("user not found");
-        return null;
     }
 
     @Override

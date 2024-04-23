@@ -49,7 +49,7 @@ public class UserServicesImp implements UserService
 
             User existingUser = userRepository.findById(userId).get();
 
-            UserOperationException.validateUser(newUserDetails, userRepository);
+            UserOperationException.validateUpdatedUser(newUserDetails);
 
             existingUser.setUserFullName(newUserDetails.getUserFullName());
             existingUser.setUserEmail(newUserDetails.getUserEmail());

@@ -27,43 +27,18 @@ public class UserServicesImp implements UserService
 
     @Override
     public String createUser(User user) {
-        String userFullName = user.getUserFullName();
-        String userEmail = user.getUserEmail();
-        String userPassword = user.getUserPassword();
-        String userRole = user.getUserRole();
-
-        if (StringUtils.isBlank(userFullName) ||StringUtils.isBlank(userEmail) || StringUtils.isBlank(userPassword) || StringUtils.isBlank(userRole)) {
-            log.error("Missing Fields");
-            return "All fields are required";
+        try {
+            UserOperationException.validateUser(user);
+            user.setUserPassword(BCrypt.hashpw(user.getUserPassword(), BCrypt.gensalt()));
+            userRepository.save(user);
+            return "User Created successfully";
+        } catch (UserOperationException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new UserOperationException("Error creating user", e);
         }
-
-        if (!isValidEmail(userEmail)) {
-            log.error("Invalid email address");
-            return "Invalid email address";
-        }
-
-        if (existsByEmail(userEmail)) {
-            log.error("User already exists");
-            return "User with provided Email ID exists";
-        }
-
-        if (!isValidPassword(userPassword)) {
-            log.error("Password format wrong");
-            return "Password must be at least 8 characters long, contain at least one uppercase letter, and at least one digit";
-        }
-
-        String hashedPassword = BCrypt.hashpw(userPassword, BCrypt.gensalt());
-        user.setUserPassword(hashedPassword);
-
-        if (!isValidUserRole(userRole)) {
-            log.error("Entered userRole is incorrect");
-            return "User role should be one among: ADMIN, SUPERVISOR, BUYER, SELLER";
-        }
-
-        userRepository.save(user);
-        log.info("User Created successfully");
-        return "User Created successfully";
     }
+
 
     @Override
     public String updateUser(int userId, User newUserDetails) {

@@ -1,6 +1,7 @@
 package com.techphantomexample.usermicroservice.controller;
 
 import com.techphantomexample.usermicroservice.model.User;
+import com.techphantomexample.usermicroservice.services.UserOperationException;
 import com.techphantomexample.usermicroservice.services.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,17 +26,12 @@ public class UserController
 
     @PostMapping
     public ResponseEntity<CreateResponse> createUser(@RequestBody User user) {
-        String result = userService.createUser(user);
-        HttpStatus httpStatus;
-        if (result.equals("User Created successfully")) {
-            httpStatus = HttpStatus.CREATED;
-        } else if (result.equals("User with provided Email ID exists")) {
-            httpStatus = HttpStatus.CONFLICT;
-        } else {
-            httpStatus = HttpStatus.BAD_REQUEST;
+        try {
+            String response = userService.createUser(user);
+            return ResponseEntity.status(HttpStatus.CREATED).body(new CreateResponse(response, HttpStatus.CREATED.value()));
+        } catch (UserOperationException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new CreateResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value()));
         }
-        CreateResponse response = new CreateResponse(result, httpStatus.value());
-        return ResponseEntity.status(httpStatus).body(response);
     }
 
     // Read all users in DB

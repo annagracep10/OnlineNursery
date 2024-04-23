@@ -42,41 +42,26 @@ public class UserServicesImp implements UserService
 
     @Override
     public String updateUser(int userId, User newUserDetails) {
-        Optional<User> optionalUser = userRepository.findById(userId);
-        if (optionalUser.isPresent()) {
-            User existingUser = optionalUser.get();
+        try {
+            if (!userRepository.existsById(userId)) {
+                throw new UserOperationException("User with ID " + userId + " does not exist");
+            }
+
+            User existingUser = userRepository.findById(userId).get();
+
+            UserOperationException.validateUser(newUserDetails);
 
             existingUser.setUserFullName(newUserDetails.getUserFullName());
-
-            String newEmail = newUserDetails.getUserEmail();
-            if (newEmail != null && !isValidEmail(newEmail)) {
-                log.error("Invalid email address updated");
-                return "Invalid email address";
-            }
-            existingUser.setUserEmail(newEmail);
-
-            String newPassword = newUserDetails.getUserPassword();
-            if (newPassword != null && !isValidPassword(newPassword)) {
-                log.error(" Updated Password format wrong");
-                return "Password must be at least 8 characters long, contain at least one uppercase letter, and at least one digit";
-            }
-            String hashedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt());
-            existingUser.setUserPassword(hashedPassword);
-
-            String newUserRole = newUserDetails.getUserRole();
-            if (newUserRole != null && !isValidUserRole(newUserRole)) {
-                log.error("Updated userRole is incorrect");
-                return "User role should be one among: ADMIN, SUPERVISOR, BUYER, SELLER";
-            }
-            existingUser.setUserRole(newUserRole);
-
+            existingUser.setUserEmail(newUserDetails.getUserEmail());
+            existingUser.setUserPassword(BCrypt.hashpw(newUserDetails.getUserPassword(), BCrypt.gensalt()));
+            existingUser.setUserRole(newUserDetails.getUserRole());
 
             userRepository.save(existingUser);
-            log.info("User Updated successfully");
             return "User Updated Successfully";
-        } else {
-
-            return "";
+        } catch (UserOperationException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new UserOperationException("Error updating user", e);
         }
     }
 

@@ -65,16 +65,13 @@ public class UserController
     }
 
     @PutMapping("{userId}")
-    public ResponseEntity<CreateResponse> updateUserDetails(@PathVariable("userId") int userId, @RequestBody User user) {
-        String result = userService.updateUser(userId, user);
-        HttpStatus httpStatus;
-        if (result.equals("User Updated Successfully")) {
-            httpStatus = HttpStatus.OK;
-        } else {
-            httpStatus = HttpStatus.NOT_FOUND;
+    public ResponseEntity<CreateResponse> updateUser(@PathVariable int userId, @RequestBody User user) {
+        try {
+            String response = userService.updateUser(userId, user);
+            return ResponseEntity.status(HttpStatus.OK).body(new CreateResponse(response, HttpStatus.OK.value()));
+        } catch (UserOperationException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new CreateResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value()));
         }
-        CreateResponse response = new CreateResponse(result, httpStatus.value());
-        return ResponseEntity.status(httpStatus).body(response);
     }
 
 

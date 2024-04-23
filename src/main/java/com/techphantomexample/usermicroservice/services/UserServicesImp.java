@@ -106,8 +106,11 @@ public class UserServicesImp implements UserService
 
     @Override
     public List<User> getAllUsers() {
-        log.info("Returning all users in database");
-        return userRepository.findAll();
+        try {
+            return userRepository.findAll();
+        } catch (Exception e) {
+            throw new UserOperationException("Error retrieving users", e);
+        }
     }
 
     private boolean isValidEmail(String email) {

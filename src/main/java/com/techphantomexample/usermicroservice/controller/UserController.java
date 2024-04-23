@@ -36,6 +36,21 @@ public class UserController
 
     // Read all users in DB
     @GetMapping
+    public ResponseEntity<?> getAllUsers() {
+        try {
+            List<User> users = userService.getAllUsers();
+            if (!users.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.OK).body(users);
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new CreateResponse("No users found", HttpStatus.NOT_FOUND.value()));
+            }
+        } catch (UserOperationException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new CreateResponse(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value()));
+        }
+    }
+
+    // Read specific user
+    @GetMapping("{userId}")
     public ResponseEntity<?> getUser(@PathVariable int userId) {
         try {
             User user = userService.getUser(userId);
@@ -49,17 +64,6 @@ public class UserController
         }
     }
 
-    // Read specific user
-    @GetMapping("{userId}")
-    public ResponseEntity<?> getUserDetails(@PathVariable("userId") int userId) {
-        User user = userService.getUser(userId);
-        if (user != null) {
-            return ResponseEntity.ok().body(user);
-        } else {
-            CreateResponse response = new CreateResponse("User not found", HttpStatus.NOT_FOUND.value());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-        }
-    }
     @PutMapping("{userId}")
     public ResponseEntity<CreateResponse> updateUserDetails(@PathVariable("userId") int userId, @RequestBody User user) {
         String result = userService.updateUser(userId, user);

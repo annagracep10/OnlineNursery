@@ -1,5 +1,6 @@
 package com.techphantomexample.usermicroservice.controller;
 
+import com.techphantomexample.usermicroservice.model.Login;
 import com.techphantomexample.usermicroservice.model.User;
 import com.techphantomexample.usermicroservice.services.UserOperationException;
 import com.techphantomexample.usermicroservice.services.UserService;
@@ -8,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
-import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -87,5 +87,13 @@ public class UserController
             }
         }
     }
+
+    @PostMapping("{login}")
+    public ResponseEntity<?>loginUser(@RequestBody Login login)
+    {
+        CreateResponse response = userService.loginUser(login);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    }
+
 }
 

@@ -31,11 +31,12 @@ public class UserOperationException extends RuntimeException
         }
 
         if (!isValidEmail(user.getUserEmail())) {
+            log.info("Invalid email");
             throw new UserOperationException("Invalid email address");
         }
 
         if (existsByEmail(user.getUserEmail(), userRepository)) {
-            throw new UserOperationException("User with provided Email ID exists");
+            throw new UserOperationException("User with entered Email ID exists , Please try with different Email ID");
         }
 
         if (!isValidPassword(user.getUserPassword())) {

@@ -1,5 +1,7 @@
 package com.techphantomexample.usermicroservice.services;
 
+import com.techphantomexample.usermicroservice.controller.CreateResponse;
+import com.techphantomexample.usermicroservice.model.Login;
 import com.techphantomexample.usermicroservice.model.User;
 
 import java.util.List;
@@ -11,4 +13,6 @@ public interface UserService
     public String deleteUser(int userId);
     public User getUser(int userId);
     public List<User> getAllUsers();
+
+    CreateResponse loginUser(Login login);
 }

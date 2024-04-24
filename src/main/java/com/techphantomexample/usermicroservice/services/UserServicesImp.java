@@ -1,7 +1,8 @@
 package com.techphantomexample.usermicroservice.services;
+import com.techphantomexample.usermicroservice.controller.CreateResponse;
+import com.techphantomexample.usermicroservice.model.Login;
 import com.techphantomexample.usermicroservice.model.User;
 import com.techphantomexample.usermicroservice.repository.UserRepository;
-import io.micrometer.common.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.mindrot.jbcrypt.BCrypt;
 import org.slf4j.Logger;
@@ -100,6 +101,28 @@ public class UserServicesImp implements UserService
             throw new UserOperationException("Error retrieving users", e);
         }
     }
+
+    @Override
+    public CreateResponse loginUser(Login login) {
+        String msg = "";
+        User user = userRepository.findByUserEmail(login.getUserEmail());
+        if (user != null) {
+            String password = login.getUserPassword();
+            String encodedPassword = user.getUserPassword();
+            boolean isPwdRight = BCrypt.checkpw(password, encodedPassword);
+            if (isPwdRight) {
+                log.info("Logged in");
+                return new CreateResponse("Login Success", 200);
+            } else {
+                log.error("Password error");
+                return new CreateResponse("Password does not match", 401);
+            }
+        } else {
+            log.error("No such email");
+            return new CreateResponse("Email does not exist", 401);
+        }
+    }
+
 
     private boolean isValidEmail(String email) {
         // Regular expression for basic email validation

@@ -5,6 +5,8 @@ import com.techphantomexample.usermicroservice.model.User;
 import com.techphantomexample.usermicroservice.repository.UserRepository;
 import com.techphantomexample.usermicroservice.services.UserOperationException;
 import com.techphantomexample.usermicroservice.services.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,6 +18,7 @@ import java.util.List;
 @RequestMapping("/user")
 public class UserController {
 
+    private static final Logger log = LoggerFactory.getLogger(UserController.class);
     @Autowired
     UserRepository userRepository;
 
@@ -59,8 +62,13 @@ public class UserController {
             userService.createUser(user); // Implement user registration logic
             return "redirect:/user/login"; // Redirect to login page after successful registration
         } catch (UserOperationException e) {
-            model.addAttribute("error", e.getMessage());
-            return "register"; // Return to registration page with error message
+            String errorMessage = e.getMessage();
+            // Log the error message for debugging
+            log.error("User registration error: {}", errorMessage);
+            // Add the error message to the model
+            model.addAttribute("error", errorMessage);
+            // Return to registration page with error message
+            return "register";
         }
     }
 

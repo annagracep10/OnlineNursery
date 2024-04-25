@@ -10,7 +10,12 @@
 <div class="flex justify-center items-center h-screen">
     <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-96">
         <h1 class="text-3xl font-bold mb-4 text-center">User Registration</h1>
-        <form th:action="@{/user/register}" th:object="${user}" method="post">
+
+        <div th:if="${error}" class="text-red-500 mb-4 text-center">
+            <p th:text="${error}"></p>
+        </div>
+
+        <form id="registrationForm" th:action="@{/user/register}" th:object="${user}" method="post">
             <div class="mb-4">
                 <label for="userFullName" class="block text-gray-700">Full Name:</label>
                 <input type="text" id="userFullName" th:field="*{userFullName}" class="form-input mt-1 block w-full border">
@@ -36,9 +41,24 @@
             </div>
             <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 w-full">Register</button>
         </form>
-        <div th:if="${message}" th:text="${message}" th:class="${status == 201 ? 'text-green-600' : 'text-red-600'}"></div>
     </div>
 </div>
-
 </body>
 </html>
+
+<script>
+    // Function to show error messages
+    function showErrorMessage(message) {
+        var errorBox = document.getElementById('errorMessage');
+        errorBox.textContent = message;
+        errorBox.classList.remove('hidden');
+    }
+
+    // Check if there is an error message in the model
+    var errorMessage = document.querySelector('.text-red-500').innerText;
+    if (errorMessage) {
+        showErrorMessage(errorMessage);
+    }
+</script>
+
+

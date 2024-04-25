@@ -41,12 +41,14 @@ public class UserController {
             if (response.getStatus() == 200) {
                 return "redirect:/user/dashboard"; // Redirect to dashboard if login successful
             } else {
+                // If login unsuccessful, display the error message from the CreateResponse object
                 model.addAttribute("error", response.getMessage());
                 return "login"; // Return to login page with error message
             }
         } catch (UserOperationException e) {
-            model.addAttribute("error", "An error occurred during login");
-            return "login"; // Return to login page with generic error message
+            // If an exception occurs during login, use the error message from the exception
+            model.addAttribute("error", e.getMessage());
+            return "login"; // Return to login page with error message
         }
     }
 

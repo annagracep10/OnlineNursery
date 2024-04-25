@@ -10,6 +10,9 @@
 <div class="flex justify-center items-center h-screen">
     <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-96">
         <h1 class="text-3xl font-bold mb-4 text-center">User Login</h1>
+
+        <div th:if="${error}" class="text-red-600 text-center" th:text="${error}"></div>
+
         <form th:action="@{/user/login}" th:object="${login}" method="post">
             <div class="mb-4">
                 <label for="userEmail" class="block text-gray-700">Email:</label>
@@ -29,3 +32,17 @@
 </div>
 </body>
 </html>
+
+<script>
+    // Function to show error messages
+    function showErrorMessage(message) {
+        var errorBox = document.querySelector('.text-red-600');
+        errorBox.textContent = message;
+    }
+
+    // Check if there is an error message in the model
+    var errorMessage = document.querySelector('.text-red-600').innerText;
+    if (errorMessage) {
+        showErrorMessage(errorMessage);
+    }
+</script>

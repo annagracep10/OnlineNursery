@@ -26,6 +26,31 @@ public class UserServicesImp implements UserService
         this.userRepository = userRepository;
     }
 
+    @Override
+    public CreateResponse loginUser(Login login) {
+        if (login.getUserEmail() == null || login.getUserEmail().isEmpty() ||
+                login.getUserPassword() == null || login.getUserPassword().isEmpty()) {
+            log.error("All fields are required for login");
+            return new CreateResponse("All fields are required", 400); // 400 for Bad Request
+        }
+        User user = userRepository.findByUserEmail(login.getUserEmail());
+        if (user != null) {
+            String password = login.getUserPassword();
+            String encodedPassword = user.getUserPassword();
+            boolean isPwdRight = BCrypt.checkpw(password, encodedPassword);
+            if (isPwdRight) {
+                log.info("User logged in successfully: {}", user.getUserEmail());
+                return new CreateResponse("Login Success", 200);
+            } else {
+                log.error("Incorrect password for user: {}", user.getUserEmail());
+                return new CreateResponse("Password does not match", 401);
+            }
+        } else {
+            log.error("No user found with email: {}", login.getUserEmail());
+            return new CreateResponse("Email does not exist", 401);
+        }
+    }
+
 
     @Override
     public String createUser(User user) {
@@ -103,25 +128,7 @@ public class UserServicesImp implements UserService
         }
     }
 
-    @Override
-    public CreateResponse loginUser(Login login) {
-        User user = userRepository.findByUserEmail(login.getUserEmail());
-        if (user != null) {
-            String password = login.getUserPassword();
-            String encodedPassword = user.getUserPassword();
-            boolean isPwdRight = BCrypt.checkpw(password, encodedPassword);
-            if (isPwdRight) {
-                log.info("User logged in successfully: {}", user.getUserEmail());
-                return new CreateResponse("Login Success", 200);
-            } else {
-                log.error("Incorrect password for user: {}", user.getUserEmail());
-                return new CreateResponse("Password does not match", 401);
-            }
-        } else {
-            log.error("No user found with email: {}", login.getUserEmail());
-            return new CreateResponse("Email does not exist", 401);
-        }
-    }
+
 
 
     private boolean isValidEmail(String email) {

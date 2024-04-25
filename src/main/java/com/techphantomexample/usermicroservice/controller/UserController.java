@@ -2,98 +2,94 @@ package com.techphantomexample.usermicroservice.controller;
 
 import com.techphantomexample.usermicroservice.model.Login;
 import com.techphantomexample.usermicroservice.model.User;
+import com.techphantomexample.usermicroservice.repository.UserRepository;
 import com.techphantomexample.usermicroservice.services.UserOperationException;
 import com.techphantomexample.usermicroservice.services.UserService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
 
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping("/user")
+public class UserController {
 
-public class UserController
-{
-    UserService userService;
+    @Autowired
+    UserRepository userRepository;
+
+    private final UserService userService;
 
     public UserController(UserService userService) {
         this.userService = userService;
     }
 
-    // Read specific user
-
-    @PostMapping
-    public ResponseEntity<CreateResponse> createUser(@RequestBody User user) {
-        try {
-            String response = userService.createUser(user);
-            return ResponseEntity.status(HttpStatus.CREATED).body(new CreateResponse(response, HttpStatus.CREATED.value()));
-        } catch (UserOperationException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new CreateResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value()));
-        }
+    @GetMapping("/login")
+    public String showLoginPage(Model model) {
+        model.addAttribute("login", new Login());
+        return "login";
     }
 
-    // Read all users in DB
-    @GetMapping
-    public ResponseEntity<?> getAllUsers() {
+    @PostMapping("/login")
+    public String loginUser(@ModelAttribute Login login, Model model) {
         try {
-            List<User> users = userService.getAllUsers();
-            if (!users.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.OK).body(users);
+            CreateResponse response = userService.loginUser(login);
+            if (response.getStatus() == 200) {
+                return "redirect:/user/dashboard"; // Redirect to dashboard if login successful
             } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new CreateResponse("No users found", HttpStatus.NOT_FOUND.value()));
+                model.addAttribute("error", response.getMessage());
+                return "login"; // Return to login page with error message
             }
         } catch (UserOperationException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new CreateResponse(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value()));
+            model.addAttribute("error", "An error occurred during login");
+            return "login"; // Return to login page with generic error message
         }
     }
 
-    // Read specific user
-    @GetMapping("{userId}")
-    public ResponseEntity<?> getUser(@PathVariable int userId) {
+    @GetMapping("/register")
+    public String showRegistrationPage(Model model) {
+        model.addAttribute("user", new User());
+        return "register";
+    }
+
+    @PostMapping("/register")
+    public String registerUser(@ModelAttribute User user, Model model) {
         try {
-            User user = userService.getUser(userId);
-            if (user != null) {
-                return ResponseEntity.status(HttpStatus.OK).body(user);
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new CreateResponse("User not found", HttpStatus.NOT_FOUND.value()));
-            }
+            userService.createUser(user); // Implement user registration logic
+            return "redirect:/user/login"; // Redirect to login page after successful registration
         } catch (UserOperationException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new CreateResponse(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value()));
+            model.addAttribute("error", e.getMessage());
+            return "register"; // Return to registration page with error message
         }
     }
 
-    @PutMapping("{userId}")
-    public ResponseEntity<CreateResponse> updateUser(@PathVariable int userId, @RequestBody User user) {
+    @GetMapping("/dashboard")
+    public String showDashboard(Model model) {
+        List<User> users = userService.getAllUsers();
+        model.addAttribute("users", users);
+        return "dashboard";
+    }
+
+    @PutMapping("/user/{userId}")
+    public String updateUser(@PathVariable int userId, @ModelAttribute User user) {
         try {
-            String response = userService.updateUser(userId, user);
-            return ResponseEntity.status(HttpStatus.OK).body(new CreateResponse(response, HttpStatus.OK.value()));
+            // Implement user update logic
+            return "redirect:/user/dashboard";
         } catch (UserOperationException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new CreateResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value()));
+            // Handle exception, display error message if necessary
+            return "error";
         }
     }
 
-    @DeleteMapping("{userId}")
-    public ResponseEntity<CreateResponse> deleteUser(@PathVariable int userId) {
+    @DeleteMapping("/user/{userId}")
+    public String deleteUser(@PathVariable int userId) {
         try {
-            String response = userService.deleteUser(userId);
-            return ResponseEntity.status(HttpStatus.OK).body(new CreateResponse(response, HttpStatus.OK.value()));
+            // Implement user deletion logic
+            return "redirect:/user/dashboard";
         } catch (UserOperationException e) {
-            if (e.getMessage().contains("User with ID")) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new CreateResponse(e.getMessage(), HttpStatus.NOT_FOUND.value()));
-            } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new CreateResponse(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value()));
-            }
+            // Handle exception, display error message if necessary
+            return "error";
         }
     }
-
-    @PostMapping("{login}")
-    public ResponseEntity<?>loginUser(@RequestBody Login login)
-    {
-        CreateResponse response = userService.loginUser(login);
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-    }
-
 }
-

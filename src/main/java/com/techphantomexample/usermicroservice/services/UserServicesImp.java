@@ -18,6 +18,7 @@ import java.util.Optional;
 public class UserServicesImp implements UserService
 {
     private static final Logger log = LoggerFactory.getLogger(UserServicesImp.class);
+
     @Autowired
     UserRepository userRepository;
 
@@ -104,21 +105,20 @@ public class UserServicesImp implements UserService
 
     @Override
     public CreateResponse loginUser(Login login) {
-        String msg = "";
         User user = userRepository.findByUserEmail(login.getUserEmail());
         if (user != null) {
             String password = login.getUserPassword();
             String encodedPassword = user.getUserPassword();
             boolean isPwdRight = BCrypt.checkpw(password, encodedPassword);
             if (isPwdRight) {
-                log.info("Logged in");
+                log.info("User logged in successfully: {}", user.getUserEmail());
                 return new CreateResponse("Login Success", 200);
             } else {
-                log.error("Password error");
+                log.error("Incorrect password for user: {}", user.getUserEmail());
                 return new CreateResponse("Password does not match", 401);
             }
         } else {
-            log.error("No such email");
+            log.error("No user found with email: {}", login.getUserEmail());
             return new CreateResponse("Email does not exist", 401);
         }
     }

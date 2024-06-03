@@ -5,6 +5,7 @@ import com.techphantomexample.usermicroservice.model.User;
 import com.techphantomexample.usermicroservice.repository.UserRepository;
 import com.techphantomexample.usermicroservice.services.UserOperationException;
 import com.techphantomexample.usermicroservice.services.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +22,8 @@ public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
     @Autowired
     UserRepository userRepository;
-
-    private final UserService userService;
+    @Autowired
+    private  UserService userService;
 
     public UserController(UserService userService) {
         this.userService = userService;
@@ -39,16 +40,14 @@ public class UserController {
         try {
             CreateResponse response = userService.loginUser(login);
             if (response.getStatus() == 200) {
-                return "redirect:/user/dashboard"; // Redirect to dashboard if login successful
+                return "redirect:/user/dashboard";
             } else {
-                // If login unsuccessful, display the error message from the CreateResponse object
                 model.addAttribute("error", response.getMessage());
-                return "login"; // Return to login page with error message
+                return "login";
             }
         } catch (UserOperationException e) {
-            // If an exception occurs during login, use the error message from the exception
             model.addAttribute("error", e.getMessage());
-            return "login"; // Return to login page with error message
+            return "login";
         }
     }
 
@@ -61,23 +60,19 @@ public class UserController {
     @PostMapping("/register")
     public String registerUser(@ModelAttribute User user, Model model) {
         try {
-            userService.createUser(user); // Implement user registration logic
-            return "redirect:/user/login"; // Redirect to login page after successful registration
+            userService.createUser(user);
+            return "redirect:/user/login";
         } catch (UserOperationException e) {
             String errorMessage = e.getMessage();
-            // Log the error message for debugging
             log.error("User registration error: {}", errorMessage);
-            // Add the error message to the model
             model.addAttribute("error", errorMessage);
-            // Return to registration page with error message
             return "register";
         }
     }
 
     @GetMapping("/dashboard")
     public String showDashboard(Model model) {
-        List<User> users = userService.getAllUsers();
-        model.addAttribute("users", users);
+        model.addAttribute("listOfUsers", userService.getAllUsers());
         return "dashboard";
     }
 

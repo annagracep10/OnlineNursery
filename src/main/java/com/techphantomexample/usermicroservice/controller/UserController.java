@@ -76,6 +76,20 @@ public class UserController {
         return "dashboard";
     }
 
+    @GetMapping("/showNewUserForm")
+    public String showNewUserForm(Model model) {
+        User user = new User();
+        model.addAttribute("user", user);
+        return "new_user";
+    }
+
+    @PostMapping("/createUser")
+    public String saveUser(@ModelAttribute("user") User user) {
+        // save employee to database
+        userService.createUser(user);
+        return "redirect:/user/dashboard";
+    }
+
     @PutMapping("/user/{userId}")
     public String updateUser(@PathVariable int userId, @ModelAttribute User user) {
         try {

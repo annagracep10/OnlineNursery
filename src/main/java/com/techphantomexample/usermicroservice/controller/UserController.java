@@ -84,20 +84,37 @@ public class UserController {
     }
 
     @PostMapping("/createUser")
-    public String saveUser(@ModelAttribute("user") User user) {
-        // save employee to database
-        userService.createUser(user);
-        return "redirect:/user/dashboard";
+    public String saveUser(@ModelAttribute("user") User user,Model model) {
+       try {
+           userService.createUser(user);
+           return "redirect:/user/dashboard";
+       } catch (UserOperationException e) {
+           String errorMessage = e.getMessage();
+           log.error("User creation error: {}", errorMessage);
+           model.addAttribute("error", errorMessage);
+           return "new_user";
+       }
     }
 
-    @PutMapping("/user/{userId}")
-    public String updateUser(@PathVariable int userId, @ModelAttribute User user) {
+    @GetMapping("/showFormForUpdate/{userId}")
+    public String showFormForUpdate(@PathVariable(value = "userId") int userId, Model model) {
+
+        User user = userService.getUser(userId);
+        model.addAttribute("user", user);
+        return "update_user";
+    }
+
+    @PutMapping("/updateUser")
+    public String updateUser(int userId, @ModelAttribute User user, Model model) {
         try {
-            // Implement user update logic
+            log.error("entered");
+            userService.updateUser(userId, user);
             return "redirect:/user/dashboard";
         } catch (UserOperationException e) {
-            // Handle exception, display error message if necessary
-            return "error";
+            String errorMessage = e.getMessage();
+            log.error("User creation error: {}", errorMessage);
+            model.addAttribute("error", errorMessage);
+            return "update_user";
         }
     }
 

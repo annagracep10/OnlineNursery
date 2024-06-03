@@ -16,16 +16,20 @@
         <table border="1" class = "table table-striped table-responsive-md">
             <thead>
                 <tr>
+                    <th> User ID</th>
                     <th> User Full Name</th>
                     <th> User Email</th>
                     <th> User Role</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
             <tr th:each="user : ${listOfUsers}">
+                <td th:text="${user.userId}"></td>
                 <td th:text="${user.userFullName}"></td>
                 <td th:text="${user.userEmail}"></td>
                 <td th:text="${user.userRole}"></td>
+                <td><a th:href="@{/user/showFormForUpdate/{userId}(userId=${user.userId})}" class="btn btn-primary">Update</a></td>
             </tr>
             </tbody>
         </table>

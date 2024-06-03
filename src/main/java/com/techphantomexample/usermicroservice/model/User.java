@@ -9,6 +9,9 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private  int userId;
+
+
+
     private String userFullName;
     private  String userEmail;
     private String userPassword;
@@ -22,6 +25,10 @@ public class User {
         this.userEmail = userEmail;
         this.userPassword = userPassword;
         this.userRole = userRole;
+    }
+
+    public int getUserId() {
+        return userId;
     }
 
 

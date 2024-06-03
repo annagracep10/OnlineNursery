@@ -29,7 +29,10 @@
                 <td th:text="${user.userFullName}"></td>
                 <td th:text="${user.userEmail}"></td>
                 <td th:text="${user.userRole}"></td>
-                <td><a th:href="@{/user/showFormForUpdate/{userId}(userId=${user.userId})}" class="btn btn-primary">Update</a></td>
+                <td>
+                    <a th:href="@{/user/showFormForUpdate/{userId}(userId=${user.userId})}" class="btn btn-primary">Update</a>
+                    <a th:href="@{/user/deleteUser/{userId}(userId=${user.userId})}" class="btn btn-danger">Delete</a>
+                </td>
             </tr>
             </tbody>
         </table>

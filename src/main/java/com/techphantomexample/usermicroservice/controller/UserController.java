@@ -107,25 +107,26 @@ public class UserController {
     @PutMapping("/updateUser")
     public String updateUser(int userId, @ModelAttribute User user, Model model) {
         try {
-            log.error("entered");
             userService.updateUser(userId, user);
             return "redirect:/user/dashboard";
         } catch (UserOperationException e) {
             String errorMessage = e.getMessage();
-            log.error("User creation error: {}", errorMessage);
+            log.error("User updation error: {}", errorMessage);
             model.addAttribute("error", errorMessage);
             return "update_user";
         }
     }
 
-    @DeleteMapping("/user/{userId}")
-    public String deleteUser(@PathVariable int userId) {
+    @GetMapping("/deleteUser/{userId}")
+    public String deleteUser(@PathVariable int userId,Model model) {
         try {
-            // Implement user deletion logic
+            userService.deleteUser(userId);
             return "redirect:/user/dashboard";
         } catch (UserOperationException e) {
-            // Handle exception, display error message if necessary
-            return "error";
+            String errorMessage = e.getMessage();
+            log.error("User deletion error: {}", errorMessage);
+            model.addAttribute("error", errorMessage);
+            return "redirect:/user/dashboard";
         }
     }
 }

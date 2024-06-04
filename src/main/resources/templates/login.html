@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -5,27 +6,56 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Login</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-image: url('https://images.unsplash.com/photo-1501004318641-b39e6451bec6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNjUyOXwwfDF8c2VhcmNofDF8fHBsYW50fGVufDB8fHx8MTYxNzU3NzU3Nw&ixlib=rb-1.2.1&q=80&w=1080');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+        .form-container {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+        }
+        .form-input {
+            transition: border-color 0.3s;
+        }
+        .form-input:focus {
+            border-color: #32a89d;
+            box-shadow: 0 0 0 3px rgba(50, 168, 157, 0.3);
+        }
+        .bg-primary {
+            background-color: #32a852; /* Primary green color */
+        }
+        .text-primary {
+            color: #32a852; /* Primary green color */
+        }
+        .hover\:bg-primary-dark:hover {
+            background-color: #2a8244; /* Darker green for hover effect */
+        }
+    </style>
 </head>
-<body class="bg-gray-100">
-<div class="flex justify-center items-center h-screen">
-    <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-96">
-        <h1 class="text-3xl font-bold mb-4 text-center">User Login</h1>
+<body>
+<div class="flex flex-col justify-center items-center h-screen">
+    <h1 class="text-3xl font-bold mb-16 text-center text-primary">TINY SPROUTS</h1>
+    <div class="form-container bg-white shadow-lg rounded-lg px-8 pt-6 pb-8 mb-4 w-96 ">
+        <h2 class="text-3xl font-bold mb-4 text-center text-primary">User Login</h2>
 
         <div th:if="${error}" class="text-red-600 text-center" th:text="${error}"></div>
 
         <form th:action="@{/user/login}" th:object="${login}" method="post">
             <div class="mb-4">
                 <label for="userEmail" class="block text-gray-700">Email:</label>
-                <input type="email" id="userEmail" th:field="*{userEmail}" class="form-input mt-1 block w-full border">
+                <input type="email" id="userEmail" th:field="*{userEmail}" class="form-input mt-1 block w-full border border-gray-300 rounded-md p-2">
             </div>
             <div class="mb-4">
                 <label for="userPassword" class="block text-gray-700">Password:</label>
-                <input type="password" id="userPassword" th:field="*{userPassword}" class="form-input mt-1 block w-full border">
+                <input type="password" id="userPassword" th:field="*{userPassword}" class="form-input mt-1 block w-full border border-gray-300 rounded-md p-2">
             </div>
-            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 w-full">Login</button>
+            <button type="submit" class="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary-dark w-full">Login</button>
         </form>
         <div class="mt-4 text-center">
-            <p class="text-gray-700">Not registered? <a href="/user/register" class="text-blue-500 hover:underline">Register here</a>.</p>
+            <p class="text-gray-700">Not registered? <a href="/user/register" class="text-primary hover:underline">Register here</a>.</p>
         </div>
         <div th:if="${message}" th:text="${message}" th:class="${status == 401 ? 'text-red-600' : 'text-green-600'}"></div>
     </div>

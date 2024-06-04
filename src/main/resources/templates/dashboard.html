@@ -1,27 +1,48 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
+    <meta charset="UTF-8">
     <title>Admin Dashboard</title>
-    <link rel="stylesheet"
-          href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
-          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
-          crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <style>
+        body {
+            background-image: url('https://images.unsplash.com/photo-1501004318641-b39e6451bec6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNjUyOXwwfDF8c2VhcmNofDF8fHBsYW50fGVufDB8fHx8MTYxNzU3NzU3Nw&ixlib=rb-1.2.1&q=80&w=1080');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            padding-top: 50px; /* Adjusted to accommodate navbar */
+        }
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .btn-create {
+            margin-bottom: 20px;
+        }
+        th, td {
+            vertical-align: middle !important; /* Ensure text is vertically centered */
+        }
+    </style>
 </head>
+
 <body>
 
-    <div align="center" class="container my-2">
-
-        <a th:href = "@{/user/showNewUserForm}" class="btn btn-primary btn-sm mb-3"> Create User </a>
-        <h1>Users List</h1>
-        <table border="1" class = "table table-striped table-responsive-md">
+<div class="container my-2">
+    <a th:href="@{/user/showNewUserForm}" class="btn btn-primary btn-sm btn-create">Create User</a>
+    <h1 class="text-center mb-4">Users List</h1>
+    <div class="table-responsive">
+        <table class="table table-striped">
             <thead>
-                <tr>
-                    <th> User ID</th>
-                    <th> User Full Name</th>
-                    <th> User Email</th>
-                    <th> User Role</th>
-                    <th>Actions</th>
-                </tr>
+            <tr>
+                <th> User ID</th>
+                <th> User Full Name</th>
+                <th> User Email</th>
+                <th> User Role</th>
+                <th>Actions</th>
+            </tr>
             </thead>
             <tbody>
             <tr th:each="user : ${listOfUsers}">
@@ -37,6 +58,8 @@
             </tbody>
         </table>
     </div>
+</div>
 
 </body>
+
 </html>

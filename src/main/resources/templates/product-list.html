@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Products</title>
+</head>
+<body>
+<h1>Products</h1>
+
+<h2>Plants</h2>
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Category</th>
+    </tr>
+    <tr th:each="plant : ${combinedProduct.plants}">
+        <td th:text="${plant.id}"></td>
+        <td th:text="${plant.name}"></td>
+        <td th:text="${plant.price}"></td>
+        <td th:text="${plant.category}"></td>
+    </tr>
+</table>
+
+<h2>Planters</h2>
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Material</th>
+        <th>Category</th>
+    </tr>
+    <tr th:each="planter : ${combinedProduct.planters}">
+        <td th:text="${planter.id}"></td>
+        <td th:text="${planter.name}"></td>
+        <td th:text="${planter.price}"></td>
+        <td th:text="${planter.category}"></td>
+    </tr>
+</table>
+
+<h2>Seeds</h2>
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Category</th>
+    </tr>
+    <tr th:each="seed : ${combinedProduct.seeds}">
+        <td th:text="${seed.id}"></td>
+        <td th:text="${seed.name}"></td>
+        <td th:text="${seed.price}"></td>
+        <td th:text="${seed.category}"></td>
+    </tr>
+</table>
+
+</body>
+</html>

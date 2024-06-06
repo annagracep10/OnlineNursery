@@ -1,5 +1,6 @@
 package com.techphantomexample.usermicroservice.controller;
 
+import com.techphantomexample.usermicroservice.Dto.CombinedProduct;
 import com.techphantomexample.usermicroservice.model.Login;
 import com.techphantomexample.usermicroservice.model.User;
 import com.techphantomexample.usermicroservice.repository.UserRepository;
@@ -9,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +27,7 @@ public class UserController {
     UserRepository userRepository;
     @Autowired
     private  UserService userService;
+    private CombinedProduct combinedProduct;
 
     public UserController(UserService userService) {
         this.userService = userService;
@@ -129,4 +133,26 @@ public class UserController {
             return "redirect:/user/dashboard";
         }
     }
+
+//    @GetMapping("/products")
+//    public ResponseEntity<CombinedProduct> getProductsForPostman() {
+//        if (combinedProduct != null) {
+//            return new ResponseEntity<>(combinedProduct, HttpStatus.OK);
+//        } else {
+//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//        }
+//    }
+    @GetMapping("/products")
+    public String showProducts(Model model) {
+        model.addAttribute("combinedProduct", combinedProduct);
+        return "product-list";
+    }
+
+    @PostMapping("/products")
+    public String receiveProducts(@RequestBody CombinedProduct combinedProduct) {
+        this.combinedProduct = combinedProduct;
+        return "redirect:/user/products";
+    }
+
+
 }

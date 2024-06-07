@@ -2,57 +2,123 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Products</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <style>
+        body {
+            background-image: url('https://images.unsplash.com/photo-1501004318641-b39e6451bec6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNjUyOXwwfDF8c2VhcmNofDF8fHBsYW50fGVufDB8fHx8MTYxNzU3NzU3Nw&ixlib=rb-1.2.1&q=80&w=1080');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            padding-top: 50px; /* Adjusted to accommodate navbar */
+        }
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .btn-create {
+            margin-bottom: 20px;
+        }
+        th, td {
+            vertical-align: middle !important; /* Ensure text is vertically centered */
+        }
+    </style>
 </head>
 <body>
-<h1>Products</h1>
+<div class="container my-2">
+    <h1 class="text-center mb-4">PRODUCT LIST</h1>
+    <!-- Create Plant Button -->
+    <a th:href="@{/plant/showNewPlantForm}" class="btn btn-primary btn-sm btn-create">Create Plant</a>
+    <!-- Plants Table -->
+    <h2 class="text-center mb-4">Plants</h2>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Category</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="plant : ${combinedProduct.plants}">
+                <td th:text="${plant.id}"></td>
+                <td th:text="${plant.name}"></td>
+                <td th:text="${plant.price}"></td>
+                <td th:text="${plant.category}"></td>
+                <td>
+                    <a th:href="@{/plant/showFormForUpdate/{id}(id=${plant.id})}" class="btn btn-primary">Update</a>
+                    <a th:href="@{/plant/deletePlant/{id}(id=${plant.id})}" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 
-<h2>Plants</h2>
-<table border="1">
-    <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Category</th>
-    </tr>
-    <tr th:each="plant : ${combinedProduct.plants}">
-        <td th:text="${plant.id}"></td>
-        <td th:text="${plant.name}"></td>
-        <td th:text="${plant.price}"></td>
-        <td th:text="${plant.category}"></td>
-    </tr>
-</table>
+    <!-- Create Planter Button -->
+    <a th:href="@{/planter/showNewPlanterForm}" class="btn btn-primary btn-sm btn-create">Create Planter</a>
 
-<h2>Planters</h2>
-<table border="1">
-    <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Material</th>
-        <th>Category</th>
-    </tr>
-    <tr th:each="planter : ${combinedProduct.planters}">
-        <td th:text="${planter.id}"></td>
-        <td th:text="${planter.name}"></td>
-        <td th:text="${planter.price}"></td>
-        <td th:text="${planter.category}"></td>
-    </tr>
-</table>
+    <!-- Planters Table -->
+    <h2 class="text-center mb-4">Planters</h2>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Material</th>
+                <th>Category</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="planter : ${combinedProduct.planters}">
+                <td th:text="${planter.id}"></td>
+                <td th:text="${planter.name}"></td>
+                <td th:text="${planter.price}"></td>
+                <td th:text="${planter.category}"></td>
+                <td>
+                    <a th:href="@{/planter/showFormForUpdate/{id}(id=${planter.id})}" class="btn btn-primary">Update</a>
+                    <a th:href="@{/planter/deletePlanter/{id}(id=${planter.id})}" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 
-<h2>Seeds</h2>
-<table border="1">
-    <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Category</th>
-    </tr>
-    <tr th:each="seed : ${combinedProduct.seeds}">
-        <td th:text="${seed.id}"></td>
-        <td th:text="${seed.name}"></td>
-        <td th:text="${seed.price}"></td>
-        <td th:text="${seed.category}"></td>
-    </tr>
-</table>
+    <!-- Create Seed Button -->
+    <a th:href="@{/seed/showNewSeedForm}" class="btn btn-primary btn-sm btn-create">Create Seed</a>
 
-</body>
+    <!-- Seeds Table -->
+    <h2 class="text-center mb-4">Seeds</h2>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Category</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="seed : ${combinedProduct.seeds}">
+                <td th:text="${seed.id}"></td>
+                <td th:text="${seed.name}"></td>
+                <td th:text="${seed.price}"></td>
+                <td th:text="${seed.category}"></td>
+                <td>
+                    <a th:href="@{/seed/showFormForUpdate/{id}(id=${seed.id})}" class="btn btn-primary">Update</a>
+                    <a th:href="@{/seed/deleteSeed/{id}(id=${seed.id})}" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
 </html>

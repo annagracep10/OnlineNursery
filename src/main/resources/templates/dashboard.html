@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-
 <head>
     <meta charset="UTF-8">
     <title>Admin Dashboard</title>
@@ -11,7 +10,7 @@
             background-size: cover;
             background-repeat: no-repeat;
             background-attachment: fixed;
-            padding-top: 50px; /* Adjusted to accommodate navbar */
+            padding-top: 70px; /* Adjusted to accommodate navbar */
         }
         .container {
             background-color: rgba(255, 255, 255, 0.9);
@@ -25,10 +24,28 @@
         th, td {
             vertical-align: middle !important; /* Ensure text is vertically centered */
         }
+        .navbar {
+            background-color: #90EE90; /* Set navbar background color to green */
+        }
+        .navbar .nav-link, .navbar .navbar-brand {
+            color: black !important; /* Set navbar text color to black */
+        }
     </style>
 </head>
-
 <body>
+<nav class="navbar navbar-expand-lg navbar-light fixed-top">
+    <a class="navbar-brand" href="#">TINY SPROUTS</a>
+    <div class="collapse navbar-collapse justify-content-end">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/user/dashboard}">User List</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/user/products}">Product List</a>
+            </li>
+        </ul>
+    </div>
+</nav>
 
 <div class="container my-2">
     <a th:href="@{/user/showNewUserForm}" class="btn btn-primary btn-sm btn-create">Create User</a>
@@ -61,5 +78,4 @@
 </div>
 
 </body>
-
 </html>

@@ -3,6 +3,9 @@
 <head>
     <title>Products</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaI6NtM6kEA5A8ykmKiw4Pq4jF86dIHNDz0W" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+rR2Q01PqKT5B6v1ou2i5l7F/Azw7Tjt+6piJw8" crossorigin="anonymous"></script>
     <style>
         body {
             background-image: url('https://images.unsplash.com/photo-1501004318641-b39e6451bec6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNjUyOXwwfDF8c2VhcmNofDF8fHBsYW50fGVufDB8fHx8MTYxNzU3NzU3Nw&ixlib=rb-1.2.1&q=80&w=1080');
@@ -60,7 +63,7 @@
             <tr>
                 <th th:if="${user.userRole == 'ADMIN'}" >ID</th>
                 <th>Name</th>
-                <th>Type</th>
+                <th>Price</th>
                 <th>Category</th>
                 <th>Actions</th>
             </tr>
@@ -68,7 +71,9 @@
             <tbody>
             <tr th:each="plant : ${combinedProduct.plants}">
                 <td  th:if="${user.userRole == 'ADMIN'}" th:text="${plant.id}"></td>
-                <td th:text="${plant.name}"></td>
+                <td >
+                    <a href="#" data-toggle="tooltip" th:title="'Description: ' + ${plant.description} + ', Price: ' + ${plant.price} + ', Quantity: ' + ${plant.quantity} + ', Type: ' + ${plant.typeOfPlant} + ', Sunlight: ' + ${plant.sunlightRequirements} + ', Watering: ' + ${plant.wateringFrequency}" th:text="${plant.name}"></a>
+                </td>
                 <td th:text="${plant.price}"></td>
                 <td th:text="${plant.category}"></td>
                 <td>
@@ -91,7 +96,7 @@
             <tr>
                 <th th:if="${user.userRole == 'ADMIN'}" >ID</th>
                 <th>Name</th>
-                <th>Material</th>
+                <th>Price</th>
                 <th>Category</th>
                 <th>Actions</th>
             </tr>
@@ -99,7 +104,9 @@
             <tbody>
             <tr th:each="planter : ${combinedProduct.planters}">
                 <td  th:if="${user.userRole == 'ADMIN'}" th:text="${planter.id}"></td>
-                <td th:text="${planter.name}"></td>
+                <td>
+                    <a href="#" data-toggle="tooltip" th:title="'Description: ' + ${planter.description} + ', Price: ' + ${planter.price} + ', Quantity: ' + ${planter.quantity} + ', Material: ' + ${planter.material} + ', Dimensions: ' + ${planter.dimensions} + ', Color: ' + ${planter.color}" th:text="${planter.name}"></a>
+                </td>
                 <td th:text="${planter.price}"></td>
                 <td th:text="${planter.category}"></td>
                 <td>
@@ -122,7 +129,7 @@
             <tr>
                 <th th:if="${user.userRole == 'ADMIN'}">ID</th>
                 <th>Name</th>
-                <th>Type</th>
+                <th>Price</th>
                 <th>Category</th>
                 <th>Actions</th>
             </tr>
@@ -130,7 +137,10 @@
             <tbody>
             <tr th:each="seed : ${combinedProduct.seeds}">
                 <td th:if="${user.userRole == 'ADMIN'}" th:text="${seed.id}"></td>
-                <td th:text="${seed.name}"></td>
+                <td>
+                    <a href="#" data-toggle="tooltip" th:title="'Description: ' + ${seed.description} + ', Price: ' + ${seed.price} + ', Quantity: ' + ${seed.quantity} + ', Type: ' + ${seed.seedType} + ', Germination Time: ' + ${seed.germinationTime} + ' days, Season: ' + ${seed.season}" th:text="${seed.name}"></a>
+                </td>
+
                 <td th:text="${seed.price}"></td>
                 <td th:text="${seed.category}"></td>
                 <td>

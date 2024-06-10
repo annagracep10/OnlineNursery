@@ -6,6 +6,7 @@ import com.techphantomexample.usermicroservice.model.User;
 import com.techphantomexample.usermicroservice.repository.UserRepository;
 import com.techphantomexample.usermicroservice.services.UserOperationException;
 import com.techphantomexample.usermicroservice.services.UserService;
+import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,10 +41,11 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public String loginUser(@ModelAttribute Login login, Model model) {
+    public String loginUser(@ModelAttribute Login login, HttpSession session, Model model) {
         try {
             CreateResponse response = userService.loginUser(login);
             if (response.getStatus() == 200) {
+                session.setAttribute("user", response.getUser());
                 return "redirect:/user/dashboard";
             } else {
                 model.addAttribute("error", response.getMessage());
@@ -53,6 +55,12 @@ public class UserController {
             model.addAttribute("error", e.getMessage());
             return "login";
         }
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate(); // Invalidate the session
+        return "redirect:/user/login"; // Redirect to login page
     }
 
     @GetMapping("/register")
@@ -75,10 +83,22 @@ public class UserController {
     }
 
     @GetMapping("/dashboard")
-    public String showDashboard(Model model) {
-        model.addAttribute("listOfUsers", userService.getAllUsers());
-        return "dashboard";
+    public String showDashboard(HttpSession session, Model model) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            return "redirect:/user/login";
+        }
+        if ("ADMIN".equals(user.getUserRole())) {
+            model.addAttribute("listOfUsers", userService.getAllUsers());
+            return "dashboard"; // Admin dashboard view
+        } else {
+            model.addAttribute("user", user);
+            model.addAttribute("combinedProduct", combinedProduct);
+            return "product-list"; // Non-admin product list view
+        }
     }
+
+
 
     @GetMapping("/showNewUserForm")
     public String showNewUserForm(Model model) {
@@ -143,7 +163,12 @@ public class UserController {
 //        }
 //    }
     @GetMapping("/products")
-    public String showProducts(Model model) {
+    public String showProducts(HttpSession session,Model model) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            return "redirect:/user/login";
+        }
+        model.addAttribute("user", user);
         model.addAttribute("combinedProduct", combinedProduct);
         return "product-list";
     }
@@ -151,8 +176,9 @@ public class UserController {
     @PostMapping("/products")
     public String receiveProducts(@RequestBody CombinedProduct combinedProduct) {
         this.combinedProduct = combinedProduct;
-        return "redirect:/user/products";
+        return "redirect:/user/dashboard";
     }
+
 
 
 }

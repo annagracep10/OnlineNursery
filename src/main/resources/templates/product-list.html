@@ -36,11 +36,14 @@
     <a class="navbar-brand" href="#">TINY SPROUTS</a>
     <div class="collapse navbar-collapse justify-content-end">
         <ul class="navbar-nav">
-            <li class="nav-item">
+            <li class="nav-item" th:if="${user.userRole == 'ADMIN'}">
                 <a class="nav-link" th:href="@{/user/dashboard}">User List</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/user/products}">Product List</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/user/logout}">Logout</a>
             </li>
         </ul>
     </div>
@@ -48,14 +51,14 @@
 <div class="container my-2">
     <h1 class="text-center mb-4">PRODUCT LIST</h1>
     <!-- Create Plant Button -->
-    <a th:href="@{/plant/showNewPlantForm}" class="btn btn-primary btn-sm btn-create">Create Plant</a>
+    <a th:href="@{/plant/showNewPlantForm}" th:if="${user.userRole == 'ADMIN'}" class="btn btn-primary btn-sm btn-create">Create Plant</a>
     <!-- Plants Table -->
     <h2 class="text-center mb-4">Plants</h2>
     <div class="table-responsive">
         <table class="table table-striped">
             <thead>
             <tr>
-                <th>ID</th>
+                <th th:if="${user.userRole == 'ADMIN'}" >ID</th>
                 <th>Name</th>
                 <th>Type</th>
                 <th>Category</th>
@@ -64,13 +67,13 @@
             </thead>
             <tbody>
             <tr th:each="plant : ${combinedProduct.plants}">
-                <td th:text="${plant.id}"></td>
+                <td  th:if="${user.userRole == 'ADMIN'}" th:text="${plant.id}"></td>
                 <td th:text="${plant.name}"></td>
                 <td th:text="${plant.price}"></td>
                 <td th:text="${plant.category}"></td>
                 <td>
-                    <a th:href="@{/plant/showFormForUpdate/{id}(id=${plant.id})}" class="btn btn-primary">Update</a>
-                    <a th:href="@{/plant/deletePlant/{id}(id=${plant.id})}" class="btn btn-danger">Delete</a>
+                    <a th:href="@{/plant/showFormForUpdate/{id}(id=${plant.id})}" th:if="${user.userRole == 'ADMIN'}" class="btn btn-primary">Update</a>
+                    <a th:href="@{/plant/deletePlant/{id}(id=${plant.id})}" th:if="${user.userRole == 'ADMIN'}"  class="btn btn-danger">Delete</a>
                 </td>
             </tr>
             </tbody>
@@ -78,7 +81,7 @@
     </div>
 
     <!-- Create Planter Button -->
-    <a th:href="@{/planter/showNewPlanterForm}" class="btn btn-primary btn-sm btn-create">Create Planter</a>
+    <a th:href="@{/planter/showNewPlanterForm}" th:if="${user.userRole == 'ADMIN'}" class="btn btn-primary btn-sm btn-create">Create Planter</a>
 
     <!-- Planters Table -->
     <h2 class="text-center mb-4">Planters</h2>
@@ -86,7 +89,7 @@
         <table class="table table-striped">
             <thead>
             <tr>
-                <th>ID</th>
+                <th th:if="${user.userRole == 'ADMIN'}" >ID</th>
                 <th>Name</th>
                 <th>Material</th>
                 <th>Category</th>
@@ -95,13 +98,13 @@
             </thead>
             <tbody>
             <tr th:each="planter : ${combinedProduct.planters}">
-                <td th:text="${planter.id}"></td>
+                <td  th:if="${user.userRole == 'ADMIN'}" th:text="${planter.id}"></td>
                 <td th:text="${planter.name}"></td>
                 <td th:text="${planter.price}"></td>
                 <td th:text="${planter.category}"></td>
                 <td>
-                    <a th:href="@{/planter/showFormForUpdate/{id}(id=${planter.id})}" class="btn btn-primary">Update</a>
-                    <a th:href="@{/planter/deletePlanter/{id}(id=${planter.id})}" class="btn btn-danger">Delete</a>
+                    <a th:href="@{/planter/showFormForUpdate/{id}(id=${planter.id})}" th:if="${user.userRole == 'ADMIN'}"  class="btn btn-primary">Update</a>
+                    <a th:href="@{/planter/deletePlanter/{id}(id=${planter.id})}" th:if="${user.userRole == 'ADMIN'}" class="btn btn-danger">Delete</a>
                 </td>
             </tr>
             </tbody>
@@ -109,7 +112,7 @@
     </div>
 
     <!-- Create Seed Button -->
-    <a th:href="@{/seed/showNewSeedForm}" class="btn btn-primary btn-sm btn-create">Create Seed</a>
+    <a th:href="@{/seed/showNewSeedForm}" th:if="${user.userRole == 'ADMIN'}"  class="btn btn-primary btn-sm btn-create">Create Seed</a>
 
     <!-- Seeds Table -->
     <h2 class="text-center mb-4">Seeds</h2>
@@ -117,7 +120,7 @@
         <table class="table table-striped">
             <thead>
             <tr>
-                <th>ID</th>
+                <th th:if="${user.userRole == 'ADMIN'}">ID</th>
                 <th>Name</th>
                 <th>Type</th>
                 <th>Category</th>
@@ -126,13 +129,13 @@
             </thead>
             <tbody>
             <tr th:each="seed : ${combinedProduct.seeds}">
-                <td th:text="${seed.id}"></td>
+                <td th:if="${user.userRole == 'ADMIN'}" th:text="${seed.id}"></td>
                 <td th:text="${seed.name}"></td>
                 <td th:text="${seed.price}"></td>
                 <td th:text="${seed.category}"></td>
                 <td>
-                    <a th:href="@{/seed/showFormForUpdate/{id}(id=${seed.id})}" class="btn btn-primary">Update</a>
-                    <a th:href="@{/seed/deleteSeed/{id}(id=${seed.id})}" class="btn btn-danger">Delete</a>
+                    <a th:href="@{/seed/showFormForUpdate/{id}(id=${seed.id})}"  th:if="${user.userRole == 'ADMIN'}" class="btn btn-primary">Update</a>
+                    <a th:href="@{/seed/deleteSeed/{id}(id=${seed.id})}" th:if="${user.userRole == 'ADMIN'}"  class="btn btn-danger">Delete</a>
                 </td>
             </tr>
             </tbody>

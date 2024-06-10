@@ -31,7 +31,7 @@ public class UserServicesImp implements UserService
         if (login.getUserEmail() == null || login.getUserEmail().isEmpty() ||
                 login.getUserPassword() == null || login.getUserPassword().isEmpty()) {
             log.error("All fields are required for login");
-            return new CreateResponse("All fields are required", 400); // 400 for Bad Request
+            return new CreateResponse("All fields are required", 400 , null); // 400 for Bad Request
         }
         User user = userRepository.findByUserEmail(login.getUserEmail());
         if (user != null) {
@@ -40,14 +40,14 @@ public class UserServicesImp implements UserService
             boolean isPwdRight = BCrypt.checkpw(password, encodedPassword);
             if (isPwdRight) {
                 log.info("User logged in successfully: {}", user.getUserEmail());
-                return new CreateResponse("Login Success", 200);
+                return new CreateResponse("Login Success", 200,user );
             } else {
                 log.error("Incorrect password for user: {}", user.getUserEmail());
-                return new CreateResponse("Password does not match", 401);
+                return new CreateResponse("Password does not match", 401 ,user );
             }
         } else {
             log.error("No user found with email: {}", login.getUserEmail());
-            return new CreateResponse("Email does not exist", 401);
+            return new CreateResponse("Email does not exist", 401, null);
         }
     }
 

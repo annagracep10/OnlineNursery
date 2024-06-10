@@ -5,6 +5,13 @@ public class Seed extends BaseProduct {
     private int germinationTime;
     private String season;
 
+    public Seed(String name, String description, double price, String category, int quantity, String seedType, int germinationTime, String season) {
+        super(name, description, price, category, quantity);
+        this.seedType = seedType;
+        this.germinationTime = germinationTime;
+        this.season = season;
+    }
+
     public String getSeedType() {
         return seedType;
     }
@@ -29,9 +36,6 @@ public class Seed extends BaseProduct {
         this.season = season;
     }
 
-    public Seed(String name, String description, double price, String category, int quantity) {
-        super(name, description, price, category, quantity);
-    }
 
     public Seed() {
     }

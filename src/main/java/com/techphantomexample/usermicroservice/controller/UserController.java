@@ -1,6 +1,7 @@
 package com.techphantomexample.usermicroservice.controller;
 
-import com.techphantomexample.usermicroservice.Dto.CombinedProduct;
+import com.techphantomexample.usermicroservice.Dto.*;
+import com.techphantomexample.usermicroservice.config.RestTemplateConfig;
 import com.techphantomexample.usermicroservice.model.Login;
 import com.techphantomexample.usermicroservice.model.User;
 import com.techphantomexample.usermicroservice.repository.UserRepository;
@@ -16,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -29,6 +31,8 @@ public class UserController {
     @Autowired
     private  UserService userService;
     private CombinedProduct combinedProduct;
+    @Autowired
+    private RestTemplate restTemplate;
 
     public UserController(UserService userService) {
         this.userService = userService;
@@ -92,10 +96,81 @@ public class UserController {
             model.addAttribute("listOfUsers", userService.getAllUsers());
             return "dashboard"; // Admin dashboard view
         } else {
-            model.addAttribute("user", user);
-            model.addAttribute("combinedProduct", combinedProduct);
-            return "product-list"; // Non-admin product list view
+            return "redirect:/user/products"; // Non-admin product list view
         }
+    }
+    @GetMapping("/products")
+    public String showProducts(HttpSession session,Model model) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            return "redirect:/user/login";
+        }
+        CombinedProduct combinedProduct = restTemplate.getForObject("http://localhost:9091/product/products",CombinedProduct.class);
+        model.addAttribute("combinedProduct", combinedProduct);
+        model.addAttribute("user", user);
+        return "product-list";
+    }
+
+    @GetMapping("/newProductForm")
+    public String newProductForm(@RequestParam("category") String category, Model model) {
+        model.addAttribute("category", category);
+        System.out.println("inside the get");
+        System.out.println(category.toLowerCase());
+        switch (category.toLowerCase()) {
+            case "plant":
+                model.addAttribute("plant", new Plant());
+                log.info("System.out.println(inside switch);");
+                break;
+            case "planter":
+                model.addAttribute("planter", new Planter());
+                break;
+            case "seed":
+                model.addAttribute("seed", new Seed());
+                break;
+            default:
+                model.addAttribute("error", "Invalid product category");
+                return "new_product";
+        }
+        System.out.println("displaying page");
+//        System.out.println("Product 1 :"+plant);
+//        System.out.println("Product 2 :"+planter);
+//        System.out.println("Product 3 :"+seed);// Add category to the model
+        return "new_product";
+    }
+
+    @PostMapping("/createProduct")
+    public String saveProduct(@RequestParam("category") String category, Model model, @RequestBody BaseProduct baseProduct) {
+        log.info("Received category: " + category);  // Debug logging
+        String url = "";
+        Plant plant = baseProduct instanceof Plant ? (Plant) baseProduct : null;
+        Planter planter = baseProduct instanceof Planter ? (Planter) baseProduct : null;
+        Seed seed = baseProduct instanceof Seed ? (Seed) baseProduct : null;
+        switch (category.toLowerCase()) {
+            case "plant":
+                log.info("Processing plant");
+                model.addAttribute("plant", plant);
+                System.out.println(plant);
+                url = "http://localhost:9091/product/plant";
+                restTemplate.postForObject(url, plant, Plant.class);
+                return "redirect:/user/products";
+            case "planter":
+                log.info("Processing planter");
+                model.addAttribute("planter", planter);
+                url = "http://localhost:9091/product/planter";
+                restTemplate.postForObject(url, planter, Planter.class);
+                return "redirect:/user/products";
+            case "seed":
+                log.info("Processing seed");
+                model.addAttribute("seed", seed);
+                url = "http://localhost:9091/product/seed";
+                restTemplate.postForObject(url, seed, Seed.class);
+                return "redirect:/user/products";
+            default:
+                log.info("here");
+                model.addAttribute("error", "Invalid product category");
+                return "new_product";
+        }
+
     }
 
 
@@ -119,6 +194,8 @@ public class UserController {
            return "new_user";
        }
     }
+
+
 
     @GetMapping("/showFormForUpdate/{userId}")
     public String showFormForUpdate(@PathVariable(value = "userId") int userId, Model model) {
@@ -154,30 +231,6 @@ public class UserController {
         }
     }
 
-//    @GetMapping("/products")
-//    public ResponseEntity<CombinedProduct> getProductsForPostman() {
-//        if (combinedProduct != null) {
-//            return new ResponseEntity<>(combinedProduct, HttpStatus.OK);
-//        } else {
-//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        }
-//    }
-    @GetMapping("/products")
-    public String showProducts(HttpSession session,Model model) {
-        User user = (User) session.getAttribute("user");
-        if (user == null) {
-            return "redirect:/user/login";
-        }
-        model.addAttribute("user", user);
-        model.addAttribute("combinedProduct", combinedProduct);
-        return "product-list";
-    }
-
-    @PostMapping("/products")
-    public String receiveProducts(@RequestBody CombinedProduct combinedProduct) {
-        this.combinedProduct = combinedProduct;
-        return "redirect:/user/dashboard";
-    }
 
 
 

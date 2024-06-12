@@ -54,7 +54,7 @@
 <div class="container my-2">
     <h1 class="text-center mb-4">PRODUCT LIST</h1>
     <!-- Create Plant Button -->
-    <a th:href="@{/plant/showNewPlantForm}" th:if="${user.userRole == 'ADMIN'}" class="btn btn-primary btn-sm btn-create">Create Plant</a>
+    <a th:href="@{/user/newProductForm(category='plant')}" th:if="${user.userRole == 'ADMIN'}" class="btn btn-primary btn-sm btn-create">Create Plant</a>
     <!-- Plants Table -->
     <h2 class="text-center mb-4">Plants</h2>
     <div class="table-responsive">
@@ -64,7 +64,7 @@
                 <th th:if="${user.userRole == 'ADMIN'}" >ID</th>
                 <th>Name</th>
                 <th>Price</th>
-                <th>Category</th>
+<!--                <th>Category</th>-->
                 <th>Actions</th>
             </tr>
             </thead>
@@ -75,7 +75,7 @@
                     <a href="#" data-toggle="tooltip" th:title="'Description: ' + ${plant.description} + ', Price: ' + ${plant.price} + ', Quantity: ' + ${plant.quantity} + ', Type: ' + ${plant.typeOfPlant} + ', Sunlight: ' + ${plant.sunlightRequirements} + ', Watering: ' + ${plant.wateringFrequency}" th:text="${plant.name}"></a>
                 </td>
                 <td th:text="${plant.price}"></td>
-                <td th:text="${plant.category}"></td>
+<!--                <td th:text="${plant.category}"></td>-->
                 <td>
                     <a th:href="@{/plant/showFormForUpdate/{id}(id=${plant.id})}" th:if="${user.userRole == 'ADMIN'}" class="btn btn-primary">Update</a>
                     <a th:href="@{/plant/deletePlant/{id}(id=${plant.id})}" th:if="${user.userRole == 'ADMIN'}"  class="btn btn-danger">Delete</a>
@@ -86,7 +86,7 @@
     </div>
 
     <!-- Create Planter Button -->
-    <a th:href="@{/planter/showNewPlanterForm}" th:if="${user.userRole == 'ADMIN'}" class="btn btn-primary btn-sm btn-create">Create Planter</a>
+    <a th:href="@{/user/newProductForm(category='planter')}" th:if="${user.userRole == 'ADMIN'}" class="btn btn-primary btn-sm btn-create">Create Planter</a>
 
     <!-- Planters Table -->
     <h2 class="text-center mb-4">Planters</h2>
@@ -97,7 +97,7 @@
                 <th th:if="${user.userRole == 'ADMIN'}" >ID</th>
                 <th>Name</th>
                 <th>Price</th>
-                <th>Category</th>
+<!--                <th>Category</th>-->
                 <th>Actions</th>
             </tr>
             </thead>
@@ -108,7 +108,7 @@
                     <a href="#" data-toggle="tooltip" th:title="'Description: ' + ${planter.description} + ', Price: ' + ${planter.price} + ', Quantity: ' + ${planter.quantity} + ', Material: ' + ${planter.material} + ', Dimensions: ' + ${planter.dimensions} + ', Color: ' + ${planter.color}" th:text="${planter.name}"></a>
                 </td>
                 <td th:text="${planter.price}"></td>
-                <td th:text="${planter.category}"></td>
+<!--                <td th:text="${planter.category}"></td>-->
                 <td>
                     <a th:href="@{/planter/showFormForUpdate/{id}(id=${planter.id})}" th:if="${user.userRole == 'ADMIN'}"  class="btn btn-primary">Update</a>
                     <a th:href="@{/planter/deletePlanter/{id}(id=${planter.id})}" th:if="${user.userRole == 'ADMIN'}" class="btn btn-danger">Delete</a>
@@ -119,7 +119,7 @@
     </div>
 
     <!-- Create Seed Button -->
-    <a th:href="@{/seed/showNewSeedForm}" th:if="${user.userRole == 'ADMIN'}"  class="btn btn-primary btn-sm btn-create">Create Seed</a>
+    <a th:href="@{/user/newProductForm(category='seed')}" th:if="${user.userRole == 'ADMIN'}"  class="btn btn-primary btn-sm btn-create">Create Seed</a>
 
     <!-- Seeds Table -->
     <h2 class="text-center mb-4">Seeds</h2>
@@ -130,7 +130,7 @@
                 <th th:if="${user.userRole == 'ADMIN'}">ID</th>
                 <th>Name</th>
                 <th>Price</th>
-                <th>Category</th>
+<!--                <th>Category</th>-->
                 <th>Actions</th>
             </tr>
             </thead>
@@ -142,7 +142,7 @@
                 </td>
 
                 <td th:text="${seed.price}"></td>
-                <td th:text="${seed.category}"></td>
+<!--                <td th:text="${seed.category}"></td>-->
                 <td>
                     <a th:href="@{/seed/showFormForUpdate/{id}(id=${seed.id})}"  th:if="${user.userRole == 'ADMIN'}" class="btn btn-primary">Update</a>
                     <a th:href="@{/seed/deleteSeed/{id}(id=${seed.id})}" th:if="${user.userRole == 'ADMIN'}"  class="btn btn-danger">Delete</a>

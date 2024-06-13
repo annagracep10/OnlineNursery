@@ -12,11 +12,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -33,6 +35,8 @@ public class UserController {
     private CombinedProduct combinedProduct;
     @Autowired
     private RestTemplate restTemplate;
+    @Value("${product.service.base-url}")
+    private String productServiceBaseUrl;
 
     public UserController(UserService userService) {
         this.userService = userService;
@@ -139,54 +143,65 @@ public class UserController {
     }
 
     @PostMapping("/createProduct")
-    public String saveProduct(@RequestParam("category") String category, Plant plant , Planter planter , Seed seed, Model model) {
+    public String saveProduct(@RequestParam("category") String category, Plant plant, Planter planter, Seed seed, Model model) {
         log.info("Received category: " + category);  // Debug logging
-        String url = "";
-        System.out.println(plant);
-        System.out.println(planter);
-        System.out.println(seed);
-        switch (category.toLowerCase()) {
-            case "plant":
-                log.info("Processing plant");
-                model.addAttribute("plant", plant);
-                url = "http://localhost:9091/product/plant";
-                restTemplate.postForObject(url, plant, Plant.class);
-                return "redirect:/user/products";
-            case "planter":
-                log.info("Processing planter");
-                model.addAttribute("planter", planter);
-                url = "http://localhost:9091/product/planter";
-                restTemplate.postForObject(url, planter, Planter.class);
-                return "redirect:/user/products";
-            case "seed":
-                log.info("Processing seed");
-                model.addAttribute("seed", seed);
-                url = "http://localhost:9091/product/seed";
-                restTemplate.postForObject(url, seed, Seed.class);
-                return "redirect:/user/products";
-            default:
-                log.info("here");
-                model.addAttribute("error", "Invalid product category");
-                return "new_product";
+        String url = productServiceBaseUrl;
+        try {
+            switch (category.toLowerCase()) {
+                case "plant":
+                    log.info("Processing plant");
+                    model.addAttribute("plant", plant);
+                    url += "/plant";
+                    restTemplate.postForObject(url, plant, Plant.class);
+                    break;
+                case "planter":
+                    log.info("Processing planter");
+                    model.addAttribute("planter", planter);
+                    url += "/planter";
+                    restTemplate.postForObject(url, planter, Planter.class);
+                    break;
+                case "seed":
+                    log.info("Processing seed");
+                    model.addAttribute("seed", seed);
+                    url += "/seed";
+                    restTemplate.postForObject(url, seed, Seed.class);
+                    break;
+                default:
+                    log.info("Invalid product category");
+                    model.addAttribute("error", "Invalid product category");
+                    return "new_product";
+            }
+            return "redirect:/user/products";
+        } catch (HttpClientErrorException e) {
+            handleHttpClientErrorException(e, model);
+            model.addAttribute("category", category);
+            return  "new_product"; // or whatever view you want to return for errors
+        } catch (Exception e) {
+            model.addAttribute("error", "An unexpected error occurred: " + e.getMessage());
+            model.addAttribute("category", category);
+            return "new_product"; // or whatever view you want to return for errors
         }
-
     }
 
     @GetMapping("/showFormForUpdateProduct/{id}")
     public String showFormForUpdate(@PathVariable("id") Long id, @RequestParam("category") String category, Model model) {
+        String url = productServiceBaseUrl;
         switch (category.toLowerCase()) {
             case "plant":
-                Plant plant = restTemplate.getForObject("http://localhost:9091/product/plant/" + id, Plant.class);
+                url += "/plant/" + id;
+                Plant plant = restTemplate.getForObject(url, Plant.class);
                 model.addAttribute("plant", plant);
                 model.addAttribute("category", "plant");
                 break;
             case "planter":
-                Planter planter = restTemplate.getForObject("http://localhost:9091/product/planter/" + id, Planter.class);
+                url += "/planter/" + id;
+                Planter planter = restTemplate.getForObject(url, Planter.class);
                 model.addAttribute("planter", planter);
                 model.addAttribute("category", "planter");
                 break;
             case "seed":
-                Seed seed = restTemplate.getForObject("http://localhost:9091/product/seed/" + id, Seed.class);
+                url += "/seed/" + id;
+                Seed seed = restTemplate.getForObject(url, Seed.class);
                 model.addAttribute("seed", seed);
                 model.addAttribute("category", "seed");
                 break;
@@ -199,40 +214,51 @@ public class UserController {
 
     @PostMapping("/updateProduct")
     public String updateProduct(@RequestParam("category") String category, Plant plant, Planter planter, Seed seed, Model model) {
-        String url = "";
-        switch (category.toLowerCase()) {
-            case "plant":
-                url = "http://localhost:9091/product/plant/" + plant.getId();
-                restTemplate.put(url, plant);
-                return "redirect:/user/products";
-            case "planter":
-                url = "http://localhost:9091/product/planter/" + planter.getId();
-                restTemplate.put(url, planter);
-                return "redirect:/user/products";
-            case "seed":
-                url = "http://localhost:9091/product/seed/" + seed.getId();
-                restTemplate.put(url, seed);
-                return "redirect:/user/products";
-            default:
-                model.addAttribute("error", "Invalid product category");
-                return "update_product";
+        String url = productServiceBaseUrl;
+        try {
+            switch (category.toLowerCase()) {
+                case "plant":
+                    url += "/plant/" + plant.getId();
+                    restTemplate.put(url, plant);
+                    break;
+                case "planter":
+                    url += "/planter/" + planter.getId();
+                    restTemplate.put(url, planter);
+                    break;
+                case "seed":
+                    url += "/seed/" + seed.getId();
+                    restTemplate.put(url, seed);
+                    break;
+                default:
+                    model.addAttribute("error", "Invalid product category");
+                    return "update_product";
+            }
+            return "redirect:/user/products";
+        } catch (HttpClientErrorException e) {
+            handleHttpClientErrorException(e, model);
+            model.addAttribute("category", category);
+            return "update_product";
+        } catch (Exception e) {
+            model.addAttribute("error", "An unexpected error occurred: " + e.getMessage());
+            model.addAttribute("category", category);
+            return "update_product";
         }
     }
 
     @GetMapping("/deleteProduct/{id}")
     public String deleteProduct(@PathVariable("id") Long id, @RequestParam("category") String category, Model model) {
-        String url = "";
+        String url = productServiceBaseUrl;
         switch (category.toLowerCase()) {
             case "plant":
-                url = "http://localhost:9091/product/plant/" + id;
+                url += "/plant/" + id;
                 restTemplate.delete(url);
                 break;
             case "planter":
-                url = "http://localhost:9091/product/planter/" + id;
+                url += "/planter/" + id;
                 restTemplate.delete(url);
                 break;
             case "seed":
-                url = "http://localhost:9091/product/seed/" + id;
+                url += "/seed/" + id;
                 restTemplate.delete(url);
                 break;
             default:
@@ -242,7 +268,16 @@ public class UserController {
         return "redirect:/user/products";
     }
 
+    private void handleHttpClientErrorException(HttpClientErrorException e, Model model) {
+        if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
+            model.addAttribute("error", "Validation error: " + e.getMessage());
 
+        } else if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
+            model.addAttribute("error", "Product not found: " + e.getMessage());
+        } else {
+            model.addAttribute("error", "An error occurred while updating the product: " + e.getResponseBodyAsString());
+        }
+    }
 
     @GetMapping("/showNewUserForm")
     public String showNewUserForm(Model model) {
@@ -263,8 +298,6 @@ public class UserController {
            return "new_user";
        }
     }
-
-
 
     @GetMapping("/showFormForUpdate/{userId}")
     public String showFormForUpdate(@PathVariable(value = "userId") int userId, Model model) {

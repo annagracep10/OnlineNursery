@@ -139,17 +139,16 @@ public class UserController {
     }
 
     @PostMapping("/createProduct")
-    public String saveProduct(@RequestParam("category") String category, Model model, @RequestBody BaseProduct baseProduct) {
+    public String saveProduct(@RequestParam("category") String category, Plant plant , Planter planter , Seed seed, Model model) {
         log.info("Received category: " + category);  // Debug logging
         String url = "";
-        Plant plant = baseProduct instanceof Plant ? (Plant) baseProduct : null;
-        Planter planter = baseProduct instanceof Planter ? (Planter) baseProduct : null;
-        Seed seed = baseProduct instanceof Seed ? (Seed) baseProduct : null;
+        System.out.println(plant);
+        System.out.println(planter);
+        System.out.println(seed);
         switch (category.toLowerCase()) {
             case "plant":
                 log.info("Processing plant");
                 model.addAttribute("plant", plant);
-                System.out.println(plant);
                 url = "http://localhost:9091/product/plant";
                 restTemplate.postForObject(url, plant, Plant.class);
                 return "redirect:/user/products";

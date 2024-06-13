@@ -1,9 +1,21 @@
 package com.techphantomexample.usermicroservice.Dto;
 
+import com.fasterxml.jackson.annotation.JsonTypeName;
+
+//@JsonTypeName("plant")
 public class Plant extends BaseProduct{
     private String typeOfPlant;
     private String sunlightRequirements;
     private String wateringFrequency;
+
+    @Override
+    public String toString() {
+        return "Plant{" +
+                "typeOfPlant='" + typeOfPlant + '\'' +
+                ", sunlightRequirements='" + sunlightRequirements + '\'' +
+                ", wateringFrequency='" + wateringFrequency + '\'' +
+                '}'+ super.toString();
+    }
 
     public String getTypeOfPlant() {
         return typeOfPlant;

@@ -1,5 +1,8 @@
 package com.techphantomexample.usermicroservice.Dto;
 
+import com.fasterxml.jackson.annotation.JsonTypeName;
+
+//@JsonTypeName("seed")
 public class Seed extends BaseProduct {
     private String seedType;
     private int germinationTime;

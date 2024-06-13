@@ -1,5 +1,8 @@
 package com.techphantomexample.usermicroservice.Dto;
 
+import com.fasterxml.jackson.annotation.JsonTypeName;
+
+//@JsonTypeName("planter")
 public class Planter extends BaseProduct {
     private String material;
     private String dimensions;

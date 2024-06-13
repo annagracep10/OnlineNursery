@@ -7,6 +7,9 @@ public class CombinedProduct {
     private List<Planter> planters;
     private List<Seed> seeds;
 
+    public CombinedProduct() {
+    }
+
     public CombinedProduct(List<Plant> plants, List<Planter> planters, List<Seed> seeds) {
         this.plants = plants;
         this.planters = planters;

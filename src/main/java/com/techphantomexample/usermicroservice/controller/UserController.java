@@ -172,6 +172,76 @@ public class UserController {
 
     }
 
+    @GetMapping("/showFormForUpdateProduct/{id}")
+    public String showFormForUpdate(@PathVariable("id") Long id, @RequestParam("category") String category, Model model) {
+        switch (category.toLowerCase()) {
+            case "plant":
+                Plant plant = restTemplate.getForObject("http://localhost:9091/product/plant/" + id, Plant.class);
+                model.addAttribute("plant", plant);
+                model.addAttribute("category", "plant");
+                break;
+            case "planter":
+                Planter planter = restTemplate.getForObject("http://localhost:9091/product/planter/" + id, Planter.class);
+                model.addAttribute("planter", planter);
+                model.addAttribute("category", "planter");
+                break;
+            case "seed":
+                Seed seed = restTemplate.getForObject("http://localhost:9091/product/seed/" + id, Seed.class);
+                model.addAttribute("seed", seed);
+                model.addAttribute("category", "seed");
+                break;
+            default:
+                model.addAttribute("error", "Invalid product category");
+                return "new_product";
+        }
+        return "update_product";
+    }
+
+    @PostMapping("/updateProduct")
+    public String updateProduct(@RequestParam("category") String category, Plant plant, Planter planter, Seed seed, Model model) {
+        String url = "";
+        switch (category.toLowerCase()) {
+            case "plant":
+                url = "http://localhost:9091/product/plant/" + plant.getId();
+                restTemplate.put(url, plant);
+                return "redirect:/user/products";
+            case "planter":
+                url = "http://localhost:9091/product/planter/" + planter.getId();
+                restTemplate.put(url, planter);
+                return "redirect:/user/products";
+            case "seed":
+                url = "http://localhost:9091/product/seed/" + seed.getId();
+                restTemplate.put(url, seed);
+                return "redirect:/user/products";
+            default:
+                model.addAttribute("error", "Invalid product category");
+                return "update_product";
+        }
+    }
+
+    @GetMapping("/deleteProduct/{id}")
+    public String deleteProduct(@PathVariable("id") Long id, @RequestParam("category") String category, Model model) {
+        String url = "";
+        switch (category.toLowerCase()) {
+            case "plant":
+                url = "http://localhost:9091/product/plant/" + id;
+                restTemplate.delete(url);
+                break;
+            case "planter":
+                url = "http://localhost:9091/product/planter/" + id;
+                restTemplate.delete(url);
+                break;
+            case "seed":
+                url = "http://localhost:9091/product/seed/" + id;
+                restTemplate.delete(url);
+                break;
+            default:
+                model.addAttribute("error", "Invalid product category");
+                return "product_list";
+        }
+        return "redirect:/user/products";
+    }
+
 
 
     @GetMapping("/showNewUserForm")

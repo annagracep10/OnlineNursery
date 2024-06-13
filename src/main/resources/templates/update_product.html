@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Product</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <style>
+        body {
+            background-image: url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNjUyOXwwfDF8c2VhcmNofDd8fGZvcmVzdHxlbnwwfHx8fDE2MTc1Nzc1Nzd8&ixlib=rb-1.2.1&q=80&w=1080');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .form-container {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 8px;
+            width: 500px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .form-control:focus {
+            border-color: #32a89d;
+            box-shadow: 0 0 0 3px rgba(50, 168, 157, 0.3);
+        }
+        .btn-info {
+            background-color: #32a852;
+            border-color: #32a852;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-info:hover {
+            background-color: #2a8244;
+            border-color: #2a8244;
+        }
+        label {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<div class="form-container">
+    <h2 class="text-primary text-center">Update Product</h2>
+    <hr>
+    <form id="productForm" th:action="@{/user/updateProduct}" method="post">
+        <input type="hidden" id="category" name="category" th:value="${category}">
+
+        <!-- Plant Fields -->
+        <div id="plantFields" th:if="${category == 'plant'}">
+            <input type="hidden" id="plantId" th:field="*{plant.id}">
+            <label for="plantName">Plant Name:</label>
+            <input type="text" id="plantName" class="form-control" th:field="*{plant.name}">
+            <label for="plantDescription">Description:</label>
+            <input type="text" id="plantDescription" class="form-control" th:field="*{plant.description}">
+            <label for="plantPrice">Price:</label>
+            <input type="number" id="plantPrice" class="form-control" th:field="*{plant.price}">
+            <label for="plantQuantity">Quantity:</label>
+            <input type="number" id="plantQuantity" class="form-control" th:field="*{plant.quantity}">
+            <label for="plantType">Type of Plant:</label>
+            <input type="text" id="plantType" class="form-control" th:field="*{plant.typeOfPlant}">
+            <label for="sunlightRequirements">Sunlight Requirements:</label>
+            <input type="text" id="sunlightRequirements" class="form-control" th:field="*{plant.sunlightRequirements}">
+            <label for="wateringFrequency">Watering Frequency:</label>
+            <input type="text" id="wateringFrequency" class="form-control" th:field="*{plant.wateringFrequency}">
+        </div>
+
+        <!-- Planter Fields -->
+        <div id="planterFields" th:if="${category == 'planter'}">
+            <input type="hidden" id="planterId" th:field="*{planter.id}">
+            <label for="planterName">Planter Name:</label>
+            <input type="text" id="planterName" class="form-control" th:field="*{planter.name}">
+            <label for="planterDescription">Description:</label>
+            <input type="text" id="planterDescription" class="form-control" th:field="*{planter.description}">
+            <label for="planterPrice">Price:</label>
+            <input type="number" id="planterPrice" class="form-control" th:field="*{planter.price}">
+            <label for="planterQuantity">Quantity:</label>
+            <input type="number" id="planterQuantity" class="form-control" th:field="*{planter.quantity}">
+            <label for="planterMaterial">Material:</label>
+            <input type="text" id="planterMaterial" class="form-control" th:field="*{planter.material}">
+            <label for="dimensions">Dimensions:</label>
+            <input type="text" id="dimensions" class="form-control" th:field="*{planter.dimensions}">
+            <label for="color">Color:</label>
+            <input type="text" id="color" class="form-control" th:field="*{planter.color}">
+        </div>
+
+        <!-- Seed Fields -->
+        <div id="seedFields" th:if="${category == 'seed'}">
+            <input type="hidden" id="seedId" th:field="*{seed.id}">
+            <label for="seedName">Seed Name:</label>
+            <input type="text" id="seedName" class="form-control" th:field="*{seed.name}">
+            <label for="seedDescription">Description:</label>
+            <input type="text" id="seedDescription" class="form-control" th:field="*{seed.description}">
+            <label for="seedPrice">Price:</label>
+            <input type="number" id="seedPrice" class="form-control" th:field="*{seed.price}">
+            <label for="seedQuantity">Quantity:</label>
+            <input type="number" id="seedQuantity" class="form-control" th:field="*{seed.quantity}">
+            <label for="seedType">Seed Type:</label>
+            <input type="text" id="seedType" class="form-control" th:field="*{seed.seedType}">
+            <label for="germinationTime">Germination Time:</label>
+            <input type="number" id="germinationTime" class="form-control" th:field="*{seed.germinationTime}">
+            <label for="season">Season:</label>
+            <input type="text" id="season" class="form-control" th:field="*{seed.season}">
+        </div>
+
+        <br>
+        <button id="submitButton" type="submit" class="btn btn-info w-100">Submit</button>
+    </form>
+</div>
+</body>
+</html>

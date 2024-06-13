@@ -77,8 +77,8 @@
                 <td th:text="${plant.price}"></td>
 <!--                <td th:text="${plant.category}"></td>-->
                 <td>
-                    <a th:href="@{/plant/showFormForUpdate/{id}(id=${plant.id})}" th:if="${user.userRole == 'ADMIN'}" class="btn btn-primary">Update</a>
-                    <a th:href="@{/plant/deletePlant/{id}(id=${plant.id})}" th:if="${user.userRole == 'ADMIN'}"  class="btn btn-danger">Delete</a>
+                    <a th:href="@{/user/showFormForUpdateProduct/{id}(id=${plant.id}, category='plant')}" th:if="${user.userRole == 'ADMIN'}" class="btn btn-primary">Update</a>
+                    <a th:href="@{/user/deleteProduct/{id}(id=${plant.id}, category='plant')}" th:if="${user.userRole == 'ADMIN'}"  class="btn btn-danger">Delete</a>
                 </td>
             </tr>
             </tbody>
@@ -110,8 +110,8 @@
                 <td th:text="${planter.price}"></td>
 <!--                <td th:text="${planter.category}"></td>-->
                 <td>
-                    <a th:href="@{/planter/showFormForUpdate/{id}(id=${planter.id})}" th:if="${user.userRole == 'ADMIN'}"  class="btn btn-primary">Update</a>
-                    <a th:href="@{/planter/deletePlanter/{id}(id=${planter.id})}" th:if="${user.userRole == 'ADMIN'}" class="btn btn-danger">Delete</a>
+                    <a th:href="@{/user/showFormForUpdateProduct/{id}(id=${planter.id}, category='planter')}" th:if="${user.userRole == 'ADMIN'}"  class="btn btn-primary">Update</a>
+                    <a th:href="@{/user/deleteProduct/{id}(id=${planter.id}, category='planter')}" th:if="${user.userRole == 'ADMIN'}" class="btn btn-danger">Delete</a>
                 </td>
             </tr>
             </tbody>
@@ -144,8 +144,8 @@
                 <td th:text="${seed.price}"></td>
 <!--                <td th:text="${seed.category}"></td>-->
                 <td>
-                    <a th:href="@{/seed/showFormForUpdate/{id}(id=${seed.id})}"  th:if="${user.userRole == 'ADMIN'}" class="btn btn-primary">Update</a>
-                    <a th:href="@{/seed/deleteSeed/{id}(id=${seed.id})}" th:if="${user.userRole == 'ADMIN'}"  class="btn btn-danger">Delete</a>
+                    <a th:href="@{/user/showFormForUpdateProduct/{id}(id=${seed.id}, category='seed')}"  th:if="${user.userRole == 'ADMIN'}" class="btn btn-primary">Update</a>
+                    <a th:href="@{/user/deleteProduct/{id}(id=${seed.id}, category='seed')}" th:if="${user.userRole == 'ADMIN'}"  class="btn btn-danger">Delete</a>
                 </td>
             </tr>
             </tbody>

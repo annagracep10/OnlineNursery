@@ -109,7 +109,8 @@ public class UserController {
         if (user == null) {
             return "redirect:/user/login";
         }
-        CombinedProduct combinedProduct = restTemplate.getForObject("http://localhost:9091/product/products",CombinedProduct.class);
+        String url = productServiceBaseUrl;
+        CombinedProduct combinedProduct = restTemplate.getForObject(url + "/products",CombinedProduct.class);
         model.addAttribute("combinedProduct", combinedProduct);
         model.addAttribute("user", user);
         return "product-list";

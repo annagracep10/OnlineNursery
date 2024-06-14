@@ -79,6 +79,7 @@
                 <td>
                     <a th:href="@{/user/showFormForUpdateProduct/{id}(id=${plant.id}, category='plant')}" th:if="${user.userRole == 'ADMIN'}" class="btn btn-primary">Update</a>
                     <a th:href="@{/user/deleteProduct/{id}(id=${plant.id}, category='plant')}" th:if="${user.userRole == 'ADMIN'}"  class="btn btn-danger">Delete</a>
+                    <a href="#" th:if="${user.userRole != 'ADMIN'}" class="btn btn-success">Buy</a>
                 </td>
             </tr>
             </tbody>
@@ -112,6 +113,7 @@
                 <td>
                     <a th:href="@{/user/showFormForUpdateProduct/{id}(id=${planter.id}, category='planter')}" th:if="${user.userRole == 'ADMIN'}"  class="btn btn-primary">Update</a>
                     <a th:href="@{/user/deleteProduct/{id}(id=${planter.id}, category='planter')}" th:if="${user.userRole == 'ADMIN'}" class="btn btn-danger">Delete</a>
+                    <a href="#"  th:if="${user.userRole != 'ADMIN'}" class="btn btn-success">Buy</a>
                 </td>
             </tr>
             </tbody>
@@ -146,6 +148,7 @@
                 <td>
                     <a th:href="@{/user/showFormForUpdateProduct/{id}(id=${seed.id}, category='seed')}"  th:if="${user.userRole == 'ADMIN'}" class="btn btn-primary">Update</a>
                     <a th:href="@{/user/deleteProduct/{id}(id=${seed.id}, category='seed')}" th:if="${user.userRole == 'ADMIN'}"  class="btn btn-danger">Delete</a>
+                    <a href="#"  th:if="${user.userRole != 'ADMIN'}" class="btn btn-success">Buy</a>
                 </td>
             </tr>
             </tbody>

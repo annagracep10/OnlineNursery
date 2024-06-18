@@ -378,14 +378,14 @@ public class UserController {
         return "redirect:/user/cart";
     }
 
-//    @PostMapping("/checkout")
-//    public String checkout(HttpSession session) {
-//        User user = (User) session.getAttribute("user");
-//        if (user != null) {
-//            cartService.checkout(user.getUserId());
-//        }
-//        return "redirect:/user/cart";
-//    }
+    @PostMapping("/checkout")
+    public String checkout(HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user != null) {
+            cartService.checkout(user.getUserId());
+        }
+        return "redirect:/user/cart";
+    }
 
 
 }

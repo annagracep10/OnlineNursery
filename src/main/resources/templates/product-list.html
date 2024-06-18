@@ -3,7 +3,7 @@
 <head>
     <title>Products</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha384-tsQFqpERiu3bVHrvY6ep6w6F7azZ3V9d6MszQbb6up9nEkQeoFxt9oy6XhDhb4fB" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaI6NtM6kEA5A8ykmKiw4Pq4jF86dIHNDz0W" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+rR2Q01PqKT5B6v1ou2i5l7F/Azw7Tjt+6piJw8" crossorigin="anonymous"></script>
     <style>
@@ -45,6 +45,9 @@
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/user/products}">Product List</a>
             </li>
+            <li class="nav-item" th:if="${user.userRole != 'ADMIN'}">
+                <a class="nav-link" th:href="@{/user/cart}">CART</a>
+            </li>
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/user/logout}">Logout</a>
             </li>
@@ -64,22 +67,27 @@
                 <th th:if="${user.userRole == 'ADMIN'}" >ID</th>
                 <th>Name</th>
                 <th>Price</th>
-<!--                <th>Category</th>-->
                 <th>Actions</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="plant : ${combinedProduct.plants}">
                 <td  th:if="${user.userRole == 'ADMIN'}" th:text="${plant.id}"></td>
-                <td >
+                <td>
                     <span  data-toggle="tooltip" th:title="'Description: ' + ${plant.description} + ', Price: ' + ${plant.price} + ', Quantity: ' + ${plant.quantity} + ', Type: ' + ${plant.typeOfPlant} + ', Sunlight: ' + ${plant.sunlightRequirements} + ', Watering: ' + ${plant.wateringFrequency}" th:text="${plant.name}"></span>
                 </td>
                 <td th:text="${plant.price}"></td>
-<!--                <td th:text="${plant.category}"></td>-->
                 <td>
                     <a th:href="@{/user/showFormForUpdateProduct/{id}(id=${plant.id}, category='plant')}" th:if="${user.userRole == 'ADMIN'}" class="btn btn-primary">Update</a>
                     <a th:href="@{/user/deleteProduct/{id}(id=${plant.id}, category='plant')}" th:if="${user.userRole == 'ADMIN'}"  class="btn btn-danger">Delete</a>
-                    <a href="#" th:if="${user.userRole != 'ADMIN'}" class="btn btn-success">Buy</a>
+                    <form th:if="${user.userRole != 'ADMIN'}"  th:action="@{/user/addToCart}" method="post" style="display:inline;">
+                        <input type="hidden" name="productId" th:value="${plant.id}">
+                        <input type="hidden" name="productName" th:value="${plant.name}">
+                        <input type="hidden" name="price" th:value="${plant.price}">
+                        <input type="hidden" name="quantity" th:value="1">
+                        <input type="hidden" name="productType" value="plant">
+                        <button type="submit" class="btn btn-success">Add to Cart</button>
+                    </form>
                 </td>
             </tr>
             </tbody>
@@ -98,7 +106,6 @@
                 <th th:if="${user.userRole == 'ADMIN'}" >ID</th>
                 <th>Name</th>
                 <th>Price</th>
-<!--                <th>Category</th>-->
                 <th>Actions</th>
             </tr>
             </thead>
@@ -109,11 +116,17 @@
                     <span data-toggle="tooltip" th:title="'Description: ' + ${planter.description} + ', Price: ' + ${planter.price} + ', Quantity: ' + ${planter.quantity} + ', Material: ' + ${planter.material} + ', Dimensions: ' + ${planter.dimensions} + ', Color: ' + ${planter.color}" th:text="${planter.name}"></span>
                 </td>
                 <td th:text="${planter.price}"></td>
-<!--                <td th:text="${planter.category}"></td>-->
                 <td>
                     <a th:href="@{/user/showFormForUpdateProduct/{id}(id=${planter.id}, category='planter')}" th:if="${user.userRole == 'ADMIN'}"  class="btn btn-primary">Update</a>
                     <a th:href="@{/user/deleteProduct/{id}(id=${planter.id}, category='planter')}" th:if="${user.userRole == 'ADMIN'}" class="btn btn-danger">Delete</a>
-                    <a href="#"  th:if="${user.userRole != 'ADMIN'}" class="btn btn-success">Buy</a>
+                    <form  th:if="${user.userRole != 'ADMIN'}" th:action="@{/user/addToCart}" method="post" style="display:inline;">
+                        <input type="hidden" name="productId" th:value="${planter.id}">
+                        <input type="hidden" name="productName" th:value="${planter.name}">
+                        <input type="hidden" name="price" th:value="${planter.price}">
+                        <input type="hidden" name="quantity" th:value="1">
+                        <input type="hidden" name="productType" value="planter">
+                        <button type="submit" class="btn btn-success">Add to Cart</button>
+                    </form>
                 </td>
             </tr>
             </tbody>
@@ -132,7 +145,6 @@
                 <th th:if="${user.userRole == 'ADMIN'}">ID</th>
                 <th>Name</th>
                 <th>Price</th>
-<!--                <th>Category</th>-->
                 <th>Actions</th>
             </tr>
             </thead>
@@ -142,13 +154,18 @@
                 <td>
                     <span  data-toggle="tooltip" th:title="'Description: ' + ${seed.description} + ', Price: ' + ${seed.price} + ', Quantity: ' + ${seed.quantity} + ', Type: ' + ${seed.seedType} + ', Germination Time: ' + ${seed.germinationTime} + ' days, Season: ' + ${seed.season}" th:text="${seed.name}"></span>
                 </td>
-
                 <td th:text="${seed.price}"></td>
-<!--                <td th:text="${seed.category}"></td>-->
                 <td>
                     <a th:href="@{/user/showFormForUpdateProduct/{id}(id=${seed.id}, category='seed')}"  th:if="${user.userRole == 'ADMIN'}" class="btn btn-primary">Update</a>
                     <a th:href="@{/user/deleteProduct/{id}(id=${seed.id}, category='seed')}" th:if="${user.userRole == 'ADMIN'}"  class="btn btn-danger">Delete</a>
-                    <a href="#"  th:if="${user.userRole != 'ADMIN'}" class="btn btn-success">Buy</a>
+                    <form th:if="${user.userRole != 'ADMIN'}" th:action="@{/user/addToCart}" method="post" style="display:inline;">
+                        <input type="hidden" name="productId" th:value="${seed.id}">
+                        <input type="hidden" name="productName" th:value="${seed.name}">
+                        <input type="hidden" name="price" th:value="${seed.price}">
+                        <input type="hidden" name="quantity" th:value="1">
+                        <input type="hidden" name="productType" value="seed">
+                        <button type="submit" class="btn btn-success">Add to Cart</button>
+                    </form>
                 </td>
             </tr>
             </tbody>

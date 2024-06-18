@@ -2,9 +2,12 @@ package com.techphantomexample.usermicroservice.controller;
 
 import com.techphantomexample.usermicroservice.Dto.*;
 import com.techphantomexample.usermicroservice.config.RestTemplateConfig;
+import com.techphantomexample.usermicroservice.model.Cart;
+import com.techphantomexample.usermicroservice.model.CartItem;
 import com.techphantomexample.usermicroservice.model.Login;
 import com.techphantomexample.usermicroservice.model.User;
 import com.techphantomexample.usermicroservice.repository.UserRepository;
+import com.techphantomexample.usermicroservice.services.CartService;
 import com.techphantomexample.usermicroservice.services.UserOperationException;
 import com.techphantomexample.usermicroservice.services.UserService;
 import jakarta.servlet.http.HttpSession;
@@ -21,7 +24,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/user")
@@ -32,14 +37,21 @@ public class UserController {
     UserRepository userRepository;
     @Autowired
     private  UserService userService;
+    @Autowired
+    private CartService cartService;
     private CombinedProduct combinedProduct;
     @Autowired
     private RestTemplate restTemplate;
     @Value("${product.service.base-url}")
     private String productServiceBaseUrl;
 
-    public UserController(UserService userService) {
+    public UserController() {
+    }
+
+    public UserController(CartService cartService, UserService userService, UserRepository userRepository) {
+        this.cartService = cartService;
         this.userService = userService;
+        this.userRepository = userRepository;
     }
 
     @GetMapping("/login")
@@ -334,7 +346,46 @@ public class UserController {
         }
     }
 
+    @GetMapping("/cart")
+    public String viewCart(Model model, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user != null) {
+            Cart cart = cartService.getCartByUserId(user.getUserId());
+            model.addAttribute("cart", cart != null ? cart : new Cart());
+            model.addAttribute("user",user);
+        } else {
+            model.addAttribute("cart", new Cart());
+            model.addAttribute("user",user);
+        }
+        return "cart";
+    }
 
+    @PostMapping("/addToCart")
+    public String addToCart(@ModelAttribute CartItem cartItem, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user != null) {
+            cartService.addItemToCart(user.getUserEmail(), cartItem);
+        }
+        return "redirect:/user/products";
+    }
+
+//    @PostMapping("/removeFromCart")
+//    public String removeFromCart(@RequestParam("itemId") int itemId, HttpSession session) {
+//        User user = (User) session.getAttribute("user");
+//        if (user != null) {
+//            cartService.removeItemFromCart(user.getUserId(), itemId);
+//        }
+//        return "redirect:/user/cart";
+//    }
+//
+//    @PostMapping("/checkout")
+//    public String checkout(HttpSession session) {
+//        User user = (User) session.getAttribute("user");
+//        if (user != null) {
+//            cartService.checkout(user.getUserId());
+//        }
+//        return "redirect:/user/cart";
+//    }
 
 
 }

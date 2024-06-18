@@ -16,16 +16,20 @@ public class User {
     private  String userEmail;
     private String userPassword;
     private String userRole;
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private Cart cart;
 
     public User() {
     }
 
-    public User(String userFullName, String userEmail, String userPassword, String userRole) {
+    public User(String userFullName, String userEmail, String userPassword, String userRole, Cart cart) {
         this.userFullName = userFullName;
         this.userEmail = userEmail;
         this.userPassword = userPassword;
         this.userRole = userRole;
+        this.cart = cart;
     }
+
 
     public int getUserId() {
         return userId;
@@ -62,5 +66,13 @@ public class User {
 
     public void setUserRole(String userRole) {
         this.userRole = userRole;
+    }
+
+    public Cart getCart() {
+        return cart;
+    }
+
+    public void setCart(Cart cart) {
+        this.cart = cart;
     }
 }

@@ -369,15 +369,15 @@ public class UserController {
         return "redirect:/user/products";
     }
 
-//    @PostMapping("/removeFromCart")
-//    public String removeFromCart(@RequestParam("itemId") int itemId, HttpSession session) {
-//        User user = (User) session.getAttribute("user");
-//        if (user != null) {
-//            cartService.removeItemFromCart(user.getUserId(), itemId);
-//        }
-//        return "redirect:/user/cart";
-//    }
-//
+    @PostMapping("/removeFromCart")
+    public String removeFromCart(@RequestParam("itemId") int itemId, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user != null) {
+            cartService.removeItemFromCart(user.getUserId(), itemId);
+        }
+        return "redirect:/user/cart";
+    }
+
 //    @PostMapping("/checkout")
 //    public String checkout(HttpSession session) {
 //        User user = (User) session.getAttribute("user");

@@ -1,17 +1,21 @@
 package com.techphantomexample.usermicroservice.services;
 
+import com.techphantomexample.usermicroservice.Dto.CartDTO;
+import com.techphantomexample.usermicroservice.Dto.CartItemDTO;
 import com.techphantomexample.usermicroservice.model.Cart;
 import com.techphantomexample.usermicroservice.model.CartItem;
 import com.techphantomexample.usermicroservice.model.User;
 import com.techphantomexample.usermicroservice.repository.CartItemRepository;
 import com.techphantomexample.usermicroservice.repository.CartRepository;
 import com.techphantomexample.usermicroservice.repository.UserRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CartService {
@@ -23,6 +27,12 @@ public class CartService {
 
     @Autowired
     private CartItemRepository cartItemRepository;
+
+    @Autowired
+    private CartMessageProducer cartMessageProducer;
+
+    @Autowired
+    private ModelMapper modelMapper;
 
     public CartService(UserRepository userRepository, CartRepository cartRepository, CartItemRepository cartItemRepository) {
         this.userRepository = userRepository;
@@ -81,9 +91,21 @@ public class CartService {
     public void checkout(int userId) {
         Cart cart = cartRepository.findByUser_UserId(userId);
         if (cart != null) {
+            CartDTO cartDTO = convertToDto(cart);
+            cartMessageProducer.sendCartItemsAsJson(cartDTO);
             cartItemRepository.deleteAll(cart.getItems());
             cart.getItems().clear();
             cartRepository.save(cart);
         }
+    }
+
+    private CartDTO convertToDto(Cart cart) {
+        CartDTO cartDto = new CartDTO();
+        List<CartItemDTO> itemDTOs = cart.getItems().stream()
+                .map(item -> modelMapper.map(item, CartItemDTO.class))
+                .collect(Collectors.toList());
+
+        cartDto.setItems(itemDTOs);
+        return cartDto;
     }
 }

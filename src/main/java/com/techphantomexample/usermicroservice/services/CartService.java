@@ -11,7 +11,6 @@ import com.techphantomexample.usermicroservice.repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -58,18 +57,18 @@ public class CartService {
             cart = cartRepository.save(cart);
         }
 
-        // Check if the item already exists in the cart
+
         Optional<CartItem> existingItemOptional = cart.getItems().stream()
                 .filter(item -> item.getProductName().equals(cartItem.getProductName()))
                 .findFirst();
 
         if (existingItemOptional.isPresent()) {
-            // If the item exists, increment the quantity
+
             CartItem existingItem = existingItemOptional.get();
             existingItem.setQuantity(existingItem.getQuantity() + cartItem.getQuantity());
             cartItemRepository.save(existingItem);
         } else {
-            // If the item does not exist, add it to the cart
+
             cartItem.setCart(cart);
             cart.getItems().add(cartItem);
             cartItemRepository.save(cartItem);

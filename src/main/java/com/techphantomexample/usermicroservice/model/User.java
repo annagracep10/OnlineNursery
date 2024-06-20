@@ -11,7 +11,6 @@ public class User {
     private  int userId;
 
 
-
     private String userFullName;
     private  String userEmail;
     private String userPassword;

@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
+
 
 @Slf4j
 @Service
@@ -111,7 +111,7 @@ public class UserServicesImp implements UserService
     public User getUser(int userId) {
         try {
             if (!userRepository.existsById(userId)) {
-                return null; // Return null if user does not exist
+                return null;
             }
             return userRepository.findById(userId).get();
         } catch (Exception e) {
@@ -132,7 +132,6 @@ public class UserServicesImp implements UserService
 
 
     private boolean isValidEmail(String email) {
-        // Regular expression for basic email validation
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
         return email.matches(emailRegex);
     }

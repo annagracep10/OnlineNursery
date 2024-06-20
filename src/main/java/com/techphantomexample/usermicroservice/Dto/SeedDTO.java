@@ -1,14 +1,11 @@
 package com.techphantomexample.usermicroservice.Dto;
 
-import com.fasterxml.jackson.annotation.JsonTypeName;
-
-//@JsonTypeName("seed")
-public class Seed extends BaseProduct {
+public class SeedDTO extends BaseProductDTO {
     private String seedType;
     private int germinationTime;
     private String season;
 
-    public Seed(String name, String description, double price, String category, int quantity, String seedType, int germinationTime, String season) {
+    public SeedDTO(String name, String description, double price, String category, int quantity, String seedType, int germinationTime, String season) {
         super(name, description, price, category, quantity);
         this.seedType = seedType;
         this.germinationTime = germinationTime;
@@ -40,7 +37,7 @@ public class Seed extends BaseProduct {
     }
 
 
-    public Seed() {
+    public SeedDTO() {
     }
 
 }

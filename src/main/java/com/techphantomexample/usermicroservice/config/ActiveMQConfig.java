@@ -1,6 +1,4 @@
 package com.techphantomexample.usermicroservice.config;
-
-import jakarta.jms.ConnectionFactory;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

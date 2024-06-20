@@ -1,7 +1,6 @@
 package com.techphantomexample.usermicroservice.controller;
 
 import com.techphantomexample.usermicroservice.Dto.*;
-import com.techphantomexample.usermicroservice.config.RestTemplateConfig;
 import com.techphantomexample.usermicroservice.model.Cart;
 import com.techphantomexample.usermicroservice.model.CartItem;
 import com.techphantomexample.usermicroservice.model.Login;
@@ -11,22 +10,16 @@ import com.techphantomexample.usermicroservice.services.CartService;
 import com.techphantomexample.usermicroservice.services.UserOperationException;
 import com.techphantomexample.usermicroservice.services.UserService;
 import jakarta.servlet.http.HttpSession;
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-
-import java.security.Principal;
-import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/user")
@@ -39,7 +32,7 @@ public class UserController {
     private  UserService userService;
     @Autowired
     private CartService cartService;
-    private CombinedProduct combinedProduct;
+    private CombinedProductDTO combinedProduct;
     @Autowired
     private RestTemplate restTemplate;
     @Value("${product.service.base-url}")
@@ -122,7 +115,7 @@ public class UserController {
             return "redirect:/user/login";
         }
         String url = productServiceBaseUrl;
-        CombinedProduct combinedProduct = restTemplate.getForObject(url + "/products",CombinedProduct.class);
+        CombinedProductDTO combinedProduct = restTemplate.getForObject(url + "/products", CombinedProductDTO.class);
         model.addAttribute("combinedProduct", combinedProduct);
         model.addAttribute("user", user);
         return "product-list";
@@ -131,33 +124,26 @@ public class UserController {
     @GetMapping("/newProductForm")
     public String newProductForm(@RequestParam("category") String category, Model model) {
         model.addAttribute("category", category);
-        System.out.println("inside the get");
-        System.out.println(category.toLowerCase());
         switch (category.toLowerCase()) {
             case "plant":
-                model.addAttribute("plant", new Plant());
+                model.addAttribute("plant", new PlantDTO());
                 log.info("System.out.println(inside switch);");
                 break;
             case "planter":
-                model.addAttribute("planter", new Planter());
+                model.addAttribute("planter", new PlanterDTO());
                 break;
             case "seed":
-                model.addAttribute("seed", new Seed());
+                model.addAttribute("seed", new SeedDTO());
                 break;
             default:
                 model.addAttribute("error", "Invalid product category");
                 return "new_product";
         }
-        System.out.println("displaying page");
-//        System.out.println("Product 1 :"+plant);
-//        System.out.println("Product 2 :"+planter);
-//        System.out.println("Product 3 :"+seed);// Add category to the model
         return "new_product";
     }
 
     @PostMapping("/createProduct")
-    public String saveProduct(@RequestParam("category") String category, Plant plant, Planter planter, Seed seed, Model model) {
-        log.info("Received category: " + category);  // Debug logging
+    public String saveProduct(@RequestParam("category") String category, PlantDTO plant, PlanterDTO planter, SeedDTO seed, Model model) {
         String url = productServiceBaseUrl;
         try {
             switch (category.toLowerCase()) {
@@ -165,19 +151,19 @@ public class UserController {
                     log.info("Processing plant");
                     model.addAttribute("plant", plant);
                     url += "/plant";
-                    restTemplate.postForObject(url, plant, Plant.class);
+                    restTemplate.postForObject(url, plant, PlantDTO.class);
                     break;
                 case "planter":
                     log.info("Processing planter");
                     model.addAttribute("planter", planter);
                     url += "/planter";
-                    restTemplate.postForObject(url, planter, Planter.class);
+                    restTemplate.postForObject(url, planter, PlanterDTO.class);
                     break;
                 case "seed":
                     log.info("Processing seed");
                     model.addAttribute("seed", seed);
                     url += "/seed";
-                    restTemplate.postForObject(url, seed, Seed.class);
+                    restTemplate.postForObject(url, seed, SeedDTO.class);
                     break;
                 default:
                     log.info("Invalid product category");
@@ -202,19 +188,19 @@ public class UserController {
         switch (category.toLowerCase()) {
             case "plant":
                 url += "/plant/" + id;
-                Plant plant = restTemplate.getForObject(url, Plant.class);
+                PlantDTO plant = restTemplate.getForObject(url, PlantDTO.class);
                 model.addAttribute("plant", plant);
                 model.addAttribute("category", "plant");
                 break;
             case "planter":
                 url += "/planter/" + id;
-                Planter planter = restTemplate.getForObject(url, Planter.class);
+                PlanterDTO planter = restTemplate.getForObject(url, PlanterDTO.class);
                 model.addAttribute("planter", planter);
                 model.addAttribute("category", "planter");
                 break;
             case "seed":
                 url += "/seed/" + id;
-                Seed seed = restTemplate.getForObject(url, Seed.class);
+                SeedDTO seed = restTemplate.getForObject(url, SeedDTO.class);
                 model.addAttribute("seed", seed);
                 model.addAttribute("category", "seed");
                 break;
@@ -226,7 +212,7 @@ public class UserController {
     }
 
     @PostMapping("/updateProduct")
-    public String updateProduct(@RequestParam("category") String category, Plant plant, Planter planter, Seed seed, Model model) {
+    public String updateProduct(@RequestParam("category") String category, PlantDTO plant, PlanterDTO planter, SeedDTO seed, Model model) {
         String url = productServiceBaseUrl;
         try {
             switch (category.toLowerCase()) {
@@ -327,7 +313,7 @@ public class UserController {
             return "redirect:/user/dashboard";
         } catch (UserOperationException e) {
             String errorMessage = e.getMessage();
-            log.error("User updation error: {}", errorMessage);
+            log.error("User update error: {}", errorMessage);
             model.addAttribute("error", errorMessage);
             return "update_user";
         }

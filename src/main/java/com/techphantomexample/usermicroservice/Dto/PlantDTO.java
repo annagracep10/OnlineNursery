@@ -1,9 +1,6 @@
 package com.techphantomexample.usermicroservice.Dto;
 
-import com.fasterxml.jackson.annotation.JsonTypeName;
-
-//@JsonTypeName("plant")
-public class Plant extends BaseProduct{
+public class PlantDTO extends BaseProductDTO {
     private String typeOfPlant;
     private String sunlightRequirements;
     private String wateringFrequency;
@@ -41,10 +38,10 @@ public class Plant extends BaseProduct{
         this.wateringFrequency = wateringFrequency;
     }
 
-    public Plant() {
+    public PlantDTO() {
     }
 
-    public Plant(String name, String description, double price, String category, int quantity, String typeOfPlant, String sunlightRequirements, String wateringFrequency) {
+    public PlantDTO(String name, String description, double price, String category, int quantity, String typeOfPlant, String sunlightRequirements, String wateringFrequency) {
         super(name, description, price, category, quantity);
         this.typeOfPlant = typeOfPlant;
         this.sunlightRequirements = sunlightRequirements;

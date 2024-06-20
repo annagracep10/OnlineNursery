@@ -66,7 +66,7 @@
             <tr>
                 <th th:if="${user.userRole == 'ADMIN'}" >ID</th>
                 <th>Name</th>
-                <th>Price</th>
+                <th>Price in Rs.</th>
                 <th>Actions</th>
             </tr>
             </thead>
@@ -74,7 +74,7 @@
             <tr th:each="plant : ${combinedProduct.plants}">
                 <td  th:if="${user.userRole == 'ADMIN'}" th:text="${plant.id}"></td>
                 <td>
-                    <span  data-toggle="tooltip" th:title="'Description: ' + ${plant.description} + ', Price: ' + ${plant.price} + ', Quantity: ' + ${plant.quantity} + ', Type: ' + ${plant.typeOfPlant} + ', Sunlight: ' + ${plant.sunlightRequirements} + ', Watering: ' + ${plant.wateringFrequency}" th:text="${plant.name}"></span>
+                    <span  data-toggle="tooltip" th:title="'Description: ' + ${plant.description} + ', Price: ' + ${plant.price} + ', Type: ' + ${plant.typeOfPlant} + ', Sunlight: ' + ${plant.sunlightRequirements} + ', Watering: ' + ${plant.wateringFrequency}" th:text="${plant.name}"></span>
                 </td>
                 <td th:text="${plant.price}"></td>
                 <td>
@@ -113,7 +113,7 @@
             <tr th:each="planter : ${combinedProduct.planters}">
                 <td  th:if="${user.userRole == 'ADMIN'}" th:text="${planter.id}"></td>
                 <td>
-                    <span data-toggle="tooltip" th:title="'Description: ' + ${planter.description} + ', Price: ' + ${planter.price} + ', Quantity: ' + ${planter.quantity} + ', Material: ' + ${planter.material} + ', Dimensions: ' + ${planter.dimensions} + ', Color: ' + ${planter.color}" th:text="${planter.name}"></span>
+                    <span data-toggle="tooltip" th:title="'Description: ' + ${planter.description} + ', Price: ' + ${planter.price} +  ', Material: ' + ${planter.material} + ', Dimensions: ' + ${planter.dimensions} + ', Color: ' + ${planter.color}" th:text="${planter.name}"></span>
                 </td>
                 <td th:text="${planter.price}"></td>
                 <td>
@@ -152,7 +152,7 @@
             <tr th:each="seed : ${combinedProduct.seeds}">
                 <td th:if="${user.userRole == 'ADMIN'}" th:text="${seed.id}"></td>
                 <td>
-                    <span  data-toggle="tooltip" th:title="'Description: ' + ${seed.description} + ', Price: ' + ${seed.price} + ', Quantity: ' + ${seed.quantity} + ', Type: ' + ${seed.seedType} + ', Germination Time: ' + ${seed.germinationTime} + ' days, Season: ' + ${seed.season}" th:text="${seed.name}"></span>
+                    <span  data-toggle="tooltip" th:title="'Description: ' + ${seed.description} + ', Price: ' + ${seed.price} + ', Type: ' + ${seed.seedType} + ', Germination Time: ' + ${seed.germinationTime} + ' days, Season: ' + ${seed.season}" th:text="${seed.name}"></span>
                 </td>
                 <td th:text="${seed.price}"></td>
                 <td>

@@ -1,17 +1,6 @@
 package com.techphantomexample.usermicroservice.Dto;
 
-
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
-
-//@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "category", visible = true)
-//@JsonSubTypes({
-//        @JsonSubTypes.Type(value = Plant.class, name = "plant"),
-//        @JsonSubTypes.Type(value = Planter.class, name = "planter"),
-//        @JsonSubTypes.Type(value = Seed.class, name = "seed")
-//})
-public class BaseProduct {
+public class BaseProductDTO {
     private int id;
 
     private String name;
@@ -34,12 +23,12 @@ public class BaseProduct {
                 '}';
     }
 
-    public BaseProduct() {
+    public BaseProductDTO() {
     }
 
 
 
-    public BaseProduct(String name, String description, double price, String category, int quantity) {
+    public BaseProductDTO(String name, String description, double price, String category, int quantity) {
         this.name = name;
         this.description = description;
         this.price = price;

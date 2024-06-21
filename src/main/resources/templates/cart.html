@@ -45,12 +45,11 @@
 <div class="container">
     <h1 class="text-center mb-4">Your Cart</h1>
 
-    <!-- Empty Cart Message -->
+
     <div th:if="${cart.items.isEmpty()}">
         <p class="text-center">Your cart is empty.</p>
     </div>
 
-    <!-- Cart Items Table -->
     <div th:if="${not cart.items.isEmpty()}">
         <table class="table table-bordered">
             <!-- Table Header -->
@@ -80,13 +79,11 @@
             </tbody>
         </table>
 
-        <!-- Checkout Button -->
         <form th:action="@{/user/checkout}" method="post" class="text-center">
             <button type="submit" class="btn btn-primary">Checkout</button>
         </form>
     </div>
 
-    <!-- Continue Shopping Button -->
     <a href="/user/products" class="btn btn-secondary d-block mx-auto mt-4">Continue Shopping</a>
 </div>
 

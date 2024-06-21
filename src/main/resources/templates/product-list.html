@@ -56,9 +56,9 @@
 </nav>
 <div class="container my-2">
     <h1 class="text-center mb-4">PRODUCT LIST</h1>
-    <!-- Create Plant Button -->
+
     <a th:href="@{/user/newProductForm(category='plant')}" th:if="${user.userRole == 'ADMIN'}" class="btn btn-primary btn-sm btn-create">Create Plant</a>
-    <!-- Plants Table -->
+
     <h2 class="text-center mb-4">Plants</h2>
     <div class="table-responsive">
         <table class="table table-striped">
@@ -94,10 +94,8 @@
         </table>
     </div>
 
-    <!-- Create Planter Button -->
     <a th:href="@{/user/newProductForm(category='planter')}" th:if="${user.userRole == 'ADMIN'}" class="btn btn-primary btn-sm btn-create">Create Planter</a>
 
-    <!-- Planters Table -->
     <h2 class="text-center mb-4">Planters</h2>
     <div class="table-responsive">
         <table class="table table-striped">
@@ -133,10 +131,8 @@
         </table>
     </div>
 
-    <!-- Create Seed Button -->
     <a th:href="@{/user/newProductForm(category='seed')}" th:if="${user.userRole == 'ADMIN'}"  class="btn btn-primary btn-sm btn-create">Create Seed</a>
 
-    <!-- Seeds Table -->
     <h2 class="text-center mb-4">Seeds</h2>
     <div class="table-responsive">
         <table class="table table-striped">

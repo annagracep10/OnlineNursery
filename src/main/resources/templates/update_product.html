@@ -62,7 +62,6 @@
     <form id="productForm" th:action="@{/user/updateProduct}" method="post">
         <input type="hidden" id="category" name="category" th:value="${category}">
 
-        <!-- Plant Fields -->
         <div id="plantFields" th:if="${category == 'plant'}">
             <div th:if="${error}" class="text-danger mb-4">
                 <p th:text="${error}"></p>
@@ -84,7 +83,6 @@
             <input type="text" id="wateringFrequency" class="form-control" th:field="*{plant.wateringFrequency}">
         </div>
 
-        <!-- Planter Fields -->
         <div id="planterFields" th:if="${category == 'planter'}">
             <div th:if="${error}" class="text-danger mb-4">
                 <p th:text="${error}"></p>
@@ -106,7 +104,6 @@
             <input type="text" id="color" class="form-control" th:field="*{planter.color}">
         </div>
 
-        <!-- Seed Fields -->
         <div id="seedFields" th:if="${category == 'seed'}">
             <div th:if="${error}" class="text-danger mb-4">
                 <p th:text="${error}"></p>
@@ -132,7 +129,6 @@
         <button id="submitButton" type="submit" class="btn btn-info w-100">Submit</button>
     </form>
     <hr>
-
     <a th:href="@{/user/products}" class="text-primary">Back to Product List</a>
 </div>
 </body>

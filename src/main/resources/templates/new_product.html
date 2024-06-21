@@ -79,7 +79,7 @@
             <input type="text" id="sunlightRequirements" class="form-control" th:field="*{plant.sunlightRequirements}">
             <label for="wateringFrequency">Watering Frequency:</label>
             <input type="text" id="wateringFrequency" class="form-control" th:field="*{plant.wateringFrequency}">
-<!--            <input type="hidden" id="plantCategory" th:field="*{plant.category}" th:value="${category}">-->
+
         </div>
 
         <div id="planterFields" th:if="${category == 'planter'}">
@@ -100,7 +100,7 @@
             <input type="text" id="dimensions" class="form-control" th:field="*{planter.dimensions}">
             <label for="color">Color:</label>
             <input type="text" id="color" class="form-control" th:field="*{planter.color}">
-<!--            <input type="hidden" id="planterCategory" th:field="*{planter.category}" th:value="${category}">-->
+
         </div>
 
         <div id="seedFields" th:if="${category == 'seed'}">
@@ -121,7 +121,7 @@
             <input type="number" id="germinationTime" class="form-control" th:field="*{seed.germinationTime}">
             <label for="season">Season:</label>
             <input type="text" id="season" class="form-control" th:field="*{seed.season}">
-<!--            <input type="hidden" id="seedCategory" th:field="*{seed.category}" th:value="${category}">-->
+
         </div>
 
         <br>

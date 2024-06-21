@@ -2,9 +2,9 @@ package com.techphantomexample.usermicroservice.services;
 
 import com.techphantomexample.usermicroservice.Dto.CartDTO;
 import com.techphantomexample.usermicroservice.Dto.CartItemDTO;
-import com.techphantomexample.usermicroservice.model.Cart;
-import com.techphantomexample.usermicroservice.model.CartItem;
-import com.techphantomexample.usermicroservice.model.User;
+import com.techphantomexample.usermicroservice.entity.Cart;
+import com.techphantomexample.usermicroservice.entity.CartItem;
+import com.techphantomexample.usermicroservice.entity.User;
 import com.techphantomexample.usermicroservice.repository.CartItemRepository;
 import com.techphantomexample.usermicroservice.repository.CartRepository;
 import com.techphantomexample.usermicroservice.repository.UserRepository;

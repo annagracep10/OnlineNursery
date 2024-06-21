@@ -1,6 +1,6 @@
 package com.techphantomexample.usermicroservice.repository;
 
-import com.techphantomexample.usermicroservice.model.CartItem;
+import com.techphantomexample.usermicroservice.entity.CartItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

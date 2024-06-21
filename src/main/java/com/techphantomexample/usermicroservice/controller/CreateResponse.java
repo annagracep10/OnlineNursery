@@ -1,6 +1,6 @@
 package com.techphantomexample.usermicroservice.controller;
 
-import com.techphantomexample.usermicroservice.model.User;
+import com.techphantomexample.usermicroservice.entity.User;
 
 public class CreateResponse {
     private String message;

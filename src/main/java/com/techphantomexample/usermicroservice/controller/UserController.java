@@ -1,12 +1,11 @@
 package com.techphantomexample.usermicroservice.controller;
 
 import com.techphantomexample.usermicroservice.model.Login;
-import com.techphantomexample.usermicroservice.model.User;
+import com.techphantomexample.usermicroservice.entity.User;
 import com.techphantomexample.usermicroservice.repository.UserRepository;
 import com.techphantomexample.usermicroservice.services.UserOperationException;
 import com.techphantomexample.usermicroservice.services.UserService;
 import jakarta.servlet.http.HttpSession;
-import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -148,7 +147,6 @@ public class UserController {
             return "redirect:/user/dashboard";
         }
     }
-
 
 
 

@@ -1,6 +1,6 @@
 package com.techphantomexample.usermicroservice.repository;
 
-import com.techphantomexample.usermicroservice.model.User;
+import com.techphantomexample.usermicroservice.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 

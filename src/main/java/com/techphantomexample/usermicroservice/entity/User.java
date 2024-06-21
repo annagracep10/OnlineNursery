@@ -1,4 +1,4 @@
-package com.techphantomexample.usermicroservice.model;
+package com.techphantomexample.usermicroservice.entity;
 
 import jakarta.persistence.*;
 

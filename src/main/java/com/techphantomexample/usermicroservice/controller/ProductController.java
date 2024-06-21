@@ -4,7 +4,7 @@ import com.techphantomexample.usermicroservice.Dto.CombinedProductDTO;
 import com.techphantomexample.usermicroservice.Dto.PlantDTO;
 import com.techphantomexample.usermicroservice.Dto.PlanterDTO;
 import com.techphantomexample.usermicroservice.Dto.SeedDTO;
-import com.techphantomexample.usermicroservice.model.User;
+import com.techphantomexample.usermicroservice.entity.User;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

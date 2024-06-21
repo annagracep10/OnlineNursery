@@ -1,8 +1,8 @@
 package com.techphantomexample.usermicroservice.controller;
 
-import com.techphantomexample.usermicroservice.model.Cart;
-import com.techphantomexample.usermicroservice.model.CartItem;
-import com.techphantomexample.usermicroservice.model.User;
+import com.techphantomexample.usermicroservice.entity.Cart;
+import com.techphantomexample.usermicroservice.entity.CartItem;
+import com.techphantomexample.usermicroservice.entity.User;
 import com.techphantomexample.usermicroservice.services.CartService;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;

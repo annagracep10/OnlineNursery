@@ -11,7 +11,6 @@ import java.util.Arrays;
 public class UserOperationException extends RuntimeException
 {
 
-
     private static final org.apache.logging.log4j.Logger log = LogManager.getLogger(UserOperationException.class);
 
     public UserOperationException(String message) {

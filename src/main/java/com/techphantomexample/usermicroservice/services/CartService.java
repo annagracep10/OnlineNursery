@@ -91,10 +91,11 @@ public class CartService {
         Cart cart = cartRepository.findByUser_UserId(userId);
         if (cart != null) {
             CartDTO cartDTO = convertToDto(cart);
-            cartMessageProducer.sendCartItemsAsJson(cartDTO);
             cartItemRepository.deleteAll(cart.getItems());
             cart.getItems().clear();
             cartRepository.save(cart);
+            cartMessageProducer.sendCartItemsAsJson(cartDTO);
+
         }
     }
 

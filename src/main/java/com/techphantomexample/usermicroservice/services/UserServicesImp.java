@@ -32,7 +32,7 @@ public class UserServicesImp implements UserService
         if (login.getUserEmail() == null || login.getUserEmail().isEmpty() ||
                 login.getUserPassword() == null || login.getUserPassword().isEmpty()) {
             log.error("All fields are required for login");
-            return new CreateResponse("All fields are required", 400 , null); // 400 for Bad Request
+            return new CreateResponse("All fields are required", 400, null); // 400 for Bad Request
         }
         User user = userRepository.findByUserEmail(login.getUserEmail());
         if (user != null) {
@@ -41,10 +41,10 @@ public class UserServicesImp implements UserService
             boolean isPwdRight = BCrypt.checkpw(password, encodedPassword);
             if (isPwdRight) {
                 log.info("User logged in successfully: {}", user.getUserEmail());
-                return new CreateResponse("Login Success", 200,user );
+                return new CreateResponse("Login Success", 200, user);
             } else {
                 log.error("Incorrect password for user: {}", user.getUserEmail());
-                return new CreateResponse("Password does not match", 401 ,user );
+                return new CreateResponse("Password does not match", 401, user);
             }
         } else {
             log.error("No user found with email: {}", login.getUserEmail());
@@ -52,108 +52,53 @@ public class UserServicesImp implements UserService
         }
     }
 
-
     @Override
     public String createUser(User user) {
-        try {
-            UserOperationException.validateUser(user , userRepository);
-            user.setUserPassword(BCrypt.hashpw(user.getUserPassword(), BCrypt.gensalt()));
-            userRepository.save(user);
-            return "User Created successfully";
-        } catch (UserOperationException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new UserOperationException("Error creating user", e);
-        }
+        UserOperationException.validateUser(user, userRepository);
+        user.setUserPassword(BCrypt.hashpw(user.getUserPassword(), BCrypt.gensalt()));
+        userRepository.save(user);
+        return "User Created successfully";
     }
-
 
     @Override
     public String updateUser(int userId, User newUserDetails) {
-        try {
-            if (!userRepository.existsById(userId)) {
-                throw new UserOperationException("User with ID " + userId + " does not exist");
-            }
-
-            User existingUser = userRepository.findById(userId).get();
-
-            UserOperationException.validateUpdatedUser(newUserDetails);
-
-            existingUser.setUserFullName(newUserDetails.getUserFullName());
-            existingUser.setUserEmail(newUserDetails.getUserEmail());
-            existingUser.setUserPassword(BCrypt.hashpw(newUserDetails.getUserPassword(), BCrypt.gensalt()));
-            existingUser.setUserRole(newUserDetails.getUserRole());
-
-            userRepository.save(existingUser);
-            return "User Updated Successfully";
-        } catch (UserOperationException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new UserOperationException("Error updating user", e);
+        if (!userRepository.existsById(userId)) {
+            throw new UserOperationException("User with ID " + userId + " does not exist");
         }
+
+        User existingUser = userRepository.findById(userId).get();
+        UserOperationException.validateUpdatedUser(newUserDetails);
+
+        existingUser.setUserFullName(newUserDetails.getUserFullName());
+        existingUser.setUserEmail(newUserDetails.getUserEmail());
+        existingUser.setUserPassword(BCrypt.hashpw(newUserDetails.getUserPassword(), BCrypt.gensalt()));
+        existingUser.setUserRole(newUserDetails.getUserRole());
+
+        userRepository.save(existingUser);
+        return "User Updated Successfully";
     }
 
     @Override
     public String deleteUser(int userId) {
-        try {
-            if (!userRepository.existsById(userId)) {
-                throw new UserOperationException("User with ID " + userId + " does not exist");
-            }
-            userRepository.deleteById(userId);
-            return "User Deleted Successfully";
-        } catch (UserOperationException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new UserOperationException("Error deleting user", e);
+        if (!userRepository.existsById(userId)) {
+            throw new UserOperationException("User with ID " + userId + " does not exist");
         }
+        userRepository.deleteById(userId);
+        return "User Deleted Successfully";
     }
 
     @Override
     public User getUser(int userId) {
-        try {
-            if (!userRepository.existsById(userId)) {
-                return null;
-            }
-            return userRepository.findById(userId).get();
-        } catch (Exception e) {
-            throw new UserOperationException("Error retrieving user", e);
+        if (!userRepository.existsById(userId)) {
+            throw new UserOperationException("User with ID " + userId + " does not exist");
         }
+        return userRepository.findById(userId).get();
     }
 
     @Override
     public List<User> getAllUsers() {
-        try {
-            return userRepository.findAll();
-        } catch (Exception e) {
-            throw new UserOperationException("Error retrieving users", e);
-        }
+        return userRepository.findAll();
     }
 
-
-
-
-    private boolean isValidEmail(String email) {
-        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
-        return email.matches(emailRegex);
-    }
-    private boolean existsByEmail(String userEmail) {
-        return userRepository.existsByUserEmail(userEmail);
-    }
-
-    private boolean isValidPassword(String password) {
-        if (password == null || password.length() < 8) {
-            return false;
-        }
-        return password.matches("^(?=.*[A-Z])(?=.*\\d).+$");
-    }
-
-    private boolean isValidUserRole(String userRole) {
-        if (userRole == null) {
-            return false;
-        }
-        String userRoleString = userRole.toString().toUpperCase(); // Convert user role to uppercase
-        List<String> validRoles = Arrays.asList("ADMIN", "SUPERVISOR", "BUYER", "SELLER");
-        return validRoles.contains(userRoleString);
-    }
 
 }

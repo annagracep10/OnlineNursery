@@ -1,5 +1,6 @@
 package com.techphantomexample.usermicroservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 @Entity

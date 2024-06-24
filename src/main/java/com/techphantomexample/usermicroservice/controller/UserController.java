@@ -3,7 +3,7 @@ package com.techphantomexample.usermicroservice.controller;
 import com.techphantomexample.usermicroservice.model.Login;
 import com.techphantomexample.usermicroservice.entity.User;
 import com.techphantomexample.usermicroservice.repository.UserRepository;
-import com.techphantomexample.usermicroservice.services.UserOperationException;
+import com.techphantomexample.usermicroservice.exception.UserOperationException;
 import com.techphantomexample.usermicroservice.services.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;

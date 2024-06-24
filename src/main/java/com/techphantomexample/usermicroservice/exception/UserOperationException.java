@@ -1,4 +1,4 @@
-package com.techphantomexample.usermicroservice.services;
+package com.techphantomexample.usermicroservice.exception;
 
 import com.techphantomexample.usermicroservice.entity.User;
 import com.techphantomexample.usermicroservice.repository.UserRepository;

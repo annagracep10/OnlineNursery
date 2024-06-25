@@ -1,7 +1,6 @@
 package com.techphantomexample.usermicroservice.controller;
 
 import com.techphantomexample.usermicroservice.entity.User;
-import com.techphantomexample.usermicroservice.exception.UserOperationException;
 import com.techphantomexample.usermicroservice.model.Login;
 import com.techphantomexample.usermicroservice.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,21 +30,24 @@ public class UserApiController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<?> createUser(@RequestBody User user) {
-        userService.createUser(user);
-        return new ResponseEntity<>("User created successfully", HttpStatus.CREATED);
+    public CreateResponse createUser(@RequestBody User user) {
+        String response = userService.createUser(user);
+        CreateResponse createResponse = new CreateResponse(response, HttpStatus.OK.value(),user);
+        return createResponse;
     }
 
     @PutMapping("/update/{userId}")
-    public ResponseEntity<?> updateUser(@PathVariable int userId, @RequestBody User user) {
-        userService.updateUser(userId, user);
-        return new ResponseEntity<>("User updated successfully", HttpStatus.OK);
+    public CreateResponse updateUser(@PathVariable int userId, @RequestBody User user) {
+        String response = userService.updateUser(userId, user);
+        CreateResponse createResponse = new CreateResponse(response, HttpStatus.OK.value(), user);
+        return createResponse;
     }
 
     @DeleteMapping("/delete/{userId}")
-    public ResponseEntity<?> deleteUser(@PathVariable int userId) {
-        userService.deleteUser(userId);
-        return new ResponseEntity<>("User deleted successfully", HttpStatus.OK);
+    public CreateResponse deleteUser(@PathVariable int userId) {
+        String response = userService.deleteUser(userId);
+        CreateResponse createResponse = new CreateResponse(response, HttpStatus.OK.value(),null);
+        return createResponse;
     }
 
     @GetMapping("/list")

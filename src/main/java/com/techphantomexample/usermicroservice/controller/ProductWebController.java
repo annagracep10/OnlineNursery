@@ -19,9 +19,9 @@ import org.springframework.web.client.RestTemplate;
 
 @Controller
 @RequestMapping("/user")
-public class ProductController {
+public class ProductWebController {
 
-    private static final Logger log = LoggerFactory.getLogger(ProductController.class);
+    private static final Logger log = LoggerFactory.getLogger(ProductWebController.class);
     private CombinedProductDTO combinedProduct;
     @Autowired
     private RestTemplate restTemplate;

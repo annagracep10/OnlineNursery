@@ -32,7 +32,7 @@ public class UserServicesImp implements UserService
         if (login.getUserEmail() == null || login.getUserEmail().isEmpty() ||
                 login.getUserPassword() == null || login.getUserPassword().isEmpty()) {
             log.error("All fields are required for login");
-            return new CreateResponse("All fields are required", 400, null); // 400 for Bad Request
+            return new CreateResponse("All fields are required", 400, null);
         }
         User user = userRepository.findByUserEmail(login.getUserEmail());
         if (user != null) {
@@ -54,6 +54,9 @@ public class UserServicesImp implements UserService
 
     @Override
     public String createUser(User user) {
+        if (userRepository.existsByUserEmail(user.getUserEmail())) {
+            throw new UserOperationException("User with provided email ID exists");
+        }
         UserOperationException.validateUser(user, userRepository);
         user.setUserPassword(BCrypt.hashpw(user.getUserPassword(), BCrypt.gensalt()));
         userRepository.save(user);
@@ -67,8 +70,7 @@ public class UserServicesImp implements UserService
         }
 
         User existingUser = userRepository.findById(userId).get();
-        UserOperationException.validateUpdatedUser(newUserDetails);
-
+        UserOperationException.validateUser(newUserDetails,userRepository);
         existingUser.setUserFullName(newUserDetails.getUserFullName());
         existingUser.setUserEmail(newUserDetails.getUserEmail());
         existingUser.setUserPassword(BCrypt.hashpw(newUserDetails.getUserPassword(), BCrypt.gensalt()));

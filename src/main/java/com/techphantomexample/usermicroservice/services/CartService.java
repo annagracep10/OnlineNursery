@@ -1,5 +1,6 @@
 package com.techphantomexample.usermicroservice.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.techphantomexample.usermicroservice.Dto.CartDTO;
 import com.techphantomexample.usermicroservice.Dto.CartItemDTO;
 import com.techphantomexample.usermicroservice.entity.Cart;
@@ -87,7 +88,7 @@ public class CartService {
         }
     }
 
-    public void checkout(int userId) {
+    public void checkout(int userId) throws JsonProcessingException {
         Cart cart = cartRepository.findByUser_UserId(userId);
         if (cart != null) {
             CartDTO cartDTO = convertToDto(cart);

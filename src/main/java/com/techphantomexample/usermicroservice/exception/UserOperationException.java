@@ -28,34 +28,12 @@ public class UserOperationException extends RuntimeException
             throw new UserOperationException("All fields are required");
 
         }
-
         if (!isValidEmail(user.getUserEmail())) {
-            log.info("Invalid email");
             throw new UserOperationException("Invalid email address");
         }
-
-        if (existsByEmail(user.getUserEmail(), userRepository)) {
-            throw new UserOperationException("User with entered Email ID exists , Please try with different Email ID");
-        }
-
         if (!isValidPassword(user.getUserPassword())) {
             throw new UserOperationException("Password must be at least 8 characters long, contain at least one uppercase letter, and at least one digit");
         }
-
-        if (!isValidUserRole(user.getUserRole())) {
-            throw new UserOperationException("User role should be one among: ADMIN, SUPERVISOR, BUYER, SELLER");
-        }
-    }
-
-    public static void validateUpdatedUser(User user) {
-        if (isNullOrEmpty(user.getUserFullName()) || isNullOrEmpty(user.getUserPassword()) || isNullOrEmpty(user.getUserRole())) {
-            throw new UserOperationException("All fields are required");
-        }
-
-        if (!isValidPassword(user.getUserPassword())) {
-            throw new UserOperationException("Password must be at least 8 characters long, contain at least one uppercase letter, and at least one digit");
-        }
-
         if (!isValidUserRole(user.getUserRole())) {
             throw new UserOperationException("User role should be one among: ADMIN, SUPERVISOR, BUYER, SELLER");
         }

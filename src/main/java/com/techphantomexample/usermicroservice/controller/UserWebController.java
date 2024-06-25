@@ -16,20 +16,20 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/user")
-public class UserController {
+public class UserWebController {
 
-    private static final Logger log = LoggerFactory.getLogger(UserController.class);
+    private static final Logger log = LoggerFactory.getLogger(UserWebController.class);
     @Autowired
     UserRepository userRepository;
     @Autowired
     private  UserService userService;
 
-    public UserController() {
+    public UserWebController() {
     }
 
-    public UserController( UserService userService, UserRepository userRepository) {
-        this.userService = userService;
+    public UserWebController(UserRepository userRepository, UserService userService) {
         this.userRepository = userRepository;
+        this.userService = userService;
     }
 
     @GetMapping("/login")
@@ -40,17 +40,12 @@ public class UserController {
 
     @PostMapping("/login")
     public String loginUser(@ModelAttribute Login login, HttpSession session, Model model) {
-        try {
-            CreateResponse response = userService.loginUser(login);
-            if (response.getStatus() == 200) {
-                session.setAttribute("user", response.getUser());
-                return "redirect:/user/dashboard";
-            } else {
-                model.addAttribute("error", response.getMessage());
-                return "login";
-            }
-        } catch (UserOperationException e) {
-            model.addAttribute("error", e.getMessage());
+        CreateResponse response = userService.loginUser(login);
+        if (response.getStatus() == 200) {
+            session.setAttribute("user", response.getUser());
+            return "redirect:/user/dashboard";
+        } else {
+            model.addAttribute("error", response.getMessage());
             return "login";
         }
     }

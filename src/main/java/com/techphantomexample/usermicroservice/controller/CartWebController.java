@@ -1,5 +1,6 @@
 package com.techphantomexample.usermicroservice.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.techphantomexample.usermicroservice.entity.Cart;
 import com.techphantomexample.usermicroservice.entity.CartItem;
 import com.techphantomexample.usermicroservice.entity.User;
@@ -14,9 +15,9 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/user")
-public class CartController {
+public class CartWebController {
 
-    private static final Logger log = LoggerFactory.getLogger(CartController.class);
+    private static final Logger log = LoggerFactory.getLogger(CartWebController.class);
     @Autowired
     private CartService cartService;
 
@@ -53,7 +54,7 @@ public class CartController {
     }
 
     @PostMapping("/checkout")
-    public String checkout(HttpSession session) {
+    public String checkout(HttpSession session) throws JsonProcessingException {
         User user = (User) session.getAttribute("user");
         if (user != null) {
             cartService.checkout(user.getUserId());

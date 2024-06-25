@@ -48,13 +48,13 @@
         <p th:text="${error}"></p>
     </div>
     <form id="addUserForm" th:action="@{/user/createUser}" th:object="${user}" method="POST">
-        <input type="text" th:field="*{userFullName}" placeholder="User Full Name" class="form-control mb-4">
+        <input type="text" th:field="*{userFullName}" placeholder="User Full Name" class="form-control mb-4" required>
 
-        <input type="text" th:field="*{userEmail}" placeholder="User Email" class="form-control mb-4">
+        <input type="text" th:field="*{userEmail}" placeholder="User Email" class="form-control mb-4" required>
 
-        <input type="password" th:field="*{userPassword}" placeholder="User Password" class="form-control mb-4">
+        <input type="password" th:field="*{userPassword}" placeholder="User Password" class="form-control mb-4" required>
 
-        <select th:field="*{userRole}" class="form-control mb-4">
+        <select th:field="*{userRole}" class="form-control mb-4" required>
             <option value="">Select User Role</option>
             <option value="ADMIN">ADMIN</option>
             <option value="BUYER">BUYER</option>

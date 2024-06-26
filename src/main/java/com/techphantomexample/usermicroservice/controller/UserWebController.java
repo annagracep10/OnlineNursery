@@ -23,13 +23,17 @@ public class UserWebController {
     UserRepository userRepository;
     @Autowired
     private  UserService userService;
+    @Autowired
+    private UserApiController userApiController;
 
     public UserWebController() {
     }
 
-    public UserWebController(UserRepository userRepository, UserService userService) {
+
+    public UserWebController(UserRepository userRepository, UserService userService, UserApiController userApiController) {
         this.userRepository = userRepository;
         this.userService = userService;
+        this.userApiController = userApiController;
     }
 
     @GetMapping("/login")
@@ -65,7 +69,7 @@ public class UserWebController {
     @PostMapping("/register")
     public String registerUser(@ModelAttribute User user, Model model) {
         try {
-            userService.createUser(user);
+            userApiController.createUser(user);
             return "redirect:/user/login";
         } catch (UserOperationException e) {
             String errorMessage = e.getMessage();
@@ -99,7 +103,7 @@ public class UserWebController {
     @PostMapping("/createUser")
     public String saveUser(@ModelAttribute("user") User user,Model model) {
        try {
-           userService.createUser(user);
+           userApiController.createUser(user);
            return "redirect:/user/dashboard";
        } catch (UserOperationException e) {
            String errorMessage = e.getMessage();
@@ -112,7 +116,7 @@ public class UserWebController {
     @GetMapping("/showFormForUpdate/{userId}")
     public String showFormForUpdate(@PathVariable(value = "userId") int userId, Model model) {
 
-        User user = userService.getUser(userId);
+        User user = userApiController.getUserById(userId).getBody();
         model.addAttribute("user", user);
         return "update_user";
     }
@@ -120,7 +124,7 @@ public class UserWebController {
     @PutMapping("/updateUser")
     public String updateUser(int userId, @ModelAttribute User user, Model model) {
         try {
-            userService.updateUser(userId, user);
+            userApiController.updateUser(userId, user);
             return "redirect:/user/dashboard";
         } catch (UserOperationException e) {
             String errorMessage = e.getMessage();
@@ -133,7 +137,7 @@ public class UserWebController {
     @GetMapping("/deleteUser/{userId}")
     public String deleteUser(@PathVariable int userId,Model model) {
         try {
-            userService.deleteUser(userId);
+            userApiController.deleteUser(userId);
             return "redirect:/user/dashboard";
         } catch (UserOperationException e) {
             String errorMessage = e.getMessage();

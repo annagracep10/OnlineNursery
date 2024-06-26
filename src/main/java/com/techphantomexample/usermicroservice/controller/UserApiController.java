@@ -18,15 +18,9 @@ public class UserApiController {
     private UserService userService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> loginUser(@RequestBody Login login) {
+    public CreateResponse loginUser(@RequestBody Login login) {
         CreateResponse response = userService.loginUser(login);
-        if (response.getStatus() == 200) {
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } else if (response.getStatus() == 401) {
-            return new ResponseEntity<>(response.getMessage(), HttpStatus.UNAUTHORIZED);
-        } else {
-            return new ResponseEntity<>(response.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+        return response;
     }
 
     @PostMapping("/create")
@@ -57,7 +51,7 @@ public class UserApiController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<?> getUserById(@PathVariable int userId) {
+    public ResponseEntity<User> getUserById(@PathVariable int userId) {
         User user = userService.getUser(userId);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }

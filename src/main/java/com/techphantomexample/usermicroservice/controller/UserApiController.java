@@ -1,6 +1,7 @@
 package com.techphantomexample.usermicroservice.controller;
 
 import com.techphantomexample.usermicroservice.entity.User;
+import com.techphantomexample.usermicroservice.model.CreateResponse;
 import com.techphantomexample.usermicroservice.model.Login;
 import com.techphantomexample.usermicroservice.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

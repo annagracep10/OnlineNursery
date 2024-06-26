@@ -1,6 +1,6 @@
 package com.techphantomexample.usermicroservice.services;
 
-import com.techphantomexample.usermicroservice.controller.CreateResponse;
+import com.techphantomexample.usermicroservice.model.CreateResponse;
 import com.techphantomexample.usermicroservice.model.Login;
 import com.techphantomexample.usermicroservice.entity.User;
 

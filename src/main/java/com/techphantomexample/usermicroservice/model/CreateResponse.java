@@ -1,4 +1,4 @@
-package com.techphantomexample.usermicroservice.controller;
+package com.techphantomexample.usermicroservice.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.techphantomexample.usermicroservice.entity.User;

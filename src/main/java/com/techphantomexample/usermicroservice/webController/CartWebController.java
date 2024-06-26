@@ -24,41 +24,30 @@ public class CartWebController {
     @GetMapping("/cart")
     public String viewCart(Model model, HttpSession session) {
         User user = (User) session.getAttribute("user");
-        if (user != null) {
-            Cart cart = cartService.getCartByUserId(user.getUserId());
-            model.addAttribute("cart", cart != null ? cart : new Cart());
-            model.addAttribute("user",user);
-        } else {
-            model.addAttribute("cart", new Cart());
-            model.addAttribute("user",user);
-        }
+        Cart cart = cartService.getCartByUserId(user.getUserId());
+        model.addAttribute("cart", cart != null ? cart : new Cart());
+        model.addAttribute("user",user);
         return "cart";
     }
 
     @PostMapping("/addToCart")
     public String addToCart(@ModelAttribute CartItem cartItem, HttpSession session) {
         User user = (User) session.getAttribute("user");
-        if (user != null) {
-            cartService.addItemToCart(user.getUserEmail(), cartItem);
-        }
+        cartService.addItemToCart(user.getUserEmail(), cartItem);
         return "redirect:/user/products";
     }
 
     @PostMapping("/removeFromCart")
     public String removeFromCart(@RequestParam("itemId") int itemId, HttpSession session) {
         User user = (User) session.getAttribute("user");
-        if (user != null) {
-            cartService.removeItemFromCart(user.getUserId(), itemId);
-        }
+        cartService.removeItemFromCart(user.getUserId(), itemId);
         return "redirect:/user/cart";
     }
 
     @PostMapping("/checkout")
     public String checkout(HttpSession session) throws JsonProcessingException {
         User user = (User) session.getAttribute("user");
-        if (user != null) {
-            cartService.checkout(user.getUserId());
-        }
+        cartService.checkout(user.getUserId());
         return "redirect:/user/cart";
     }
 }

@@ -46,30 +46,16 @@ public class CartService {
 
     public void addItemToCart(String userEmail, CartItem cartItem) {
         User user = userRepository.findByUserEmail(userEmail);
-        if (user == null) {
-            throw new RuntimeException("User not found");
-        }
-
         Cart cart = cartRepository.findByUser_UserId(user.getUserId());
-        if (cart == null)
-        {
-            cart = new Cart();
-            cart.setUser(user);
-            cart.setItems(new ArrayList<>());
-            cart = cartRepository.save(cart);
-        }
-
         Optional<CartItem> existingItemOptional = cart.getItems().stream()
                 .filter(item -> item.getProductName().equals(cartItem.getProductName()))
                 .findFirst();
 
         if (existingItemOptional.isPresent()) {
-
             CartItem existingItem = existingItemOptional.get();
             existingItem.setQuantity(existingItem.getQuantity() + cartItem.getQuantity());
             cartItemRepository.save(existingItem);
         } else {
-
             cartItem.setCart(cart);
             cart.getItems().add(cartItem);
             cartItemRepository.save(cartItem);

@@ -1,4 +1,4 @@
-package com.techphantomexample.usermicroservice.controller;
+package com.techphantomexample.usermicroservice.apiController;
 
 import com.techphantomexample.usermicroservice.entity.User;
 import com.techphantomexample.usermicroservice.model.CreateResponse;

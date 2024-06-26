@@ -1,4 +1,4 @@
-package com.techphantomexample.usermicroservice.controller;
+package com.techphantomexample.usermicroservice.webController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.techphantomexample.usermicroservice.entity.Cart;

@@ -1,4 +1,4 @@
-package com.techphantomexample.usermicroservice.controller;
+package com.techphantomexample.usermicroservice.webController;
 
 import com.techphantomexample.usermicroservice.Dto.CombinedProductDTO;
 import com.techphantomexample.usermicroservice.Dto.PlantDTO;
@@ -10,11 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 @Controller

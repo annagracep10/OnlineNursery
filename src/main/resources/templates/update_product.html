@@ -72,7 +72,7 @@
             <label for="plantDescription">Description:</label>
             <input type="text" id="plantDescription" class="form-control" th:field="*{plant.description}">
             <label for="plantPrice">Price:</label>
-            <input type="number" id="plantPrice" class="form-control" th:field="*{plant.price}">
+            <input type="number" id="plantPrice" class="form-control" th:field="*{plant.price}"  step="0.01">
             <label for="plantQuantity">Quantity:</label>
             <input type="number" id="plantQuantity" class="form-control" th:field="*{plant.quantity}">
             <label for="plantType">Type of Plant:</label>
@@ -93,7 +93,7 @@
             <label for="planterDescription">Description:</label>
             <input type="text" id="planterDescription" class="form-control" th:field="*{planter.description}">
             <label for="planterPrice">Price:</label>
-            <input type="number" id="planterPrice" class="form-control" th:field="*{planter.price}">
+            <input type="number" id="planterPrice" class="form-control" th:field="*{planter.price}"  step="0.01">
             <label for="planterQuantity">Quantity:</label>
             <input type="number" id="planterQuantity" class="form-control" th:field="*{planter.quantity}">
             <label for="planterMaterial">Material:</label>
@@ -114,7 +114,7 @@
             <label for="seedDescription">Description:</label>
             <input type="text" id="seedDescription" class="form-control" th:field="*{seed.description}">
             <label for="seedPrice">Price:</label>
-            <input type="number" id="seedPrice" class="form-control" th:field="*{seed.price}">
+            <input type="number" id="seedPrice" class="form-control" th:field="*{seed.price}"  step="0.01">
             <label for="seedQuantity">Quantity:</label>
             <input type="number" id="seedQuantity" class="form-control" th:field="*{seed.quantity}">
             <label for="seedType">Seed Type:</label>

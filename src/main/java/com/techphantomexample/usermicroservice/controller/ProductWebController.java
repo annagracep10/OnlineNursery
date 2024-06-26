@@ -87,14 +87,10 @@ public class ProductWebController {
                     return "new_product";
             }
             return "redirect:/user/products";
-        } catch (HttpClientErrorException e) {
-            handleHttpClientErrorException(e, model);
-            model.addAttribute("category", category);
-            return  "new_product"; // or whatever view you want to return for errors
         } catch (Exception e) {
-            model.addAttribute("error", "An unexpected error occurred: " + e.getMessage());
             model.addAttribute("category", category);
-            return "new_product"; // or whatever view you want to return for errors
+            model.addAttribute("error",e.getMessage());
+            return  "new_product"; // or whatever view you want to return for errors
         }
     }
 
@@ -149,13 +145,9 @@ public class ProductWebController {
                     return "update_product";
             }
             return "redirect:/user/products";
-        } catch (HttpClientErrorException e) {
-            handleHttpClientErrorException(e, model);
-            model.addAttribute("category", category);
-            return "update_product";
         } catch (Exception e) {
-            model.addAttribute("error", "An unexpected error occurred: " + e.getMessage());
             model.addAttribute("category", category);
+            model.addAttribute("error", e.getMessage());
             return "update_product";
         }
     }
@@ -183,15 +175,5 @@ public class ProductWebController {
         return "redirect:/user/products";
     }
 
-    private void handleHttpClientErrorException(HttpClientErrorException e, Model model) {
-        if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
-            model.addAttribute("error", "Validation error: " + e.getMessage());
-
-        } else if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
-            model.addAttribute("error", "Product not found: " + e.getMessage());
-        } else {
-            model.addAttribute("error", "An error occurred while updating the product: " + e.getResponseBodyAsString());
-        }
-    }
 
 }

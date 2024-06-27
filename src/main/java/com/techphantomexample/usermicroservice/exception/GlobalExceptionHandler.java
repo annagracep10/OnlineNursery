@@ -36,4 +36,5 @@ public class GlobalExceptionHandler {
         CreateResponse createResponse = new CreateResponse("An unexpected error occurred: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value(),null);
         return new ResponseEntity<>(createResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
 }

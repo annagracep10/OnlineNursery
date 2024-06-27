@@ -4,7 +4,6 @@ import com.techphantomexample.usermicroservice.exception.UserOperationException;
 import com.techphantomexample.usermicroservice.model.Login;
 import com.techphantomexample.usermicroservice.entity.User;
 import com.techphantomexample.usermicroservice.repository.UserRepository;
-import lombok.extern.slf4j.Slf4j;
 import org.mindrot.jbcrypt.BCrypt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,8 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-
-@Slf4j
 @Service
 public class UserServicesImp implements UserService
 {
@@ -68,7 +65,6 @@ public class UserServicesImp implements UserService
         if (!userRepository.existsById(userId)) {
             throw new UserOperationException("User with ID " + userId + " does not exist");
         }
-
         User existingUser = userRepository.findById(userId).get();
         UserOperationException.validateUser(newUserDetails,userRepository);
         existingUser.setUserFullName(newUserDetails.getUserFullName());

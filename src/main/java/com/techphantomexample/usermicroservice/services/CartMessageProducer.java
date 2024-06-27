@@ -19,6 +19,5 @@ public class CartMessageProducer {
     public void sendCartItemsAsJson(CartDTO cartDTO) throws JsonProcessingException {
             String cartItemsJson = objectMapper.writeValueAsString(cartDTO);
             jmsTemplate.convertAndSend(cartItemsJson);
-
     }
 }

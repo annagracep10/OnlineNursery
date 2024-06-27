@@ -7,7 +7,7 @@ import org.apache.logging.log4j.LogManager;
 
 import java.util.Arrays;
 
-@Slf4j
+
 public class UserOperationException extends RuntimeException
 {
 
@@ -26,7 +26,6 @@ public class UserOperationException extends RuntimeException
     public static void validateUser(User user ,UserRepository userRepository ) {
         if (isNullOrEmpty(user.getUserFullName()) || isNullOrEmpty(user.getUserEmail()) || isNullOrEmpty(user.getUserPassword()) || isNullOrEmpty(user.getUserRole())) {
             throw new UserOperationException("All fields are required");
-
         }
         if (!isValidEmail(user.getUserEmail())) {
             throw new UserOperationException("Invalid email address");

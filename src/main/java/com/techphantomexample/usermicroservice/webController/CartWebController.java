@@ -34,6 +34,7 @@ public class CartWebController {
     public String addToCart(@ModelAttribute CartItem cartItem, HttpSession session) {
         User user = (User) session.getAttribute("user");
         cartService.addItemToCart(user.getUserEmail(), cartItem);
+        log.info("Item added to cart");
         return "redirect:/user/products";
     }
 
@@ -41,6 +42,7 @@ public class CartWebController {
     public String removeFromCart(@RequestParam("itemId") int itemId, HttpSession session) {
         User user = (User) session.getAttribute("user");
         cartService.removeItemFromCart(user.getUserId(), itemId);
+        log.info("Item removed from cart");
         return "redirect:/user/cart";
     }
 
@@ -48,6 +50,7 @@ public class CartWebController {
     public String checkout(HttpSession session) throws JsonProcessingException {
         User user = (User) session.getAttribute("user");
         cartService.checkout(user.getUserId());
+        log.info("Order Checked out");
         return "redirect:/user/cart";
     }
 }

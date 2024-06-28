@@ -9,6 +9,7 @@ import com.techphantomexample.usermicroservice.entity.User;
 import com.techphantomexample.usermicroservice.repository.CartItemRepository;
 import com.techphantomexample.usermicroservice.repository.CartRepository;
 import com.techphantomexample.usermicroservice.repository.UserRepository;
+import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@AllArgsConstructor
 @Service
 public class CartService {
     @Autowired
@@ -34,19 +36,14 @@ public class CartService {
     @Autowired
     private ModelMapper modelMapper;
 
-    public CartService(UserRepository userRepository, CartRepository cartRepository, CartItemRepository cartItemRepository) {
-        this.userRepository = userRepository;
-        this.cartRepository = cartRepository;
-        this.cartItemRepository = cartItemRepository;
-    }
+    @Autowired
+    private  UserService userService;
 
-    public Cart getCartByUserId(int userId) {
-        return cartRepository.findByUser_UserId(userId);
-    }
+
 
     public void addItemToCart(String userEmail, CartItem cartItem) {
         User user = userRepository.findByUserEmail(userEmail);
-        Cart cart = cartRepository.findByUser_UserId(user.getUserId());
+        Cart cart = userService.getCartByUserId(user.getUserId());
         if (cart == null){
             cart = new Cart();
             cart.setUser(user);
@@ -60,6 +57,7 @@ public class CartService {
             CartItem existingItem = existingItemOptional.get();
             existingItem.setQuantity(existingItem.getQuantity() + cartItem.getQuantity());
             cartItemRepository.save(existingItem);
+
         } else {
             cartItem.setCart(cart);
             cart.getItems().add(cartItem);

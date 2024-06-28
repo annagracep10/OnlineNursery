@@ -1,4 +1,5 @@
 package com.techphantomexample.usermicroservice.services;
+import com.techphantomexample.usermicroservice.entity.Cart;
 import com.techphantomexample.usermicroservice.model.CreateResponse;
 import com.techphantomexample.usermicroservice.exception.UserOperationException;
 import com.techphantomexample.usermicroservice.model.Login;
@@ -96,6 +97,13 @@ public class UserServicesImp implements UserService
     @Override
     public List<User> getAllUsers() {
         return userRepository.findAll();
+    }
+
+    @Override
+    public Cart getCartByUserId(int userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserOperationException("User with ID " + userId + " does not exist"))
+                .cart;
     }
 
 

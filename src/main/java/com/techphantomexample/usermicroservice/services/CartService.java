@@ -52,7 +52,6 @@ public class CartService {
         Optional<CartItem> existingItemOptional = cart.getItems().stream()
                 .filter(item -> item.getProductName().equals(cartItem.getProductName()))
                 .findFirst();
-
         if (existingItemOptional.isPresent()) {
             CartItem existingItem = existingItemOptional.get();
             existingItem.setQuantity(existingItem.getQuantity() + cartItem.getQuantity());
@@ -79,22 +78,17 @@ public class CartService {
 
     public void checkout(int userId) throws JsonProcessingException {
         Cart cart = cartRepository.findByUser_UserId(userId);
+        CartDTO cartDto = new CartDTO();
         if (cart != null) {
-            CartDTO cartDTO = convertToDto(cart);
+            List<CartItemDTO> itemDTOs = cart.getItems().stream()
+                    .map(item -> modelMapper.map(item, CartItemDTO.class))
+                    .collect(Collectors.toList());
+            cartDto.setItems(itemDTOs);
             cartItemRepository.deleteAll(cart.getItems());
             cart.getItems().clear();
             cartRepository.save(cart);
-            cartMessageProducer.sendCartItemsAsJson(cartDTO);
+            cartMessageProducer.sendCartItemsAsJson(cartDto);
         }
     }
 
-    private CartDTO convertToDto(Cart cart) {
-        CartDTO cartDto = new CartDTO();
-        List<CartItemDTO> itemDTOs = cart.getItems().stream()
-                .map(item -> modelMapper.map(item, CartItemDTO.class))
-                .collect(Collectors.toList());
-
-        cartDto.setItems(itemDTOs);
-        return cartDto;
-    }
 }

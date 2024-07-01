@@ -32,22 +32,25 @@ public class UserServicesImp implements UserService
             log.error("All fields are required for login");
             return new CreateResponse("All fields are required", 400, null);
         }
-        User user = userRepository.findByUserEmail(login.getUserEmail());
-        if (user != null) {
-            String password = login.getUserPassword();
-            String encodedPassword = user.getUserPassword();
-            boolean isPwdRight = BCrypt.checkpw(password, encodedPassword);
-            if (isPwdRight) {
-                log.info("User logged in successfully: {}", user.getUserEmail());
-                return new CreateResponse("Login Success", 200, user);
+        else{
+            User user = userRepository.findByUserEmail(login.getUserEmail());
+            if (user != null) {
+                String password = login.getUserPassword();
+                String encodedPassword = user.getUserPassword();
+                boolean isPwdRight = BCrypt.checkpw(password, encodedPassword);
+                if (isPwdRight) {
+                    log.info("User logged in successfully: {}", user.getUserEmail());
+                    return new CreateResponse("Login Success", 200, user);
+                } else {
+                    log.error("Incorrect password for user: {}", user.getUserEmail());
+                    return new CreateResponse("Password does not match", 401, user);
+                }
             } else {
-                log.error("Incorrect password for user: {}", user.getUserEmail());
-                return new CreateResponse("Password does not match", 401, user);
+                log.error("No user found with email: {}", login.getUserEmail());
+                return new CreateResponse("Email does not exist", 401, null);
             }
-        } else {
-            log.error("No user found with email: {}", login.getUserEmail());
-            return new CreateResponse("Email does not exist", 401, null);
         }
+
     }
 
     @Override

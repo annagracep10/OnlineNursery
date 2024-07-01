@@ -44,9 +44,6 @@ public class UserOperationException extends RuntimeException
         return email.matches(emailRegex);
     }
 
-    private static boolean existsByEmail(String userEmail, UserRepository userRepository) {
-        return userRepository.existsByUserEmail(userEmail);
-    }
 
     private static boolean isValidPassword(String password) {
         return password != null && password.length() >= 8 && password.matches("^(?=.*[A-Z])(?=.*\\d).+$");

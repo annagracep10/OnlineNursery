@@ -1,4 +1,4 @@
-package services;
+package com.techphantomexample.usermicroservice;
 
 import com.techphantomexample.usermicroservice.entity.Cart;
 import com.techphantomexample.usermicroservice.entity.User;

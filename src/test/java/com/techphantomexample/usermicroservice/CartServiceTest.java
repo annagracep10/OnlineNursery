@@ -1,4 +1,4 @@
-package services;
+package com.techphantomexample.usermicroservice;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.techphantomexample.usermicroservice.Dto.CartDTO;

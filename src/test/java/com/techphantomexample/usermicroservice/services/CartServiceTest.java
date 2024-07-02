@@ -1,4 +1,4 @@
-package com.techphantomexample.usermicroservice;
+package com.techphantomexample.usermicroservice.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.techphantomexample.usermicroservice.Dto.CartDTO;
@@ -8,17 +8,11 @@ import com.techphantomexample.usermicroservice.entity.User;
 import com.techphantomexample.usermicroservice.repository.CartItemRepository;
 import com.techphantomexample.usermicroservice.repository.CartRepository;
 import com.techphantomexample.usermicroservice.repository.UserRepository;
-import com.techphantomexample.usermicroservice.services.CartMessageProducer;
-import com.techphantomexample.usermicroservice.services.CartService;
-import com.techphantomexample.usermicroservice.services.UserService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.junit.jupiter.api.BeforeEach;
-import org.modelmapper.ModelMapper;
+import org.mockito.junit.jupiter.MockitoSettings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,9 +20,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.never;
 
-@ExtendWith(MockitoExtension.class)
-public class CartServiceTest {
+@MockitoSettings
+class CartServiceTest {
 
     @Mock
     private UserRepository userRepository;
@@ -45,9 +40,6 @@ public class CartServiceTest {
     @Mock
     private UserService userService;
 
-    @Mock
-    private ModelMapper modelMapper;
-
     @InjectMocks
     private CartService cartService;
 
@@ -57,8 +49,7 @@ public class CartServiceTest {
     private CartItem cartItem2;
 
     @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
+    void setUp() {
 
         user = new User();
         user.setUserEmail("test@example.com");
@@ -80,9 +71,8 @@ public class CartServiceTest {
         items.add(cartItem2);
         cart.setItems(items);
         cart.setUser(user);
-    }
 
-    // Tests for addItemToCart
+    }
 
     @Test
     public void testAddItemToCart_NewCart_NewItem() {
@@ -134,7 +124,6 @@ public class CartServiceTest {
         verify(cartItemRepository).save(cartItem1);
     }
 
-    // Tests for removeItemFromCart
 
     @Test
     public void testRemoveItemFromCart_ItemFound() {
@@ -149,9 +138,7 @@ public class CartServiceTest {
     @Test
     public void testRemoveItemFromCart_ItemNotFound() {
         when(cartRepository.findByUser_UserId(1)).thenReturn(cart);
-
         cartService.removeItemFromCart(1, 3);
-
         assertTrue(cart.getItems().contains(cartItem1));
         assertTrue(cart.getItems().contains(cartItem2));
         verify(cartItemRepository, never()).delete(any(CartItem.class));
@@ -160,9 +147,7 @@ public class CartServiceTest {
     @Test
     public void testRemoveItemFromCart_CartNotFound() {
         when(cartRepository.findByUser_UserId(1)).thenReturn(null);
-
         cartService.removeItemFromCart(1, 1);
-
         verify(cartItemRepository, never()).delete(any(CartItem.class));
     }
 
@@ -170,9 +155,7 @@ public class CartServiceTest {
     public void testCheckout_CartExists() throws JsonProcessingException {
         when(cartRepository.findByUser_UserId(user.getUserId())).thenReturn(cart);
         doNothing().when(cartItemRepository).deleteAll(cart.getItems());
-
         cartService.checkout(user.getUserId());
-
         assertTrue(cart.getItems().isEmpty());
         verify(cartRepository, times(1)).save(cart);
         verify(cartMessageProducer, times(1)).sendCartItemsAsJson(any(CartDTO.class));
@@ -181,11 +164,8 @@ public class CartServiceTest {
     @Test
     public void testCheckout_CartDoesNotExist() throws JsonProcessingException {
         when(cartRepository.findByUser_UserId(user.getUserId())).thenReturn(null);
-
         cartService.checkout(user.getUserId());
-
         verify(cartRepository, never()).save(any());
         verify(cartMessageProducer, never()).sendCartItemsAsJson(any());
     }
-
 }

@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
+import org.modelmapper.ModelMapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +37,9 @@ class CartServiceTest {
 
     @Mock
     private CartMessageProducer cartMessageProducer;
+
+    @Mock
+    ModelMapper modelMapper;
 
     @Mock
     private UserService userService;

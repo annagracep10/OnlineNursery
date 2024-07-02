@@ -1,5 +1,6 @@
 package com.techphantomexample.usermicroservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -24,7 +25,7 @@ public class User {
     private String userRole;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @JsonBackReference
     public Cart cart;
 
 

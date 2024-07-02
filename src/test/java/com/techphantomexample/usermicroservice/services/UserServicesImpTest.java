@@ -2,6 +2,7 @@ package com.techphantomexample.usermicroservice.services;
 
 import com.techphantomexample.usermicroservice.entity.Cart;
 import com.techphantomexample.usermicroservice.entity.User;
+import com.techphantomexample.usermicroservice.exception.UserOperationException;
 import com.techphantomexample.usermicroservice.model.CreateResponse;
 import com.techphantomexample.usermicroservice.model.Login;
 import com.techphantomexample.usermicroservice.repository.UserRepository;
@@ -11,6 +12,7 @@ import org.mindrot.jbcrypt.BCrypt;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.MockitoAnnotations;
 
 import java.util.Arrays;
 import java.util.List;
@@ -18,6 +20,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -30,9 +33,9 @@ class UserServicesImpTest {
     @InjectMocks
     private UserServicesImp userServices;
 
-
     @BeforeEach
     void setUp() {
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
@@ -60,6 +63,21 @@ class UserServicesImpTest {
     }
 
     @Test
+    void createUser_UserExists() {
+        User user = new User();
+        user.setUserEmail("test@example.com");
+
+        when(userRepository.existsByUserEmail(anyString())).thenReturn(true);
+
+        UserOperationException thrown = assertThrows(UserOperationException.class, () -> {
+            userServices.createUser(user);
+        });
+
+        assertEquals("User with provided email ID exists", thrown.getMessage());
+        verify(userRepository, times(1)).existsByUserEmail(anyString());
+    }
+
+    @Test
     void updateUser() {
         int userId = 1;
         User existingUser = createUserWithPassword("ExistingPass123");
@@ -78,6 +96,18 @@ class UserServicesImpTest {
     }
 
     @Test
+    void updateUser_UserDoesNotExist() {
+        when(userRepository.existsById(anyInt())).thenReturn(false);
+
+        UserOperationException thrown = assertThrows(UserOperationException.class, () -> {
+            userServices.updateUser(1, new User());
+        });
+
+        assertEquals("User with ID 1 does not exist", thrown.getMessage());
+        verify(userRepository, times(1)).existsById(anyInt());
+    }
+
+    @Test
     void deleteUser() {
         int userId = 1;
         when(userRepository.existsById(userId)).thenReturn(true);
@@ -85,6 +115,18 @@ class UserServicesImpTest {
         assertEquals("User Deleted Successfully", result);
         verify(userRepository, times(1)).existsById(userId);
         verify(userRepository, times(1)).deleteById(userId);
+    }
+
+    @Test
+    void deleteUser_UserDoesNotExist() {
+        when(userRepository.existsById(anyInt())).thenReturn(false);
+
+        UserOperationException thrown = assertThrows(UserOperationException.class, () -> {
+            userServices.deleteUser(1);
+        });
+
+        assertEquals("User with ID 1 does not exist", thrown.getMessage());
+        verify(userRepository, times(1)).existsById(anyInt());
     }
 
     @Test
@@ -97,6 +139,18 @@ class UserServicesImpTest {
         assertEquals(mockUser, result);
         verify(userRepository, times(1)).existsById(userId);
         verify(userRepository, times(1)).findById(userId);
+    }
+
+    @Test
+    void getUser_UserDoesNotExist() {
+        when(userRepository.existsById(anyInt())).thenReturn(false);
+
+        UserOperationException thrown = assertThrows(UserOperationException.class, () -> {
+            userServices.getUser(1);
+        });
+
+        assertEquals("User with ID 1 does not exist", thrown.getMessage());
+        verify(userRepository, times(1)).existsById(anyInt());
     }
 
     @Test
@@ -121,6 +175,58 @@ class UserServicesImpTest {
         Cart result = userServices.getCartByUserId(userId);
         assertEquals(mockCart, result);
         verify(userRepository, times(1)).findById(userId);
+    }
+
+    @Test
+    void getCartByUserId_UserDoesNotExist() {
+        when(userRepository.findById(anyInt())).thenReturn(Optional.empty());
+
+        UserOperationException thrown = assertThrows(UserOperationException.class, () -> {
+            userServices.getCartByUserId(1);
+        });
+
+        assertEquals("User with ID 1 does not exist", thrown.getMessage());
+        verify(userRepository, times(1)).findById(anyInt());
+    }
+
+    @Test
+    void validateUser_AllFieldsRequired() {
+        User user = new User(1, "", "invalid", "Pass123", "INVALID", new Cart());
+        assertThrows(UserOperationException.class, () -> {
+            UserOperationException.validateUser(user, userRepository);
+        });
+    }
+
+    @Test
+    void validateUser_InvalidEmail() {
+        User user = new User(1, "username", "invalid", "Pass123", "ADMIN", new Cart());
+        assertThrows(UserOperationException.class, () -> {
+            UserOperationException.validateUser(user, userRepository);
+        });
+    }
+
+    @Test
+    void validateUser_InvalidPassword() {
+        User user = new User(1, "username", "email@example.com", "short", "ADMIN", new Cart());
+        assertThrows(UserOperationException.class, () -> {
+            UserOperationException.validateUser(user, userRepository);
+        });
+    }
+
+    @Test
+    void validateUser_InvalidUserRole() {
+        User user = new User(1, "username", "email@example.com", "ValidPass1", "INVALID", new Cart());
+        assertThrows(UserOperationException.class, () -> {
+            UserOperationException.validateUser(user, userRepository);
+        });
+    }
+
+    @Test
+    void validateUser_ValidUser() {
+        User user = new User(1, "username", "email@example.com", "ValidPass1", "ADMIN", new Cart());
+        assertDoesNotThrow(() -> {
+            UserOperationException.validateUser(user, userRepository);
+        });
     }
 
     private void assertLoginUser(Login login, String expectedMessage, int expectedStatus) {

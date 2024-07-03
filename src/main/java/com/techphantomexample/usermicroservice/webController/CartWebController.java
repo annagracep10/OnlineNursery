@@ -36,7 +36,7 @@ public class CartWebController {
     @PostMapping("/addToCart")
     public String addToCart(@ModelAttribute CartItem cartItem, HttpSession session) {
         User user = (User) session.getAttribute("user");
-        cartService.addItemToCart(user.getUserEmail(), cartItem);
+        cartService.addItemToCart(user.getUserId(), cartItem);
         log.info("Item added to cart");
         return "redirect:/user/products";
     }
@@ -56,4 +56,6 @@ public class CartWebController {
         log.info("Order Checked out");
         return "redirect:/user/cart";
     }
+
+
 }

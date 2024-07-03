@@ -6,6 +6,7 @@ import com.techphantomexample.usermicroservice.Dto.CartItemDTO;
 import com.techphantomexample.usermicroservice.entity.Cart;
 import com.techphantomexample.usermicroservice.entity.CartItem;
 import com.techphantomexample.usermicroservice.entity.User;
+import com.techphantomexample.usermicroservice.exception.NotFoundException;
 import com.techphantomexample.usermicroservice.repository.CartItemRepository;
 import com.techphantomexample.usermicroservice.repository.CartRepository;
 import com.techphantomexample.usermicroservice.repository.UserRepository;
@@ -40,13 +41,8 @@ public class CartService {
     private  UserService userService;
 
 
-    public void addItemToCart(String userEmail, CartItem cartItem) {
-        User user = userRepository.findByUserEmail(userEmail);
-        if (user == null) {
-            throw new RuntimeException("User not found with email: " + userEmail);
-        }
-        Cart cart = userService.getCartByUserId(user.getUserId());
-
+    public void addItemToCart(int userId, CartItem cartItem) {
+        Cart cart = userService.getCartByUserId(userId);
         Optional<CartItem> existingItemOptional = cart.getItems().stream()
                 .filter(item -> item.getProductName().equals(cartItem.getProductName()))
                 .findFirst();
@@ -70,7 +66,11 @@ public class CartService {
             if (itemToRemove != null) {
                 items.remove(itemToRemove);
                 cartItemRepository.delete(itemToRemove);
+            }else {
+                throw new NotFoundException("Item not found in cart with id: " + itemId);
             }
+        }else {
+            throw new NotFoundException("Cart not found for user with id: " + userId);
         }
     }
 

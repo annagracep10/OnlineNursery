@@ -111,7 +111,7 @@ public class UserServicesImp implements UserService
         Cart cart = cartRepository.findByUser_UserId(userId);
         if (cart == null) {
             cart = new Cart();
-            User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+            User user = userRepository.findById(userId).orElseThrow(() -> new UserOperationException("User not found with id: " + userId));
             cart.setUser(user);
             cart = cartRepository.save(cart);
         }

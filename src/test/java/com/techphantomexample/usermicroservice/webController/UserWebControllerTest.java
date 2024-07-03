@@ -43,19 +43,22 @@ class UserWebControllerTest {
 
     @Test
     void showLoginPage() {
+
         String viewName = userWebController.showLoginPage(model);
+
         assertEquals("login", viewName);
         verify(model, times(1)).addAttribute(eq("login"), any(Login.class));
     }
 
     @Test
     void loginUser_Success() {
-
         Login login = new Login();
         User user = new User();
         CreateResponse response = new CreateResponse("Success", 200, user);
         when(userService.loginUser(any(Login.class))).thenReturn(response);
+
         String viewName = userWebController.loginUser(login, session, model);
+
         assertEquals("redirect:/user/dashboard", viewName);
         verify(session, times(1)).setAttribute("user", user);
     }
@@ -64,17 +67,19 @@ class UserWebControllerTest {
     public void loginUser_Failure() {
         Login login = new Login();
         CreateResponse response = new CreateResponse("Failure", 400, null);
-
         when(userService.loginUser(any(Login.class))).thenReturn(response);
 
         String viewName = userWebController.loginUser(login, session, model);
+
         assertEquals("login", viewName);
         verify(model, times(1)).addAttribute("error", "Failure");
     }
 
     @Test
     void logout() {
+
         String viewName = userWebController.logout(session);
+
         assertEquals("redirect:/user/login", viewName);
         verify(session, times(1)).invalidate();
     }
@@ -82,6 +87,7 @@ class UserWebControllerTest {
     @Test
     void showRegistrationPage() {
         String viewName = userWebController.showRegistrationPage(model);
+
         assertEquals("register", viewName);
         verify(model, times(1)).addAttribute(eq("user"), any(User.class));
     }
@@ -91,6 +97,7 @@ class UserWebControllerTest {
         User user = new User();
 
         String viewName = userWebController.registerUser(user, model);
+
         assertEquals("redirect:/user/login", viewName);
         verify(userService, times(1)).createUser(user);
     }
@@ -101,6 +108,7 @@ class UserWebControllerTest {
         doThrow(new UserOperationException("Error")).when(userService).createUser(any(User.class));
 
         String viewName = userWebController.registerUser(user, model);
+
         assertEquals("register", viewName);
         verify(model, times(1)).addAttribute("error", "Error");
     }
@@ -110,6 +118,7 @@ class UserWebControllerTest {
         when(session.getAttribute("user")).thenReturn(null);
 
         String viewName = userWebController.showDashboard(session, model);
+
         assertEquals("redirect:/user/login", viewName);
     }
 
@@ -117,10 +126,10 @@ class UserWebControllerTest {
     public void testShowDashboard_Admin() {
         User user = new User();
         user.setUserRole("ADMIN");
-
         when(session.getAttribute("user")).thenReturn(user);
 
         String viewName = userWebController.showDashboard(session, model);
+
         assertEquals("dashboard", viewName);
         verify(userService, times(1)).getAllUsers();
         verify(model, times(1)).addAttribute(eq("listOfUsers"), any());
@@ -130,17 +139,19 @@ class UserWebControllerTest {
     public void testShowDashboard_NonAdmin() {
         User user = new User();
         user.setUserRole("USER");
-
         when(session.getAttribute("user")).thenReturn(user);
 
         String viewName = userWebController.showDashboard(session, model);
+
         assertEquals("redirect:/user/products", viewName);
     }
 
 
     @Test
     public void testShowNewUserForm() {
+
         String viewName = userWebController.showNewUserForm(model);
+
         assertEquals("new_user", viewName);
         verify(model, times(1)).addAttribute(eq("user"), any(User.class));
     }
@@ -150,6 +161,7 @@ class UserWebControllerTest {
         User user = new User();
 
         String viewName = userWebController.saveUser(user, model);
+
         assertEquals("redirect:/user/dashboard", viewName);
         verify(userService, times(1)).createUser(user);
     }
@@ -160,6 +172,7 @@ class UserWebControllerTest {
         doThrow(new UserOperationException("Error")).when(userService).createUser(any(User.class));
 
         String viewName = userWebController.saveUser(user, model);
+
         assertEquals("new_user", viewName);
         verify(model, times(1)).addAttribute("error", "Error");
     }
@@ -170,6 +183,7 @@ class UserWebControllerTest {
         when(userService.getUser(anyInt())).thenReturn(user);
 
         String viewName = userWebController.showFormForUpdate(1, model);
+
         assertEquals("update_user", viewName);
         verify(model, times(1)).addAttribute("user", user);
     }
@@ -179,6 +193,7 @@ class UserWebControllerTest {
         User user = new User();
 
         String viewName = userWebController.updateUser(1, user, model);
+
         assertEquals("redirect:/user/dashboard", viewName);
         verify(userService, times(1)).updateUser(eq(1), eq(user));
     }
@@ -189,13 +204,16 @@ class UserWebControllerTest {
         doThrow(new UserOperationException("Error")).when(userService).updateUser(anyInt(), any(User.class));
 
         String viewName = userWebController.updateUser(1, user, model);
+
         assertEquals("update_user", viewName);
         verify(model, times(1)).addAttribute("error", "Error");
     }
 
     @Test
     public void testDeleteUser_Success() {
+
         String viewName = userWebController.deleteUser(1, model);
+
         assertEquals("redirect:/user/dashboard", viewName);
         verify(userService, times(1)).deleteUser(1);
     }
@@ -205,6 +223,7 @@ class UserWebControllerTest {
         doThrow(new UserOperationException("Error")).when(userService).deleteUser(anyInt());
 
         String viewName = userWebController.deleteUser(1, model);
+
         assertEquals("redirect:/user/dashboard", viewName);
         verify(model, times(1)).addAttribute("error", "Error");
     }

@@ -69,8 +69,6 @@ public class CartService {
             }else {
                 throw new NotFoundException("Item not found in cart with id: " + itemId);
             }
-        }else {
-            throw new NotFoundException("Cart not found for user with id: " + userId);
         }
     }
 

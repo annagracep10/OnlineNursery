@@ -6,6 +6,7 @@ import com.techphantomexample.usermicroservice.model.Login;
 import com.techphantomexample.usermicroservice.entity.User;
 import com.techphantomexample.usermicroservice.repository.CartRepository;
 import com.techphantomexample.usermicroservice.repository.UserRepository;
+import lombok.AllArgsConstructor;
 import org.mindrot.jbcrypt.BCrypt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@AllArgsConstructor
 @Service
 public class UserServicesImp implements UserService
 {

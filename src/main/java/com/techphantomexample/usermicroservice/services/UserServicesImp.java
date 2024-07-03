@@ -30,9 +30,8 @@ public class UserServicesImp implements UserService
     }
 
     @Override
-    public CreateResponse loginUser(Login login) {
-        if (login.getUserEmail() == null || login.getUserEmail().isEmpty() ||
-                login.getUserPassword() == null || login.getUserPassword().isEmpty()) {
+    public CreateResponse loginUser(Login login)  {
+        if ( login.getUserEmail().isEmpty() || login.getUserPassword().isEmpty()) {
             log.error("All fields are required for login");
             return new CreateResponse("All fields are required", 400, null);
         }
@@ -47,7 +46,7 @@ public class UserServicesImp implements UserService
                     return new CreateResponse("Login Success", 200, user);
                 } else {
                     log.error("Incorrect password for user: {}", user.getUserEmail());
-                    return new CreateResponse("Password does not match", 401, user);
+                    return new CreateResponse("Password does not match", 401, null);
                 }
             } else {
                 log.error("No user found with email: {}", login.getUserEmail());

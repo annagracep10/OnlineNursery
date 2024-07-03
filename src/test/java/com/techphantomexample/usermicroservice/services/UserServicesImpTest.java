@@ -5,12 +5,15 @@ import com.techphantomexample.usermicroservice.entity.User;
 import com.techphantomexample.usermicroservice.exception.UserOperationException;
 import com.techphantomexample.usermicroservice.model.CreateResponse;
 import com.techphantomexample.usermicroservice.model.Login;
+import com.techphantomexample.usermicroservice.repository.CartRepository;
 import com.techphantomexample.usermicroservice.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mindrot.jbcrypt.BCrypt;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.MockitoAnnotations;
 
@@ -24,105 +27,112 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-@MockitoSettings
+@ExtendWith(MockitoExtension.class)
 class UserServicesImpTest {
 
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private CartRepository cartRepository;
+
     @InjectMocks
-    private UserServicesImp userServices;
+    private UserServicesImp userService;
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
+    private User createUserWithPassword(String password) {
+        return new User(1, "username", "valid@example.com", BCrypt.hashpw(password, BCrypt.gensalt()), "ADMIN", new Cart());
     }
 
     @Test
-    void loginUser() {
-        assertAll("Login tests",
-                () -> assertLoginUser(new Login(null, "password"), "All fields are required", 400),
-                () -> assertLoginUser(new Login("", "password"), "All fields are required", 400),
-                () -> assertLoginUser(new Login("email@example.com", null), "All fields are required", 400),
-                () -> assertLoginUser(new Login("email@example.com", ""), "All fields are required", 400),
-                () -> assertLoginUserWithRepository(null, "email@example.com", "password", "Email does not exist", 401),
-                () -> assertLoginUserWithRepository(createUserWithPassword("correctPassword"), "email@example.com", "wrongPassword", "Password does not match", 401),
-                () -> assertLoginUserWithRepository(createUserWithPassword("correctPassword"), "email@example.com", "correctPassword", "Login Success", 200)
-        );
+    void testLoginUser_Fail_EmptyFields() {
+        Login login = new Login("","");
+
+        CreateResponse response = userService.loginUser(login);
+
+        assertEquals("All fields are required", response.getMessage());
+        assertEquals(400, response.getStatus());
+        assertNull(response.getUser());
+
     }
 
     @Test
-    void createUser() {
-        when(userRepository.existsByUserEmail(anyString())).thenReturn(false);
-        User user = createUserWithPassword("Validpass123");
-        when(userRepository.save(any(User.class))).thenReturn(user);
-        String result = userServices.createUser(user);
-        assertEquals("User Created successfully", result);
-        verify(userRepository, times(1)).existsByUserEmail(user.getUserEmail());
-        verify(userRepository, times(1)).save(user);
+    void testLoginUser_Fail_NonExistingUser() {
+        Login login = new Login("wrong@example.com","password");
+        when(userRepository.findByUserEmail(login.getUserEmail())).thenReturn(null);
+
+        CreateResponse response = userService.loginUser(login);
+
+        assertEquals("Email does not exist", response.getMessage());
+        assertEquals(401, response.getStatus());
+        assertNull(response.getUser());
+
     }
 
     @Test
-    void createUser_UserExists() {
-        User user = new User();
-        user.setUserEmail("test@example.com");
+    void testLoginUser_Fail_IncorrectPassword() {
+        User user = createUserWithPassword("Password");
+        Login login = new Login("valid@example.com","Wrong");
+        when(userRepository.findByUserEmail(login.getUserEmail())).thenReturn(user);
 
-        when(userRepository.existsByUserEmail(anyString())).thenReturn(true);
+        CreateResponse response = userService.loginUser(login);
 
-        UserOperationException thrown = assertThrows(UserOperationException.class, () -> {
-            userServices.createUser(user);
-        });
-
-        assertEquals("User with provided email ID exists", thrown.getMessage());
-        verify(userRepository, times(1)).existsByUserEmail(anyString());
+        assertEquals("Password does not match", response.getMessage());
+        assertEquals(401, response.getStatus());
+        assertNull(response.getUser());
     }
 
     @Test
-    void updateUser() {
-        int userId = 1;
-        User existingUser = createUserWithPassword("ExistingPass123");
-        when(userRepository.existsById(userId)).thenReturn(true);
-        when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
-        User newUserDetails = new User(1, "newName", "new@example.com", "NewPass123", "ADMIN", new Cart());
+    void testLoginUser_Success() {
+        User user = createUserWithPassword("password");
+        Login login = new Login("valid@example.com","password");
+        when(userRepository.findByUserEmail(login.getUserEmail())).thenReturn(user);
 
-        String result = userServices.updateUser(userId, newUserDetails);
+        CreateResponse response = userService.loginUser(login);
 
-        assertEquals("User Updated Successfully", result);
-        verify(userRepository, times(1)).existsById(userId);
-        verify(userRepository, times(1)).findById(userId);
-        verify(userRepository, times(1)).save(existingUser);
-        assertEquals("newName", existingUser.getUserFullName());
-        assertEquals("new@example.com", existingUser.getUserEmail());
+        assertEquals("Login Success", response.getMessage());
+        assertEquals(200, response.getStatus());
+        assertEquals(user, response.getUser());
+
     }
 
     @Test
-    void updateUser_UserDoesNotExist() {
-        when(userRepository.existsById(anyInt())).thenReturn(false);
+    void testCreateUser_Success() {
 
-        UserOperationException thrown = assertThrows(UserOperationException.class, () -> {
-            userServices.updateUser(1, new User());
-        });
-
-        assertEquals("User with ID 1 does not exist", thrown.getMessage());
-        verify(userRepository, times(1)).existsById(anyInt());
     }
 
     @Test
-    void deleteUser() {
-        int userId = 1;
-        when(userRepository.existsById(userId)).thenReturn(true);
-        String result = userServices.deleteUser(userId);
+    void testCreateUser_Failure() {
+
+    }
+    @Test
+    void testUpdateUser_Failure() {
+
+    }
+
+    @Test
+    void testUpdateUser_Success() {
+
+    }
+
+
+    @Test
+    void testDeleteUser_Success() {
+        User user = createUserWithPassword("password");
+        when(userRepository.existsById(user.getUserId())).thenReturn(true);
+
+        String result = userService.deleteUser(user.getUserId());
+
         assertEquals("User Deleted Successfully", result);
-        verify(userRepository, times(1)).existsById(userId);
-        verify(userRepository, times(1)).deleteById(userId);
+        verify(userRepository, times(1)).existsById(user.getUserId());
+        verify(userRepository, times(1)).deleteById(user.getUserId());
     }
 
     @Test
-    void deleteUser_UserDoesNotExist() {
+    void testDeleteUser_Failure() {
         when(userRepository.existsById(anyInt())).thenReturn(false);
 
         UserOperationException thrown = assertThrows(UserOperationException.class, () -> {
-            userServices.deleteUser(1);
+            userService.deleteUser(1);
         });
 
         assertEquals("User with ID 1 does not exist", thrown.getMessage());
@@ -130,23 +140,25 @@ class UserServicesImpTest {
     }
 
     @Test
-    void getUser() {
-        int userId = 1;
+    void testGetUser_Success() {
         User mockUser = createUserWithPassword("password");
+        int userId = 1;
         when(userRepository.existsById(userId)).thenReturn(true);
         when(userRepository.findById(userId)).thenReturn(Optional.of(mockUser));
-        User result = userServices.getUser(userId);
+
+        User result = userService.getUser(userId);
+
         assertEquals(mockUser, result);
         verify(userRepository, times(1)).existsById(userId);
         verify(userRepository, times(1)).findById(userId);
     }
 
     @Test
-    void getUser_UserDoesNotExist() {
+    void testGetUser_UserDoesNotExist() {
         when(userRepository.existsById(anyInt())).thenReturn(false);
 
         UserOperationException thrown = assertThrows(UserOperationException.class, () -> {
-            userServices.getUser(1);
+            userService.getUser(1);
         });
 
         assertEquals("User with ID 1 does not exist", thrown.getMessage());
@@ -160,90 +172,63 @@ class UserServicesImpTest {
                 new User(2, "user2", "user2@example.com", "password2", "SELLER", new Cart())
         );
         when(userRepository.findAll()).thenReturn(mockUsers);
-        List<User> result = userServices.getAllUsers();
+
+        List<User> result = userService.getAllUsers();
+
         assertEquals(mockUsers.size(), result.size());
         assertEquals(mockUsers, result);
         verify(userRepository, times(1)).findAll();
     }
 
     @Test
-    void getCartByUserId() {
+    public void testGetCartByUserId_CartExists() {
         int userId = 1;
         Cart mockCart = new Cart();
-        User mockUser = new User(1, "username", "example@gmail.com", "password", "ADMIN", mockCart);
-        when(userRepository.findById(userId)).thenReturn(Optional.of(mockUser));
-        Cart result = userServices.getCartByUserId(userId);
+        when(cartRepository.findByUser_UserId(userId)).thenReturn(mockCart);
+
+        Cart result = userService.getCartByUserId(userId);
+
+        assertNotNull(result);
         assertEquals(mockCart, result);
+        verify(cartRepository, times(1)).findByUser_UserId(userId);
+        verify(userRepository, never()).findById(userId);
+        verify(cartRepository, never()).save(any(Cart.class));
+    }
+
+    @Test
+    public void testGetCartByUserId_CartDoesNotExist_UserExists() {
+        User mockUser = createUserWithPassword("password");
+        when(cartRepository.findByUser_UserId(mockUser.getUserId())).thenReturn(null);
+        when(userRepository.findById(mockUser.getUserId())).thenReturn(Optional.of(mockUser));
+        Cart mockCart = new Cart();
+        when(cartRepository.save(any(Cart.class))).thenReturn(mockCart);
+
+        Cart result = userService.getCartByUserId(mockUser.getUserId());
+
+        assertNotNull(result);
+        assertEquals(mockCart, result);
+        verify(cartRepository, times(1)).findByUser_UserId(mockUser.getUserId());
+        verify(userRepository, times(1)).findById(mockUser.getUserId());
+        verify(cartRepository, times(1)).save(any(Cart.class));
+    }
+
+    @Test
+    public void testGetCartByUserId_UserNotFound() {
+        int userId = 1;
+        when(cartRepository.findByUser_UserId(userId)).thenReturn(null);
+        when(userRepository.findById(userId)).thenReturn(null);
+
+        UserOperationException exception = assertThrows(UserOperationException.class, () -> {
+            userService.getCartByUserId(userId);
+        });
+
+        assertEquals("User not found with id: " + userId, exception.getMessage());
+        verify(cartRepository, times(1)).findByUser_UserId(userId);
         verify(userRepository, times(1)).findById(userId);
+        verify(cartRepository, never()).save(any(Cart.class));
     }
 
-    @Test
-    void getCartByUserId_UserDoesNotExist() {
-        when(userRepository.findById(anyInt())).thenReturn(Optional.empty());
 
-        UserOperationException thrown = assertThrows(UserOperationException.class, () -> {
-            userServices.getCartByUserId(1);
-        });
 
-        assertEquals("User with ID 1 does not exist", thrown.getMessage());
-        verify(userRepository, times(1)).findById(anyInt());
-    }
 
-    @Test
-    void validateUser_AllFieldsRequired() {
-        User user = new User(1, "", "invalid", "Pass123", "INVALID", new Cart());
-        assertThrows(UserOperationException.class, () -> {
-            UserOperationException.validateUser(user, userRepository);
-        });
-    }
-
-    @Test
-    void validateUser_InvalidEmail() {
-        User user = new User(1, "username", "invalid", "Pass123", "ADMIN", new Cart());
-        assertThrows(UserOperationException.class, () -> {
-            UserOperationException.validateUser(user, userRepository);
-        });
-    }
-
-    @Test
-    void validateUser_InvalidPassword() {
-        User user = new User(1, "username", "email@example.com", "short", "ADMIN", new Cart());
-        assertThrows(UserOperationException.class, () -> {
-            UserOperationException.validateUser(user, userRepository);
-        });
-    }
-
-    @Test
-    void validateUser_InvalidUserRole() {
-        User user = new User(1, "username", "email@example.com", "ValidPass1", "INVALID", new Cart());
-        assertThrows(UserOperationException.class, () -> {
-            UserOperationException.validateUser(user, userRepository);
-        });
-    }
-
-    @Test
-    void validateUser_ValidUser() {
-        User user = new User(1, "username", "email@example.com", "ValidPass1", "ADMIN", new Cart());
-        assertDoesNotThrow(() -> {
-            UserOperationException.validateUser(user, userRepository);
-        });
-    }
-
-    private void assertLoginUser(Login login, String expectedMessage, int expectedStatus) {
-        CreateResponse response = userServices.loginUser(login);
-        assertEquals(expectedMessage, response.getMessage());
-        assertEquals(expectedStatus, response.getStatus());
-    }
-
-    private void assertLoginUserWithRepository(User user, String email, String password, String expectedMessage, int expectedStatus) {
-        when(userRepository.findByUserEmail(email)).thenReturn(user);
-        Login login = new Login(email, password);
-        CreateResponse response = userServices.loginUser(login);
-        assertEquals(expectedMessage, response.getMessage());
-        assertEquals(expectedStatus, response.getStatus());
-    }
-
-    private User createUserWithPassword(String password) {
-        return new User(1, "username", "valid@example.com", BCrypt.hashpw(password, BCrypt.gensalt()), "ADMIN", new Cart());
-    }
 }

@@ -40,15 +40,13 @@ public class CartService {
     private  UserService userService;
 
 
-
     public void addItemToCart(String userEmail, CartItem cartItem) {
         User user = userRepository.findByUserEmail(userEmail);
-        Cart cart = userService.getCartByUserId(user.getUserId());
-        if (cart == null){
-            cart = new Cart();
-            cart.setUser(user);
-            cart = cartRepository.save(cart);
+        if (user == null) {
+            throw new RuntimeException("User not found with email: " + userEmail);
         }
+        Cart cart = userService.getCartByUserId(user.getUserId());
+
         Optional<CartItem> existingItemOptional = cart.getItems().stream()
                 .filter(item -> item.getProductName().equals(cartItem.getProductName()))
                 .findFirst();
@@ -65,7 +63,7 @@ public class CartService {
     }
 
     public void removeItemFromCart(int userId, int itemId) {
-        Cart cart = cartRepository.findByUser_UserId(userId);
+        Cart cart = userService.getCartByUserId(userId);
         if (cart != null) {
             List<CartItem> items = cart.getItems();
             CartItem itemToRemove = items.stream().filter(item -> item.getId() == itemId).findFirst().orElse(null);
@@ -77,7 +75,7 @@ public class CartService {
     }
 
     public void checkout(int userId) throws JsonProcessingException {
-        Cart cart = cartRepository.findByUser_UserId(userId);
+        Cart cart = userService.getCartByUserId(userId);
         CartDTO cartDto = new CartDTO();
         if (cart != null) {
             List<CartItemDTO> itemDTOs = cart.getItems().stream()

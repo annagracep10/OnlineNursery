@@ -4,6 +4,7 @@ import com.techphantomexample.usermicroservice.model.CreateResponse;
 import com.techphantomexample.usermicroservice.exception.UserOperationException;
 import com.techphantomexample.usermicroservice.model.Login;
 import com.techphantomexample.usermicroservice.entity.User;
+import com.techphantomexample.usermicroservice.repository.CartRepository;
 import com.techphantomexample.usermicroservice.repository.UserRepository;
 import org.mindrot.jbcrypt.BCrypt;
 import org.slf4j.Logger;
@@ -20,6 +21,9 @@ public class UserServicesImp implements UserService
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    CartRepository cartRepository;
 
     public UserServicesImp(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -104,9 +108,14 @@ public class UserServicesImp implements UserService
 
     @Override
     public Cart getCartByUserId(int userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new UserOperationException("User with ID " + userId + " does not exist"))
-                .cart;
+        Cart cart = cartRepository.findByUser_UserId(userId);
+        if (cart == null) {
+            cart = new Cart();
+            User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+            cart.setUser(user);
+            cart = cartRepository.save(cart);
+        }
+        return cart;
     }
 
 

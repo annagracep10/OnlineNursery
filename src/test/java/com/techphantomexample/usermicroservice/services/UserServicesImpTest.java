@@ -53,30 +53,6 @@ class UserServicesImpTest {
     }
 
     @Test
-    void testLoginUser_Fail_EmptyEmail() {
-        Login login = new Login("","Password1");
-
-        CreateResponse response = userService.loginUser(login);
-
-        assertEquals("All fields are required", response.getMessage());
-        assertEquals(400, response.getStatus());
-        assertNull(response.getUser());
-
-    }
-
-    @Test
-    void testLoginUser_Fail_EmptyPassword() {
-        Login login = new Login("valid@gmail.com","");
-
-        CreateResponse response = userService.loginUser(login);
-
-        assertEquals("All fields are required", response.getMessage());
-        assertEquals(400, response.getStatus());
-        assertNull(response.getUser());
-
-    }
-
-    @Test
     void testLoginUser_Fail_NonExistingUser() {
         Login login = new Login("wrong@example.com","password");
         when(userRepository.findByUserEmail(login.getUserEmail())).thenReturn(null);

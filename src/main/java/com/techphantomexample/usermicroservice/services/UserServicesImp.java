@@ -28,9 +28,6 @@ public class UserServicesImp implements UserService
     @Autowired
     CartRepository cartRepository;
 
-    public UserServicesImp(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     @Override
     public CreateResponse loginUser(Login login)  {

@@ -4,6 +4,7 @@ import com.techphantomexample.usermicroservice.entity.User;
 import com.techphantomexample.usermicroservice.model.CreateResponse;
 import com.techphantomexample.usermicroservice.model.Login;
 import com.techphantomexample.usermicroservice.services.UserService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@AllArgsConstructor
 @RestController
 @RequestMapping("/api/user")
 public class UserApiController {
@@ -27,7 +29,7 @@ public class UserApiController {
     @PostMapping("/create")
     public CreateResponse createUser(@RequestBody User user) {
         String response = userService.createUser(user);
-        CreateResponse createResponse = new CreateResponse(response, HttpStatus.OK.value(),user);
+        CreateResponse createResponse = new CreateResponse(response, HttpStatus.CREATED.value(),user);
         return createResponse;
     }
 

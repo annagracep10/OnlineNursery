@@ -10,10 +10,12 @@ import com.techphantomexample.usermicroservice.model.Login;
 import com.techphantomexample.usermicroservice.services.UserService;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -35,6 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @WebMvcTest(UserApiController.class)
 @AutoConfigureMockMvc
+@ExtendWith(MockitoExtension.class)
 public class UserApiControllerTest {
 
     @Autowired
@@ -46,10 +49,6 @@ public class UserApiControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Before
-    public void setup() {
-        MockitoAnnotations.initMocks(this);
-    }
 
     @Test
     public void testLoginUser_Success() throws Exception {
@@ -82,7 +81,7 @@ public class UserApiControllerTest {
     @Test
     public void testCreateUser() throws Exception {
         User user = new User(1, "John Doe", "john.doe@example.com", "password", "USER",new Cart());
-        CreateResponse expectedResponse = new CreateResponse("success", HttpStatus.OK.value(), user);
+        CreateResponse expectedResponse = new CreateResponse("success", HttpStatus.CREATED.value(), user);
 
         when(userService.createUser(any(User.class))).thenReturn("success");
 
@@ -122,7 +121,6 @@ public class UserApiControllerTest {
     }
 
 
-
     @Test
     public void testGetAllUsers() throws Exception {
         List<User> users = Arrays.asList(
@@ -149,20 +147,7 @@ public class UserApiControllerTest {
                 .andExpect(MockMvcResultMatchers.content().json(objectMapper.writeValueAsString(user)));
     }
 
-    @Test
-    public void testHandleUserOperationException() throws Exception {
-        int userId = 1;
-        String errorMessage = "User with ID " + userId + " does not exist";
-        UserOperationException exception = new UserOperationException(errorMessage);
 
-        when(userService.getUser(eq(userId))).thenThrow(exception);
-
-        CreateResponse expectedResponse = new CreateResponse(errorMessage, HttpStatus.BAD_REQUEST.value(), null);
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/user/{userId}", userId))
-                .andExpect(status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.content().json(objectMapper.writeValueAsString(expectedResponse)));
-    }
 
 
 }

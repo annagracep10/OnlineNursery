@@ -25,7 +25,7 @@ public class User {
     private String userRole;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    @JsonBackReference
+    @JsonManagedReference
     public Cart cart;
 
 

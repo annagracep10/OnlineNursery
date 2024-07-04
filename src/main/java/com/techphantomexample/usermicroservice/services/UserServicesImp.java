@@ -6,6 +6,7 @@ import com.techphantomexample.usermicroservice.model.Login;
 import com.techphantomexample.usermicroservice.entity.User;
 import com.techphantomexample.usermicroservice.repository.CartRepository;
 import com.techphantomexample.usermicroservice.repository.UserRepository;
+import com.techphantomexample.usermicroservice.validator.UserValidator;
 import lombok.AllArgsConstructor;
 import org.mindrot.jbcrypt.BCrypt;
 import org.slf4j.Logger;
@@ -63,7 +64,7 @@ public class UserServicesImp implements UserService
         if (userRepository.existsByUserEmail(user.getUserEmail())) {
             throw new UserOperationException("User with provided email ID exists");
         }
-        UserOperationException.validateUser(user, userRepository);
+        UserValidator.validateUser(user, userRepository);
         user.setUserPassword(BCrypt.hashpw(user.getUserPassword(), BCrypt.gensalt()));
         userRepository.save(user);
         return "User Created successfully";
@@ -75,7 +76,7 @@ public class UserServicesImp implements UserService
             throw new UserOperationException("User with ID " + userId + " does not exist");
         }
         User existingUser = userRepository.findById(userId).get();
-        UserOperationException.validateUser(newUserDetails,userRepository);
+        UserValidator.validateUser(newUserDetails,userRepository);
         existingUser.setUserFullName(newUserDetails.getUserFullName());
         existingUser.setUserEmail(newUserDetails.getUserEmail());
         existingUser.setUserPassword(BCrypt.hashpw(newUserDetails.getUserPassword(), BCrypt.gensalt()));

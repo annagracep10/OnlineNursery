@@ -24,7 +24,7 @@ public class ProductWebController {
     @Autowired
     private RestTemplate restTemplate;
     @Value("${product.service.base-url}")
-    private String productServiceBaseUrl;
+    public String productServiceBaseUrl;
 
 
     @GetMapping("/products")

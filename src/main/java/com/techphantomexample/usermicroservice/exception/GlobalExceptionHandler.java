@@ -2,6 +2,7 @@ package com.techphantomexample.usermicroservice.exception;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.techphantomexample.usermicroservice.model.CreateResponse;
+import com.techphantomexample.usermicroservice.services.CartService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<CreateResponse> handleUserOperationException(UserOperationException ex) {
         CreateResponse createResponse = new CreateResponse(ex.getMessage(), HttpStatus.BAD_REQUEST.value(),null);
         return new ResponseEntity<CreateResponse>(createResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<CreateResponse> handleNotFoundException(NotFoundException ex) {
+        CreateResponse createResponse = new CreateResponse(ex.getMessage(), HttpStatus.NOT_FOUND.value(), null);
+        return new ResponseEntity<>(createResponse, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(JsonProcessingException.class)

@@ -8,6 +8,8 @@ import com.techphantomexample.usermicroservice.repository.UserRepository;
 import com.techphantomexample.usermicroservice.exception.UserOperationException;
 import com.techphantomexample.usermicroservice.services.UserService;
 import jakarta.servlet.http.HttpSession;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,26 +17,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-
+@NoArgsConstructor
+@AllArgsConstructor
 @Controller
 @RequestMapping("/user")
 public class UserWebController {
 
     private static final Logger log = LoggerFactory.getLogger(UserWebController.class);
-    @Autowired
-    UserRepository userRepository;
+
     @Autowired
     private  UserService userService;
-
-
-    public UserWebController() {
-    }
-
-
-    public UserWebController(UserRepository userRepository, UserService userService) {
-        this.userRepository = userRepository;
-        this.userService = userService;
-    }
 
     @GetMapping("/login")
     public String showLoginPage(Model model) {

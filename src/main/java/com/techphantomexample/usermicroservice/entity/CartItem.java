@@ -1,5 +1,6 @@
 package com.techphantomexample.usermicroservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -23,7 +24,8 @@ public class CartItem {
     private String productType;
 
     @ManyToOne
-    @JoinColumn(name = "cart_id")
+    @JoinColumn(name = "cart_id",referencedColumnName = "id")
+    @JsonBackReference
     private Cart cart;
 
 }

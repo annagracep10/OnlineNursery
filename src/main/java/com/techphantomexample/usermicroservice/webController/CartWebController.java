@@ -5,6 +5,7 @@ import com.techphantomexample.usermicroservice.entity.Cart;
 import com.techphantomexample.usermicroservice.entity.CartItem;
 import com.techphantomexample.usermicroservice.entity.User;
 import com.techphantomexample.usermicroservice.services.CartService;
+import com.techphantomexample.usermicroservice.services.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,11 +21,13 @@ public class CartWebController {
     private static final Logger log = LoggerFactory.getLogger(CartWebController.class);
     @Autowired
     private CartService cartService;
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/cart")
     public String viewCart(Model model, HttpSession session) {
         User user = (User) session.getAttribute("user");
-        Cart cart = cartService.getCartByUserId(user.getUserId());
+        Cart cart = userService.getCartByUserId(user.getUserId());
         model.addAttribute("cart", cart != null ? cart : new Cart());
         model.addAttribute("user",user);
         return "cart";
@@ -33,7 +36,7 @@ public class CartWebController {
     @PostMapping("/addToCart")
     public String addToCart(@ModelAttribute CartItem cartItem, HttpSession session) {
         User user = (User) session.getAttribute("user");
-        cartService.addItemToCart(user.getUserEmail(), cartItem);
+        cartService.addItemToCart(user.getUserId(), cartItem);
         log.info("Item added to cart");
         return "redirect:/user/products";
     }
@@ -53,4 +56,6 @@ public class CartWebController {
         log.info("Order Checked out");
         return "redirect:/user/cart";
     }
+
+
 }

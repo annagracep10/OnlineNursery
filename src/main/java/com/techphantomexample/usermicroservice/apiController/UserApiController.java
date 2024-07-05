@@ -6,7 +6,9 @@ import com.techphantomexample.usermicroservice.model.CreateResponse;
 import com.techphantomexample.usermicroservice.model.Login;
 import com.techphantomexample.usermicroservice.services.UserService;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,12 +16,15 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @AllArgsConstructor
+@NoArgsConstructor
 @RestController
 @RequestMapping("/api/user")
 public class UserApiController {
 
     @Autowired
     private UserService userService;
+
+
 
     @PostMapping("/login")
     public ResponseEntity<CreateResponse> loginUser(@RequestBody Login login) {

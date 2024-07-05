@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @AllArgsConstructor
@@ -27,10 +26,6 @@ public class UserServicesImp implements UserService
 
     @Autowired
     CartRepository cartRepository;
-
-    public UserServicesImp(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     @Override
     public CreateResponse loginUser(Login login)  {

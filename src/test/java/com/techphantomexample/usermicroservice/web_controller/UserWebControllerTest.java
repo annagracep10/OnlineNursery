@@ -1,4 +1,4 @@
-package com.techphantomexample.usermicroservice.webcontroller;
+package com.techphantomexample.usermicroservice.web_controller;
 
 import com.techphantomexample.usermicroservice.entity.User;
 import com.techphantomexample.usermicroservice.exception.UserOperationException;

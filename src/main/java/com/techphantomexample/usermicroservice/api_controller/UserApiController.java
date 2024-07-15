@@ -1,4 +1,4 @@
-package com.techphantomexample.usermicroservice.apicontroller;
+package com.techphantomexample.usermicroservice.api_controller;
 
 import com.techphantomexample.usermicroservice.entity.Cart;
 import com.techphantomexample.usermicroservice.entity.User;

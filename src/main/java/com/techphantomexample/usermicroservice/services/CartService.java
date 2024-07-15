@@ -1,11 +1,10 @@
 package com.techphantomexample.usermicroservice.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.techphantomexample.usermicroservice.Dto.CartDTO;
-import com.techphantomexample.usermicroservice.Dto.CartItemDTO;
+import com.techphantomexample.usermicroservice.dto.CartDTO;
+import com.techphantomexample.usermicroservice.dto.CartItemDTO;
 import com.techphantomexample.usermicroservice.entity.Cart;
 import com.techphantomexample.usermicroservice.entity.CartItem;
-import com.techphantomexample.usermicroservice.entity.User;
 import com.techphantomexample.usermicroservice.exception.NotFoundException;
 import com.techphantomexample.usermicroservice.repository.CartItemRepository;
 import com.techphantomexample.usermicroservice.repository.CartRepository;

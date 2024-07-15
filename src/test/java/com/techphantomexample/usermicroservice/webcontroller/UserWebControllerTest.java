@@ -1,18 +1,16 @@
-package com.techphantomexample.usermicroservice.webController;
+package com.techphantomexample.usermicroservice.webcontroller;
 
 import com.techphantomexample.usermicroservice.entity.User;
 import com.techphantomexample.usermicroservice.exception.UserOperationException;
 import com.techphantomexample.usermicroservice.model.CreateResponse;
 import com.techphantomexample.usermicroservice.model.Login;
 import com.techphantomexample.usermicroservice.services.UserService;
-import com.techphantomexample.usermicroservice.services.UserServicesImp;
 import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.ui.Model;
 
 import static org.junit.jupiter.api.Assertions.*;

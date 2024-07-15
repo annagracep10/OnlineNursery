@@ -1,9 +1,9 @@
-package com.techphantomexample.usermicroservice.webController;
+package com.techphantomexample.usermicroservice.webcontroller;
 
-import com.techphantomexample.usermicroservice.Dto.CombinedProductDTO;
-import com.techphantomexample.usermicroservice.Dto.PlantDTO;
-import com.techphantomexample.usermicroservice.Dto.PlanterDTO;
-import com.techphantomexample.usermicroservice.Dto.SeedDTO;
+import com.techphantomexample.usermicroservice.dto.CombinedProductDTO;
+import com.techphantomexample.usermicroservice.dto.PlantDTO;
+import com.techphantomexample.usermicroservice.dto.PlanterDTO;
+import com.techphantomexample.usermicroservice.dto.SeedDTO;
 import com.techphantomexample.usermicroservice.entity.User;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;

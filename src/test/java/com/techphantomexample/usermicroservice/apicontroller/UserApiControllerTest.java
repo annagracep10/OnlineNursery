@@ -1,4 +1,4 @@
-package com.techphantomexample.usermicroservice.apiController;
+package com.techphantomexample.usermicroservice.apicontroller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.techphantomexample.usermicroservice.entity.Cart;

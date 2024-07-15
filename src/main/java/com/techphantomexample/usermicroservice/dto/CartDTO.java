@@ -1,4 +1,4 @@
-package com.techphantomexample.usermicroservice.Dto;
+package com.techphantomexample.usermicroservice.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

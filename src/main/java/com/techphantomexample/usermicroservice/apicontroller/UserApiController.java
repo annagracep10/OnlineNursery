@@ -1,4 +1,4 @@
-package com.techphantomexample.usermicroservice.apiController;
+package com.techphantomexample.usermicroservice.apicontroller;
 
 import com.techphantomexample.usermicroservice.entity.Cart;
 import com.techphantomexample.usermicroservice.entity.User;
@@ -8,7 +8,6 @@ import com.techphantomexample.usermicroservice.services.UserService;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

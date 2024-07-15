@@ -1,10 +1,8 @@
-package com.techphantomexample.usermicroservice.webController;
+package com.techphantomexample.usermicroservice.webcontroller;
 
-import com.techphantomexample.usermicroservice.apiController.UserApiController;
 import com.techphantomexample.usermicroservice.model.CreateResponse;
 import com.techphantomexample.usermicroservice.model.Login;
 import com.techphantomexample.usermicroservice.entity.User;
-import com.techphantomexample.usermicroservice.repository.UserRepository;
 import com.techphantomexample.usermicroservice.exception.UserOperationException;
 import com.techphantomexample.usermicroservice.services.UserService;
 import jakarta.servlet.http.HttpSession;

@@ -2,9 +2,7 @@ package com.techphantomexample.usermicroservice.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.techphantomexample.usermicroservice.Dto.CartDTO;
-import com.techphantomexample.usermicroservice.repository.UserRepository;
-import org.junit.jupiter.api.BeforeEach;
+import com.techphantomexample.usermicroservice.dto.CartDTO;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

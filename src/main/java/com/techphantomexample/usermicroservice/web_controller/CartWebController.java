@@ -1,6 +1,7 @@
 package com.techphantomexample.usermicroservice.web_controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.techphantomexample.usermicroservice.dto.CartItemDTO;
 import com.techphantomexample.usermicroservice.entity.Cart;
 import com.techphantomexample.usermicroservice.entity.CartItem;
 import com.techphantomexample.usermicroservice.entity.User;
@@ -34,7 +35,7 @@ public class CartWebController {
     }
 
     @PostMapping("/addToCart")
-    public String addToCart(@ModelAttribute CartItem cartItem, HttpSession session) {
+    public String addToCart(@ModelAttribute CartItemDTO cartItem, HttpSession session) {
         User user = (User) session.getAttribute("user");
         cartService.addItemToCart(user.getUserId(), cartItem);
         log.info("Item added to cart");

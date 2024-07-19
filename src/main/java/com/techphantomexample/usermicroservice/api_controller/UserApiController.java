@@ -64,10 +64,5 @@ public class UserApiController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @GetMapping("/{userId}/cart")
-    public ResponseEntity<Cart> getCartByUserId(@PathVariable int userId) {
-        Cart cart = userService.getCartByUserId(userId);
-        return new ResponseEntity<>(cart, HttpStatus.OK);
-    }
 
 }

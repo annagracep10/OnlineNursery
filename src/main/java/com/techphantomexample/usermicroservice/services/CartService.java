@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.techphantomexample.usermicroservice.dto.*;
 import com.techphantomexample.usermicroservice.entity.Cart;
 import com.techphantomexample.usermicroservice.entity.CartItem;
+import com.techphantomexample.usermicroservice.entity.Order;
+import com.techphantomexample.usermicroservice.entity.OrderItem;
 import com.techphantomexample.usermicroservice.exception.NotFoundException;
 import com.techphantomexample.usermicroservice.model.CartResponse;
 import com.techphantomexample.usermicroservice.repository.CartItemRepository;
@@ -12,6 +14,8 @@ import com.techphantomexample.usermicroservice.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -28,6 +32,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @Service
 public class CartService {
+    private static final Logger log = LoggerFactory.getLogger(CartService.class);
     @Autowired
     private UserRepository userRepository;
 
@@ -47,6 +52,9 @@ public class CartService {
     private  UserService userService;
 
     @Autowired
+    private  OrderService orderService;
+
+    @Autowired
     private RestTemplate restTemplate;
 
     @Value("${product.service.base-url}")
@@ -61,6 +69,7 @@ public class CartService {
         String url = productServiceBaseUrl;
         int quantity;
         double price;
+        int id;
 
         switch (cartItemDto.getProductType()) {
             case "plant":
@@ -68,18 +77,21 @@ public class CartService {
                 PlantDTO plant = restTemplate.getForObject(url, PlantDTO.class);
                 quantity = plant.getQuantity();
                 price = plant.getPrice();
+                id = plant.getId();
                 break;
             case "planter":
                 url += "/planter/" + cartItemDto.getProductId();
                 PlanterDTO planter = restTemplate.getForObject(url, PlanterDTO.class);
                 quantity = planter.getQuantity();
                 price = planter.getPrice();
+                id = planter.getId();
                 break;
             case "seed":
                 url += "/seed/" + cartItemDto.getProductId();
                 SeedDTO seed = restTemplate.getForObject(url, SeedDTO.class);
                 quantity = seed.getQuantity();
                 price = seed.getPrice();
+                id= seed.getId();
                 break;
             default:
                 return new CartResponse("Product Type Unavailable", HttpStatus.BAD_REQUEST.value(), cart);
@@ -89,7 +101,9 @@ public class CartService {
             return new CartResponse("Product out of Stock - Only " + quantity + " left", HttpStatus.BAD_REQUEST.value(), cart);
         }
 
+        cartItem.setProductId(id);
         cartItem.setPrice(price);
+
         Optional<CartItem> existingItemOptional = cart.getItems().stream()
                 .filter(item -> item.getProductName().equals(cartItem.getProductName()))
                 .findFirst();
@@ -103,15 +117,8 @@ public class CartService {
             cart.getItems().add(cartItem);
             cartItemRepository.save(cartItem);
         }
-        updateProductQuantity(cartItemDto.getProductId(), cartItemDto.getProductType(), cartItemDto.getQuantity());
+        updateProductQuantity(cartItemDto.getProductId(), cartItemDto.getProductType(), -cartItemDto.getQuantity());
         return new CartResponse("Product added successfully", HttpStatus.OK.value(), cart);
-    }
-
-    private void updateProductQuantity(int productId, String productType, int quantityToSubtract) {
-        String url = productServiceBaseUrl + "/" + productType + "/" + productId + "/quantity";
-        Map<String, Integer> updateQuantityMap = new HashMap<>();
-        updateQuantityMap.put("quantityToSubtract", quantityToSubtract);
-        restTemplate.put(url, updateQuantityMap);
     }
 
     public void removeItemFromCart(int userId, int itemId) {
@@ -121,6 +128,7 @@ public class CartService {
             CartItem itemToRemove = items.stream().filter(item -> item.getId() == itemId).findFirst().orElse(null);
             if (itemToRemove != null) {
                 items.remove(itemToRemove);
+                updateProductQuantity(itemToRemove.getProductId(), itemToRemove.getProductType(), itemToRemove.getQuantity());
                 cartItemRepository.delete(itemToRemove);
             }else {
                 throw new NotFoundException("Item not found in cart with id: " + itemId);
@@ -128,18 +136,37 @@ public class CartService {
         }
     }
 
+    private void updateProductQuantity(int productId, String productType, int quantityToSubtract) {
+        String url = productServiceBaseUrl + "/" + productType + "/" + productId + "/quantity";
+        Map<String, Integer> updateQuantityMap = new HashMap<>();
+        updateQuantityMap.put("quantityToSubtract", quantityToSubtract);
+        restTemplate.put(url, updateQuantityMap);
+    }
+
+
     public void checkout(int userId) throws JsonProcessingException {
         Cart cart = userService.getCartByUserId(userId);
-        CartDTO cartDto = new CartDTO();
         if (cart != null) {
-            List<CartItemDTO> itemDTOs = cart.getItems().stream()
-                    .map(item -> modelMapper.map(item, CartItemDTO.class))
+            Order order = new Order();
+            order.setUserId(userId);
+            List<OrderItem> orderItems = cart.getItems().stream()
+                    .map(cartItem -> {
+                        OrderItem orderItem = new OrderItem();
+                        orderItem.setProductId(cartItem.getProductId());
+                        orderItem.setProductName(cartItem.getProductName());
+                        orderItem.setQuantity(cartItem.getQuantity());
+                        orderItem.setPrice(cartItem.getPrice());
+                        orderItem.setProductType(cartItem.getProductType());
+                        return orderItem;
+                    })
                     .collect(Collectors.toList());
-            cartDto.setItems(itemDTOs);
+            order.setItems(orderItems);
+            orderService.saveOrder(order);
+
+            cartMessageProducer.sendOrderAsJson(order);
             cartItemRepository.deleteAll(cart.getItems());
             cart.getItems().clear();
             cartRepository.save(cart);
-            cartMessageProducer.sendCartItemsAsJson(cartDto);
         }
     }
 

@@ -7,6 +7,7 @@ import com.techphantomexample.usermicroservice.entity.CartItem;
 import com.techphantomexample.usermicroservice.entity.Order;
 import com.techphantomexample.usermicroservice.entity.OrderItem;
 import com.techphantomexample.usermicroservice.exception.NotFoundException;
+import com.techphantomexample.usermicroservice.messege.SendOrderMessage;
 import com.techphantomexample.usermicroservice.model.CartResponse;
 import com.techphantomexample.usermicroservice.repository.CartItemRepository;
 import com.techphantomexample.usermicroservice.repository.CartRepository;
@@ -43,7 +44,7 @@ public class CartService {
     private CartItemRepository cartItemRepository;
 
     @Autowired
-    private CartMessageProducer cartMessageProducer;
+    private SendOrderMessage sendOrderMessage;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -144,30 +145,36 @@ public class CartService {
     }
 
 
-    public void checkout(int userId) throws JsonProcessingException {
+    public CartResponse checkout(int userId) throws JsonProcessingException {
         Cart cart = userService.getCartByUserId(userId);
         if (cart != null) {
             Order order = new Order();
             order.setUserId(userId);
-            List<OrderItem> orderItems = cart.getItems().stream()
-                    .map(cartItem -> {
-                        OrderItem orderItem = new OrderItem();
-                        orderItem.setProductId(cartItem.getProductId());
-                        orderItem.setProductName(cartItem.getProductName());
-                        orderItem.setQuantity(cartItem.getQuantity());
-                        orderItem.setPrice(cartItem.getPrice());
-                        orderItem.setProductType(cartItem.getProductType());
-                        return orderItem;
-                    })
-                    .collect(Collectors.toList());
-            order.setItems(orderItems);
-            orderService.saveOrder(order);
+            if(!cart.getItems().isEmpty()){
+                List<OrderItem> orderItems = cart.getItems().stream()
+                        .map(cartItem -> {
+                            OrderItem orderItem = new OrderItem();
+                            orderItem.setProductId(cartItem.getProductId());
+                            orderItem.setProductName(cartItem.getProductName());
+                            orderItem.setQuantity(cartItem.getQuantity());
+                            orderItem.setPrice(cartItem.getPrice());
+                            orderItem.setProductType(cartItem.getProductType());
+                            return orderItem;
+                        })
+                        .collect(Collectors.toList());
+                order.setItems(orderItems);
+                orderService.saveOrder(order);
+                sendOrderMessage.sendOrderAsJson(order);
+                cartItemRepository.deleteAll(cart.getItems());
+                cart.getItems().clear();
+                cartRepository.save(cart);
+                return new CartResponse("Checkout Success",HttpStatus.OK.value(), cart);
+            }
+            else
+                return new CartResponse("No item in your cart ",HttpStatus.BAD_REQUEST.value(), cart);
 
-            cartMessageProducer.sendOrderAsJson(order);
-            cartItemRepository.deleteAll(cart.getItems());
-            cart.getItems().clear();
-            cartRepository.save(cart);
         }
+        return new CartResponse("No such cart found", HttpStatus.BAD_REQUEST.value(), null);
     }
 
 }

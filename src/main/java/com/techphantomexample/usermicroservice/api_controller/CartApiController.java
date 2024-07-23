@@ -68,8 +68,8 @@ public class CartApiController {
     @PostMapping("/{userId}/checkout")
     public ResponseEntity<CartResponse> checkout(@PathVariable int userId) {
         try {
-            cartService.checkout(userId);
-            return new ResponseEntity<>(new CartResponse("Checkout successful", HttpStatus.OK.value(), null), HttpStatus.OK);
+            CartResponse cartResponse = cartService.checkout(userId);
+            return new ResponseEntity<>(cartResponse, HttpStatus.valueOf(cartResponse.getStatus()));
         } catch (JsonProcessingException e) {
             return new ResponseEntity<>(new CartResponse("Checkout failed", HttpStatus.INTERNAL_SERVER_ERROR.value(), null), HttpStatus.INTERNAL_SERVER_ERROR);
         }

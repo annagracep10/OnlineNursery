@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.techphantomexample.usermicroservice.entity.Order;
 import com.techphantomexample.usermicroservice.entity.OrderStatus;
 import com.techphantomexample.usermicroservice.exception.NotFoundException;
+import com.techphantomexample.usermicroservice.messege.CancelOrderMessage;
 import com.techphantomexample.usermicroservice.repository.OrderRepository;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -20,7 +21,7 @@ public class OrderService {
     private OrderRepository orderRepository;
 
     @Autowired
-    private CartMessageProducer cartMessageProducer;
+    private CancelOrderMessage cancelOrderMessage;
 
     public Order saveOrder(Order order) {
         return orderRepository.save(order);
@@ -38,7 +39,7 @@ public class OrderService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new NotFoundException("Order not found with id: " + orderId));
         order.setStatus(OrderStatus.CANCELLED);
-        cartMessageProducer.sendOrderCancellationMessage(orderId);
+        cancelOrderMessage.sendOrderCancellationMessage(orderId);
         orderRepository.save(order);
         return order;
     }

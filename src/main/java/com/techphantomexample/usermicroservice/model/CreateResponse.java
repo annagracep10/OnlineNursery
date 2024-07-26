@@ -6,7 +6,6 @@ import com.techphantomexample.usermicroservice.entity.User;
 public class CreateResponse {
     private String message;
     private Integer status;
-    @JsonIgnore
     private User user;
 
 

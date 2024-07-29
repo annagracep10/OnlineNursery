@@ -168,7 +168,7 @@ public class CartService {
                 cartItemRepository.deleteAll(cart.getItems());
                 cart.getItems().clear();
                 cartRepository.save(cart);
-                return new CartResponse("Checkout Success",HttpStatus.OK.value(), cart);
+                return new CartResponse("Checkout Success",HttpStatus.OK.value(), order);
             }
             else
                 return new CartResponse("No item in your cart ",HttpStatus.BAD_REQUEST.value(), cart);

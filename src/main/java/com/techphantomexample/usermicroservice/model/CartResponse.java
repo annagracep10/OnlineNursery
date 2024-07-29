@@ -12,5 +12,5 @@ public class CartResponse {
 
     private String message;
     private int status;
-    private Cart cart;
+    private Object cart;
 }

@@ -4,7 +4,7 @@ import com.techphantomexample.usermicroservice.dto.CombinedProductDTO;
 import com.techphantomexample.usermicroservice.dto.PlantDTO;
 import com.techphantomexample.usermicroservice.dto.PlanterDTO;
 import com.techphantomexample.usermicroservice.dto.SeedDTO;
-import com.techphantomexample.usermicroservice.entity.User;
+import com.techphantomexample.usermicroservice.entity.UserEntity;
 import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -56,7 +56,7 @@ public class ProductWebControllerTest {
 
     @Test
     public void testShowProducts() {
-        User user = new User();
+        UserEntity user = new UserEntity();
         CombinedProductDTO combinedProduct = new CombinedProductDTO();
         when(session.getAttribute("user")).thenReturn(user);
         when(restTemplate.getForObject(anyString(), eq(CombinedProductDTO.class))).thenReturn(combinedProduct);

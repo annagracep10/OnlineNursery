@@ -1,6 +1,6 @@
 package com.techphantomexample.usermicroservice.web_controller;
 
-import com.techphantomexample.usermicroservice.entity.User;
+import com.techphantomexample.usermicroservice.entity.UserEntity;
 import com.techphantomexample.usermicroservice.exception.UserOperationException;
 import com.techphantomexample.usermicroservice.model.CreateResponse;
 import com.techphantomexample.usermicroservice.model.Login;
@@ -51,7 +51,7 @@ class UserWebControllerTest {
     @Test
     void loginUser_Success() {
         Login login = new Login();
-        User user = new User();
+        UserEntity user = new UserEntity();
         CreateResponse response = new CreateResponse("Success", 200, user);
         when(userService.loginUser(any(Login.class))).thenReturn(response);
 
@@ -87,12 +87,12 @@ class UserWebControllerTest {
         String viewName = userWebController.showRegistrationPage(model);
 
         assertEquals("register", viewName);
-        verify(model, times(1)).addAttribute(eq("user"), any(User.class));
+        verify(model, times(1)).addAttribute(eq("user"), any(UserEntity.class));
     }
 
     @Test
     public void testRegisterUser_Success() {
-        User user = new User();
+        UserEntity user = new UserEntity();
 
         String viewName = userWebController.registerUser(user, model);
 
@@ -102,8 +102,8 @@ class UserWebControllerTest {
 
     @Test
     public void testRegisterUser_Failure() {
-        User user = new User();
-        doThrow(new UserOperationException("Error")).when(userService).createUser(any(User.class));
+        UserEntity user = new UserEntity();
+        doThrow(new UserOperationException("Error")).when(userService).createUser(any(UserEntity.class));
 
         String viewName = userWebController.registerUser(user, model);
 
@@ -122,7 +122,7 @@ class UserWebControllerTest {
 
     @Test
     public void testShowDashboard_Admin() {
-        User user = new User();
+        UserEntity user = new UserEntity();
         user.setUserRole("ADMIN");
         when(session.getAttribute("user")).thenReturn(user);
 
@@ -135,7 +135,7 @@ class UserWebControllerTest {
 
     @Test
     public void testShowDashboard_NonAdmin() {
-        User user = new User();
+        UserEntity user = new UserEntity();
         user.setUserRole("USER");
         when(session.getAttribute("user")).thenReturn(user);
 
@@ -151,12 +151,12 @@ class UserWebControllerTest {
         String viewName = userWebController.showNewUserForm(model);
 
         assertEquals("new_user", viewName);
-        verify(model, times(1)).addAttribute(eq("user"), any(User.class));
+        verify(model, times(1)).addAttribute(eq("user"), any(UserEntity.class));
     }
 
     @Test
     public void testSaveUser_Success() {
-        User user = new User();
+        UserEntity user = new UserEntity();
 
         String viewName = userWebController.saveUser(user, model);
 
@@ -166,8 +166,8 @@ class UserWebControllerTest {
 
     @Test
     public void testSaveUser_Failure() {
-        User user = new User();
-        doThrow(new UserOperationException("Error")).when(userService).createUser(any(User.class));
+        UserEntity user = new UserEntity();
+        doThrow(new UserOperationException("Error")).when(userService).createUser(any(UserEntity.class));
 
         String viewName = userWebController.saveUser(user, model);
 
@@ -177,7 +177,7 @@ class UserWebControllerTest {
 
     @Test
     public void testShowFormForUpdate() {
-        User user = new User();
+        UserEntity user = new UserEntity();
         when(userService.getUser(anyInt())).thenReturn(user);
 
         String viewName = userWebController.showFormForUpdate(1, model);
@@ -188,7 +188,7 @@ class UserWebControllerTest {
 
     @Test
     public void testUpdateUser_Success() {
-        User user = new User();
+        UserEntity user = new UserEntity();
 
         String viewName = userWebController.updateUser(1, user, model);
 
@@ -198,8 +198,8 @@ class UserWebControllerTest {
 
     @Test
     public void testUpdateUser_Failure() {
-        User user = new User();
-        doThrow(new UserOperationException("Error")).when(userService).updateUser(anyInt(), any(User.class));
+        UserEntity user = new UserEntity();
+        doThrow(new UserOperationException("Error")).when(userService).updateUser(anyInt(), any(UserEntity.class));
 
         String viewName = userWebController.updateUser(1, user, model);
 

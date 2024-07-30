@@ -1,7 +1,7 @@
 package com.techphantomexample.usermicroservice.services;
 
 import com.techphantomexample.usermicroservice.entity.Cart;
-import com.techphantomexample.usermicroservice.entity.User;
+import com.techphantomexample.usermicroservice.entity.UserEntity;
 import com.techphantomexample.usermicroservice.exception.UserOperationException;
 import com.techphantomexample.usermicroservice.model.CreateResponse;
 import com.techphantomexample.usermicroservice.model.Login;
@@ -36,8 +36,8 @@ class UserServicesImpTest {
     @InjectMocks
     private UserServicesImp userService;
 
-    private User createUserWithPassword(String password) {
-        return new User(1, "username", "valid@example.com", BCrypt.hashpw(password, BCrypt.gensalt()), "ADMIN", new Cart());
+    private UserEntity createUserWithPassword(String password) {
+        return new UserEntity(1, "username", "valid@example.com", BCrypt.hashpw(password, BCrypt.gensalt()), "ADMIN", new Cart());
     }
 
     @Test
@@ -67,7 +67,7 @@ class UserServicesImpTest {
 
     @Test
     void testLoginUser_Fail_IncorrectPassword() {
-        User user = createUserWithPassword("Password");
+        UserEntity user = createUserWithPassword("Password");
         Login login = new Login("valid@example.com","Wrong");
         when(userRepository.findByUserEmail(login.getUserEmail())).thenReturn(user);
 
@@ -80,7 +80,7 @@ class UserServicesImpTest {
 
     @Test
     void testLoginUser_Success() {
-        User user = createUserWithPassword("password");
+        UserEntity user = createUserWithPassword("password");
         Login login = new Login("valid@example.com","password");
         when(userRepository.findByUserEmail(login.getUserEmail())).thenReturn(user);
 
@@ -94,7 +94,7 @@ class UserServicesImpTest {
 
     @Test
     void testCreateUser_Success() {
-        User user = createUserWithPassword("password");
+        UserEntity user = createUserWithPassword("password");
         when(userRepository.existsByUserEmail(user.getUserEmail())).thenReturn(false);
 
         String result = userService.createUser(user);
@@ -106,7 +106,7 @@ class UserServicesImpTest {
 
     @Test
     void testCreateUser_UserAlreadyExists() {
-        User user = createUserWithPassword("password");
+        UserEntity user = createUserWithPassword("password");
         when(userRepository.existsByUserEmail(user.getUserEmail())).thenReturn(true);
 
         UserOperationException exception = assertThrows(UserOperationException.class, () -> {
@@ -115,16 +115,16 @@ class UserServicesImpTest {
 
         assertEquals("User with provided email ID exists", exception.getMessage());
         verify(userRepository, times(1)).existsByUserEmail(user.getUserEmail());
-        verify(userRepository, never()).save(any(User.class));
+        verify(userRepository, never()).save(any(UserEntity.class));
     }
 
     @Test
     void testUpdateUser_Success() {
-        User existingUser = createUserWithPassword("password");
-        User newUserDetails = new User(1, "Updated Username", "updated@example.com", BCrypt.hashpw("password", BCrypt.gensalt()), "ADMIN", new Cart());
+        UserEntity existingUser = createUserWithPassword("password");
+        UserEntity newUserDetails = new UserEntity(1, "Updated Username", "updated@example.com", BCrypt.hashpw("password", BCrypt.gensalt()), "ADMIN", new Cart());
         when(userRepository.existsById(existingUser.getUserId())).thenReturn(true);
         when(userRepository.findById(existingUser.getUserId())).thenReturn(java.util.Optional.of(existingUser));
-        when(userRepository.save(any(User.class))).thenReturn(newUserDetails);
+        when(userRepository.save(any(UserEntity.class))).thenReturn(newUserDetails);
 
         String result = userService.updateUser(1, newUserDetails);
 
@@ -134,12 +134,12 @@ class UserServicesImpTest {
         assertEquals(newUserDetails.getUserRole(), existingUser.getUserRole());
         verify(userRepository, times(1)).existsById(1);
         verify(userRepository, times(1)).findById(1);
-        verify(userRepository, times(1)).save(any(User.class));
+        verify(userRepository, times(1)).save(any(UserEntity.class));
     }
 
     @Test
     void testUpdateUser_UserNotFound() {
-        User newUserDetails = createUserWithPassword("password");
+        UserEntity newUserDetails = createUserWithPassword("password");
         when(userRepository.existsById(newUserDetails.getUserId())).thenReturn(false);
 
         UserOperationException thrown = assertThrows(UserOperationException.class, () -> {
@@ -149,13 +149,13 @@ class UserServicesImpTest {
         assertEquals("User with ID " + newUserDetails.getUserId() + " does not exist", thrown.getMessage());
         verify(userRepository, times(1)).existsById(newUserDetails.getUserId());
         verify(userRepository, never()).findById(newUserDetails.getUserId());
-        verify(userRepository, never()).save(any(User.class));
+        verify(userRepository, never()).save(any(UserEntity.class));
     }
 
 
     @Test
     void testDeleteUser_Success() {
-        User user = createUserWithPassword("password");
+        UserEntity user = createUserWithPassword("password");
         when(userRepository.existsById(user.getUserId())).thenReturn(true);
 
         String result = userService.deleteUser(user.getUserId());
@@ -179,12 +179,12 @@ class UserServicesImpTest {
 
     @Test
     void testGetUser_Success() {
-        User mockUser = createUserWithPassword("password");
+        UserEntity mockUser = createUserWithPassword("password");
         int userId = 1;
         when(userRepository.existsById(userId)).thenReturn(true);
         when(userRepository.findById(userId)).thenReturn(Optional.of(mockUser));
 
-        User result = userService.getUser(userId);
+        UserEntity result = userService.getUser(userId);
 
         assertEquals(mockUser, result);
         verify(userRepository, times(1)).existsById(userId);
@@ -205,13 +205,13 @@ class UserServicesImpTest {
 
     @Test
     void getAllUsers() {
-        List<User> mockUsers = Arrays.asList(
-                new User(1, "user1", "user1@example.com", "password1", "BUYER", new Cart()),
-                new User(2, "user2", "user2@example.com", "password2", "SELLER", new Cart())
+        List<UserEntity> mockUsers = Arrays.asList(
+                new UserEntity(1, "user1", "user1@example.com", "password1", "BUYER", new Cart()),
+                new UserEntity(2, "user2", "user2@example.com", "password2", "SELLER", new Cart())
         );
         when(userRepository.findAll()).thenReturn(mockUsers);
 
-        List<User> result = userService.getAllUsers();
+        List<UserEntity> result = userService.getAllUsers();
 
         assertEquals(mockUsers.size(), result.size());
         assertEquals(mockUsers, result);
@@ -220,7 +220,7 @@ class UserServicesImpTest {
 
     @Test
     void testGetCartByUserId_CartExists() {
-        User user = createUserWithPassword("password");
+        UserEntity user = createUserWithPassword("password");
         Cart mockCart = new Cart();
         mockCart.setUser(user);
         when(cartRepository.findByUser_UserId(user.getUserId())).thenReturn(mockCart);
@@ -234,7 +234,7 @@ class UserServicesImpTest {
 
     @Test
     void testGetCartByUserId_CartDoesNotExist_UserExists() {
-        User user = createUserWithPassword("password");
+        UserEntity user = createUserWithPassword("password");
 
         when(cartRepository.findByUser_UserId(user.getUserId())).thenReturn(null);
         when(userRepository.findById(user.getUserId())).thenReturn(Optional.of(user));

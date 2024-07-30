@@ -2,7 +2,7 @@ package com.techphantomexample.usermicroservice.api_controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.techphantomexample.usermicroservice.entity.Cart;
-import com.techphantomexample.usermicroservice.entity.User;
+import com.techphantomexample.usermicroservice.entity.UserEntity;
 import com.techphantomexample.usermicroservice.exception.UserOperationException;
 import com.techphantomexample.usermicroservice.model.CreateResponse;
 import com.techphantomexample.usermicroservice.model.Login;
@@ -58,10 +58,10 @@ public class UserApiControllerTest {
 
     @Test
     void testCreateUser() throws Exception {
-        User user = new User(1, "John Doe", "john.doe@example.com", "password", "USER", new Cart());
+        UserEntity user = new UserEntity(1, "John Doe", "john.doe@example.com", "password", "USER", new Cart());
         CreateResponse response = new CreateResponse("User Created successfully", HttpStatus.CREATED.value(), user);
 
-        when(userService.createUser(any(User.class))).thenReturn("User Created successfully");
+        when(userService.createUser(any(UserEntity.class))).thenReturn("User Created successfully");
 
         mockMvc.perform(post("/api/user/create")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -73,10 +73,10 @@ public class UserApiControllerTest {
 
     @Test
     void testUpdateUser() throws Exception {
-        User user = new User(1, "John Doe", "john.doe@example.com", "newpassword", "USER", new Cart());
+        UserEntity user = new UserEntity(1, "John Doe", "john.doe@example.com", "newpassword", "USER", new Cart());
         CreateResponse response = new CreateResponse("User Updated Successfully", HttpStatus.OK.value(), user);
 
-        when(userService.updateUser(anyInt(), any(User.class))).thenReturn("User Updated Successfully");
+        when(userService.updateUser(anyInt(), any(UserEntity.class))).thenReturn("User Updated Successfully");
 
         mockMvc.perform(put("/api/user/update/1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -101,9 +101,9 @@ public class UserApiControllerTest {
 
     @Test
     void testGetAllUsers() throws Exception {
-        User user1 = new User(1, "John Doe", "john.doe@example.com", "password", "USER", new Cart());
-        User user2 = new User(2, "Jane Doe", "jane.doe@example.com", "password", "USER", new Cart());
-        List<User> users = Arrays.asList(user1, user2);
+        UserEntity user1 = new UserEntity(1, "John Doe", "john.doe@example.com", "password", "USER", new Cart());
+        UserEntity user2 = new UserEntity(2, "Jane Doe", "jane.doe@example.com", "password", "USER", new Cart());
+        List<UserEntity> users = Arrays.asList(user1, user2);
 
         when(userService.getAllUsers()).thenReturn(users);
 
@@ -118,7 +118,7 @@ public class UserApiControllerTest {
 
     @Test
     void testGetUserById() throws Exception {
-        User user = new User(1, "John Doe", "john.doe@example.com", "password", "USER", new Cart());
+        UserEntity user = new UserEntity(1, "John Doe", "john.doe@example.com", "password", "USER", new Cart());
 
         when(userService.getUser(anyInt())).thenReturn(user);
 
@@ -145,9 +145,9 @@ public class UserApiControllerTest {
 
     @Test
     void testCreateUser_UserOperationException() throws Exception {
-        User user = new User(1, "John Doe", "john.doe@example.com", "password", "USER", new Cart());
+        UserEntity user = new UserEntity(1, "John Doe", "john.doe@example.com", "password", "USER", new Cart());
 
-        when(userService.createUser(any(User.class))).thenThrow(new UserOperationException("User with provided email ID exists"));
+        when(userService.createUser(any(UserEntity.class))).thenThrow(new UserOperationException("User with provided email ID exists"));
 
         mockMvc.perform(post("/api/user/create")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -159,9 +159,9 @@ public class UserApiControllerTest {
 
     @Test
     void testUpdateUser_UserOperationException() throws Exception {
-        User user = new User(1, "John Doe", "john.doe@example.com", "password", "USER", new Cart());
+        UserEntity user = new UserEntity(1, "John Doe", "john.doe@example.com", "password", "USER", new Cart());
 
-        when(userService.updateUser(anyInt(), any(User.class))).thenThrow(new UserOperationException("User with ID 1 does not exist"));
+        when(userService.updateUser(anyInt(), any(UserEntity.class))).thenThrow(new UserOperationException("User with ID 1 does not exist"));
 
         mockMvc.perform(put("/api/user/update/1")
                         .contentType(MediaType.APPLICATION_JSON)

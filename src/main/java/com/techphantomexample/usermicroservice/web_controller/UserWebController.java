@@ -2,7 +2,7 @@ package com.techphantomexample.usermicroservice.web_controller;
 
 import com.techphantomexample.usermicroservice.model.CreateResponse;
 import com.techphantomexample.usermicroservice.model.Login;
-import com.techphantomexample.usermicroservice.entity.User;
+import com.techphantomexample.usermicroservice.entity.UserEntity;
 import com.techphantomexample.usermicroservice.exception.UserOperationException;
 import com.techphantomexample.usermicroservice.services.UserService;
 import jakarta.servlet.http.HttpSession;
@@ -52,12 +52,12 @@ public class UserWebController {
 
     @GetMapping("/register")
     public String showRegistrationPage(Model model) {
-        model.addAttribute("user", new User());
+        model.addAttribute("user", new UserEntity());
         return "register";
     }
 
     @PostMapping("/register")
-    public String registerUser(@ModelAttribute User user, Model model) {
+    public String registerUser(@ModelAttribute UserEntity user, Model model) {
         try {
             userService.createUser(user);
             return "redirect:/user/login";
@@ -71,7 +71,7 @@ public class UserWebController {
 
     @GetMapping("/dashboard")
     public String showDashboard(HttpSession session, Model model) {
-        User user = (User) session.getAttribute("user");
+        UserEntity user = (UserEntity) session.getAttribute("user");
         if (user == null) {
             return "redirect:/user/login";
         }
@@ -85,13 +85,13 @@ public class UserWebController {
 
     @GetMapping("/showNewUserForm")
     public String showNewUserForm(Model model) {
-        User user = new User();
+        UserEntity user = new UserEntity();
         model.addAttribute("user", user);
         return "new_user";
     }
 
     @PostMapping("/createUser")
-    public String saveUser(@ModelAttribute("user") User user,Model model) {
+    public String saveUser(@ModelAttribute("user") UserEntity user, Model model) {
        try {
            userService.createUser(user);
            return "redirect:/user/dashboard";
@@ -106,13 +106,13 @@ public class UserWebController {
     @GetMapping("/showFormForUpdate/{userId}")
     public String showFormForUpdate(@PathVariable(value = "userId") int userId, Model model) {
 
-        User user = userService.getUser(userId);
+        UserEntity user = userService.getUser(userId);
         model.addAttribute("user", user);
         return "update_user";
     }
 
     @PutMapping("/updateUser")
-    public String updateUser(int userId, @ModelAttribute User user, Model model) {
+    public String updateUser(int userId, @ModelAttribute UserEntity user, Model model) {
         try {
             userService.updateUser(userId, user);
             return "redirect:/user/dashboard";

@@ -3,8 +3,7 @@ package com.techphantomexample.usermicroservice.web_controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.techphantomexample.usermicroservice.dto.CartItemDTO;
 import com.techphantomexample.usermicroservice.entity.Cart;
-import com.techphantomexample.usermicroservice.entity.CartItem;
-import com.techphantomexample.usermicroservice.entity.User;
+import com.techphantomexample.usermicroservice.entity.UserEntity;
 import com.techphantomexample.usermicroservice.services.CartService;
 import com.techphantomexample.usermicroservice.services.UserService;
 import jakarta.servlet.http.HttpSession;
@@ -27,7 +26,7 @@ public class CartWebController {
 
     @GetMapping("/cart")
     public String viewCart(Model model, HttpSession session) {
-        User user = (User) session.getAttribute("user");
+        UserEntity user = (UserEntity) session.getAttribute("user");
         Cart cart = userService.getCartByUserId(user.getUserId());
         model.addAttribute("cart", cart != null ? cart : new Cart());
         model.addAttribute("user",user);
@@ -36,7 +35,7 @@ public class CartWebController {
 
     @PostMapping("/addToCart")
     public String addToCart(@ModelAttribute CartItemDTO cartItem, HttpSession session) {
-        User user = (User) session.getAttribute("user");
+        UserEntity user = (UserEntity) session.getAttribute("user");
         cartService.addItemToCart(user.getUserId(), cartItem);
         log.info("Item added to cart");
         return "redirect:/user/products";
@@ -44,7 +43,7 @@ public class CartWebController {
 
     @PostMapping("/removeFromCart")
     public String removeFromCart(@RequestParam("itemId") int itemId, HttpSession session) {
-        User user = (User) session.getAttribute("user");
+        UserEntity user = (UserEntity) session.getAttribute("user");
         cartService.removeItemFromCart(user.getUserId(), itemId);
         log.info("Item removed from cart");
         return "redirect:/user/cart";
@@ -52,7 +51,7 @@ public class CartWebController {
 
     @PostMapping("/checkout")
     public String checkout(HttpSession session) throws JsonProcessingException {
-        User user = (User) session.getAttribute("user");
+        UserEntity user = (UserEntity) session.getAttribute("user");
         cartService.checkout(user.getUserId());
         log.info("Order Checked out");
         return "redirect:/user/cart";

@@ -3,7 +3,7 @@ import com.techphantomexample.usermicroservice.entity.Cart;
 import com.techphantomexample.usermicroservice.model.CreateResponse;
 import com.techphantomexample.usermicroservice.exception.UserOperationException;
 import com.techphantomexample.usermicroservice.model.Login;
-import com.techphantomexample.usermicroservice.entity.User;
+import com.techphantomexample.usermicroservice.entity.UserEntity;
 import com.techphantomexample.usermicroservice.repository.CartRepository;
 import com.techphantomexample.usermicroservice.repository.UserRepository;
 import com.techphantomexample.usermicroservice.validator.UserValidator;
@@ -34,7 +34,7 @@ public class UserServicesImp implements UserService
             return new CreateResponse("All fields are required", 400, null);
         }
         else{
-            User user = userRepository.findByUserEmail(login.getUserEmail());
+            UserEntity user = userRepository.findByUserEmail(login.getUserEmail());
             if (user != null) {
                 String password = login.getUserPassword();
                 String encodedPassword = user.getUserPassword();
@@ -55,7 +55,7 @@ public class UserServicesImp implements UserService
     }
 
     @Override
-    public String createUser(User user) {
+    public String createUser(UserEntity user) {
         if (userRepository.existsByUserEmail(user.getUserEmail())) {
             throw new UserOperationException("User with provided email ID exists");
         }
@@ -66,11 +66,11 @@ public class UserServicesImp implements UserService
     }
 
     @Override
-    public String updateUser(int userId, User newUserDetails) {
+    public String updateUser(int userId, UserEntity newUserDetails) {
         if (!userRepository.existsById(userId)) {
             throw new UserOperationException("User with ID " + userId + " does not exist");
         }
-        User existingUser = userRepository.findById(userId).get();
+        UserEntity existingUser = userRepository.findById(userId).get();
         UserValidator.validateUser(newUserDetails,userRepository);
         existingUser.setUserFullName(newUserDetails.getUserFullName());
         existingUser.setUserEmail(newUserDetails.getUserEmail());
@@ -91,7 +91,7 @@ public class UserServicesImp implements UserService
     }
 
     @Override
-    public User getUser(int userId) {
+    public UserEntity getUser(int userId) {
         if (!userRepository.existsById(userId)) {
             throw new UserOperationException("User with ID " + userId + " does not exist");
         }
@@ -99,7 +99,7 @@ public class UserServicesImp implements UserService
     }
 
     @Override
-    public List<User> getAllUsers() {
+    public List<UserEntity> getAllUsers() {
         return userRepository.findAll();
     }
 
@@ -108,7 +108,7 @@ public class UserServicesImp implements UserService
         Cart cart = cartRepository.findByUser_UserId(userId);
         if (cart == null) {
             cart = new Cart();
-            User user = userRepository.findById(userId).orElseThrow(() -> new UserOperationException("User not found with id: " + userId));
+            UserEntity user = userRepository.findById(userId).orElseThrow(() -> new UserOperationException("User not found with id: " + userId));
             cart.setUser(user);
             cart = cartRepository.save(cart);
         }

@@ -1,6 +1,6 @@
 package com.techphantomexample.usermicroservice.validator;
 
-import com.techphantomexample.usermicroservice.entity.User;
+import com.techphantomexample.usermicroservice.entity.UserEntity;
 import com.techphantomexample.usermicroservice.exception.UserOperationException;
 import com.techphantomexample.usermicroservice.repository.UserRepository;
 import org.junit.jupiter.api.Test;
@@ -18,14 +18,14 @@ class UserValidatorTest {
 
     @Test
     public void testValidateUser_AllFieldsAreRequired() {
-        User user = new User();
+        UserEntity user = new UserEntity();
 
         assertThrows(UserOperationException.class, () -> UserValidator.validateUser(user, userRepository), "All fields are required");
     }
 
     @Test
     public void testValidateUser_InvalidEmail() {
-        User user = new User();
+        UserEntity user = new UserEntity();
         user.setUserFullName("John Doe");
         user.setUserEmail("invalid-email");
         user.setUserPassword("Password1");
@@ -36,7 +36,7 @@ class UserValidatorTest {
 
     @Test
     public void testValidateUser_InvalidPassword() {
-        User user = new User();
+        UserEntity user = new UserEntity();
         user.setUserFullName("John Doe");
         user.setUserEmail("john.doe@example.com");
         user.setUserPassword("short");
@@ -47,7 +47,7 @@ class UserValidatorTest {
 
     @Test
     public void testValidateUser_InvalidUserRole() {
-        User user = new User();
+        UserEntity user = new UserEntity();
         user.setUserFullName("John Doe");
         user.setUserEmail("john.doe@example.com");
         user.setUserPassword("Password1");
@@ -58,7 +58,7 @@ class UserValidatorTest {
 
     @Test
     public void testValidateUser_ValidUser() {
-        User user = new User();
+        UserEntity user = new UserEntity();
         user.setUserFullName("John Doe");
         user.setUserEmail("john.doe@example.com");
         user.setUserPassword("Password1");

@@ -1,15 +1,14 @@
 package com.techphantomexample.usermicroservice.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.techphantomexample.usermicroservice.entity.User;
+import com.techphantomexample.usermicroservice.entity.UserEntity;
 
 public class CreateResponse {
     private String message;
     private Integer status;
-    private User user;
+    private UserEntity user;
 
 
-    public CreateResponse(String message, Integer status , User user) {
+    public CreateResponse(String message, Integer status , UserEntity user) {
         this.message = message;
         this.status = status;
         this.user = user;
@@ -30,11 +29,11 @@ public class CreateResponse {
         this.message = message;
     }
 
-    public User getUser() {
+    public UserEntity getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(UserEntity user) {
         this.user = user;
     }
 }

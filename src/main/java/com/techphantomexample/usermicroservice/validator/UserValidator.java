@@ -1,6 +1,6 @@
 package com.techphantomexample.usermicroservice.validator;
 
-import com.techphantomexample.usermicroservice.entity.User;
+import com.techphantomexample.usermicroservice.entity.UserEntity;
 import com.techphantomexample.usermicroservice.exception.UserOperationException;
 import com.techphantomexample.usermicroservice.repository.UserRepository;
 
@@ -8,7 +8,7 @@ import java.util.Arrays;
 
 public class UserValidator {
 
-    public static void validateUser(User user , UserRepository userRepository ) {
+    public static void validateUser(UserEntity user , UserRepository userRepository ) {
         if (isNullOrEmpty(user.getUserFullName()) || isNullOrEmpty(user.getUserEmail()) || isNullOrEmpty(user.getUserPassword()) || isNullOrEmpty(user.getUserRole())) {
             throw new UserOperationException("All fields are required");
         }

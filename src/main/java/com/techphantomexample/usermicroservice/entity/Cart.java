@@ -23,7 +23,7 @@ public class Cart {
     @OneToOne
     @JoinColumn(name = "user_id",referencedColumnName = "userId")
     @JsonBackReference
-    private User user;
+    private UserEntity user;
 
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference

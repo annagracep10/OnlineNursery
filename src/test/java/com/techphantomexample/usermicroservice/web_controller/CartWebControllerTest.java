@@ -3,7 +3,7 @@ package com.techphantomexample.usermicroservice.web_controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.techphantomexample.usermicroservice.entity.Cart;
 import com.techphantomexample.usermicroservice.entity.CartItem;
-import com.techphantomexample.usermicroservice.entity.User;
+import com.techphantomexample.usermicroservice.entity.UserEntity;
 import com.techphantomexample.usermicroservice.services.CartService;
 import com.techphantomexample.usermicroservice.services.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,7 +44,7 @@ public class CartWebControllerTest {
     @BeforeEach
     public void setUp() {
         session = new MockHttpSession();
-        User user = new User();
+        UserEntity user = new UserEntity();
         user.setUserId(1);
         session.setAttribute("user", user);
     }

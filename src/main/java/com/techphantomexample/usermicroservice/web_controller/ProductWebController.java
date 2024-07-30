@@ -4,7 +4,7 @@ import com.techphantomexample.usermicroservice.dto.CombinedProductDTO;
 import com.techphantomexample.usermicroservice.dto.PlantDTO;
 import com.techphantomexample.usermicroservice.dto.PlanterDTO;
 import com.techphantomexample.usermicroservice.dto.SeedDTO;
-import com.techphantomexample.usermicroservice.entity.User;
+import com.techphantomexample.usermicroservice.entity.UserEntity;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +29,7 @@ public class ProductWebController {
 
     @GetMapping("/products")
     public String showProducts(HttpSession session, Model model) {
-        User user = (User) session.getAttribute("user");
+        UserEntity user = (UserEntity) session.getAttribute("user");
         if (user == null) {
             return "redirect:/user/login";
         }

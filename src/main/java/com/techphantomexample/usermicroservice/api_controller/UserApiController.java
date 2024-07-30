@@ -1,7 +1,6 @@
 package com.techphantomexample.usermicroservice.api_controller;
 
-import com.techphantomexample.usermicroservice.entity.Cart;
-import com.techphantomexample.usermicroservice.entity.User;
+import com.techphantomexample.usermicroservice.entity.UserEntity;
 import com.techphantomexample.usermicroservice.model.CreateResponse;
 import com.techphantomexample.usermicroservice.model.Login;
 import com.techphantomexample.usermicroservice.services.UserService;
@@ -10,6 +9,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,23 +23,8 @@ public class UserApiController {
     @Autowired
     private UserService userService;
 
-
-
-    @PostMapping("/login")
-    public ResponseEntity<CreateResponse> loginUser(@RequestBody Login login) {
-        CreateResponse response = userService.loginUser(login);
-        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
-    }
-
-    @PostMapping("/create")
-    public ResponseEntity<CreateResponse> createUser(@RequestBody User user) {
-        String response = userService.createUser(user);
-        CreateResponse createResponse = new CreateResponse(response, HttpStatus.CREATED.value(), user);
-        return new ResponseEntity<>(createResponse, HttpStatus.CREATED);
-    }
-
     @PutMapping("/update/{userId}")
-    public ResponseEntity<CreateResponse> updateUser(@PathVariable int userId, @RequestBody User user) {
+    public ResponseEntity<CreateResponse> updateUser(@PathVariable int userId, @RequestBody UserEntity user) {
         String response = userService.updateUser(userId, user);
         CreateResponse createResponse = new CreateResponse(response, HttpStatus.OK.value(), user);
         return new ResponseEntity<>(createResponse, HttpStatus.OK);
@@ -53,14 +38,14 @@ public class UserApiController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = userService.getAllUsers();
+    public ResponseEntity<List<UserEntity>> getAllUsers() {
+        List<UserEntity> users = userService.getAllUsers();
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<User> getUserById(@PathVariable int userId) {
-        User user = userService.getUser(userId);
+    public ResponseEntity<UserEntity> getUserById(@PathVariable int userId) {
+        UserEntity user = userService.getUser(userId);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 

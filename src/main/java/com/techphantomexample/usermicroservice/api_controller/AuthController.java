@@ -62,4 +62,10 @@ public class AuthController {
         return userRepository.findByUserEmail(userEmail);
     }
 
+    int getCurrentUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+        return userService.getUserIdByEmail(userEmail);
+    }
+
 }

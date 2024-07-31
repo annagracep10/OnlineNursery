@@ -18,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -36,25 +38,31 @@ public class CartApiController {
     @Autowired
     private RestTemplate restTemplate;
 
+    @Autowired
+    private AuthController authController;
+
     @Value("${product.service.base-url}")
     public String productServiceBaseUrl;
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<CartResponse> getCartByUserId(@PathVariable int userId) {
-        Cart cart = userService.getCartByUserId(userId);
-        CartResponse cartResponse = new CartResponse("Cart displayed",HttpStatus.OK.value(),cart);
-        return new ResponseEntity<>(cartResponse, HttpStatus.OK);
 
+    @GetMapping
+    public ResponseEntity<CartResponse> getCartByUserId() {
+        int userId = authController.getCurrentUserId();
+        Cart cart = userService.getCartByUserId(userId);
+        CartResponse cartResponse = new CartResponse("Cart displayed", HttpStatus.OK.value(), cart);
+        return new ResponseEntity<>(cartResponse, HttpStatus.OK);
     }
 
-    @PostMapping("/{userId}/add")
-    public ResponseEntity<CartResponse> addItemToCart(@PathVariable int userId, @RequestBody CartItemDTO cartItemDto) {
+    @PostMapping("/add")
+    public ResponseEntity<CartResponse> addItemToCart(@RequestBody CartItemDTO cartItemDto) {
+        int userId = authController.getCurrentUserId();
         CartResponse cartResponse = cartService.addItemToCart(userId, cartItemDto);
         return new ResponseEntity<>(cartResponse, HttpStatus.valueOf(cartResponse.getStatus()));
     }
 
-    @DeleteMapping("/{userId}/remove/{itemId}")
-    public ResponseEntity<CartResponse> removeItemFromCart(@PathVariable int userId, @PathVariable int itemId) {
+    @DeleteMapping("/remove/{itemId}")
+    public ResponseEntity<CartResponse> removeItemFromCart(@PathVariable int itemId) {
+        int userId = authController.getCurrentUserId();
         try {
             cartService.removeItemFromCart(userId, itemId);
             Cart cart = userService.getCartByUserId(userId);
@@ -65,8 +73,9 @@ public class CartApiController {
         }
     }
 
-    @PostMapping("/{userId}/checkout")
-    public ResponseEntity<CartResponse> checkout(@PathVariable int userId) {
+    @PostMapping("/checkout")
+    public ResponseEntity<CartResponse> checkout() {
+        int userId = authController.getCurrentUserId();
         try {
             CartResponse cartResponse = cartService.checkout(userId);
             return new ResponseEntity<>(cartResponse, HttpStatus.valueOf(cartResponse.getStatus()));
@@ -74,6 +83,5 @@ public class CartApiController {
             return new ResponseEntity<>(new CartResponse("Checkout failed", HttpStatus.INTERNAL_SERVER_ERROR.value(), null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
 
 }

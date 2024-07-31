@@ -115,5 +115,9 @@ public class UserServicesImp implements UserService
         return cart;
     }
 
+    public int getUserIdByEmail(String email) {
+        return userRepository.findByUserEmail(email).getUserId();
+    }
+
 
 }

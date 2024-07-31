@@ -16,4 +16,5 @@ public interface UserService
     public List<UserEntity> getAllUsers();
     public Cart getCartByUserId(int userId);
     CreateResponse loginUser(Login login);
+    int getUserIdByEmail(String userEmail);
 }

@@ -61,6 +61,9 @@ public class CartService {
     @Value("${product.service.base-url}")
     private String productServiceBaseUrl;
 
+    @Autowired
+    ProductUpdateService productUpdateService;
+
     public CartResponse addItemToCart(int userId, CartItemDTO cartItemDto) {
         Cart cart = userService.getCartByUserId(userId);
         CartItem cartItem = new CartItem();
@@ -118,7 +121,7 @@ public class CartService {
             cart.getItems().add(cartItem);
             cartItemRepository.save(cartItem);
         }
-        updateProductQuantity(cartItemDto.getProductId(), cartItemDto.getProductType(), -cartItemDto.getQuantity());
+        productUpdateService.updateProductQuantity(cartItemDto.getProductId(), cartItemDto.getProductType(), -cartItemDto.getQuantity());
         return new CartResponse("Product added successfully", HttpStatus.OK.value(), cart);
     }
 
@@ -129,7 +132,7 @@ public class CartService {
             CartItem itemToRemove = items.stream().filter(item -> item.getId() == itemId).findFirst().orElse(null);
             if (itemToRemove != null) {
                 items.remove(itemToRemove);
-                updateProductQuantity(itemToRemove.getProductId(), itemToRemove.getProductType(), itemToRemove.getQuantity());
+                productUpdateService.updateProductQuantity(itemToRemove.getProductId(), itemToRemove.getProductType(), itemToRemove.getQuantity());
                 cartItemRepository.delete(itemToRemove);
             }else {
                 throw new NotFoundException("Item not found in cart with id: " + itemId);
@@ -137,12 +140,6 @@ public class CartService {
         }
     }
 
-    private void updateProductQuantity(int productId, String productType, int quantityToSubtract) {
-        String url = productServiceBaseUrl + "/" + productType + "/" + productId + "/quantity";
-        Map<String, Integer> updateQuantityMap = new HashMap<>();
-        updateQuantityMap.put("quantityToSubtract", quantityToSubtract);
-        restTemplate.put(url, updateQuantityMap);
-    }
 
 
     public CartResponse checkout(int userId) throws JsonProcessingException {

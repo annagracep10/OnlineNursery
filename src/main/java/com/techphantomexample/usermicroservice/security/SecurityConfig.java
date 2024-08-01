@@ -72,7 +72,7 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("http://localhost:5173");  // Replace with your front-end URL
+        config.addAllowedOrigin("http://localhost:3000");  // Replace with your front-end URL
         config.addAllowedHeader("Authorization");  // Allow Authorization header
         config.addAllowedHeader("Content-Type");   // Allow Content-Type header
         config.addAllowedMethod("*");              // Allow all methods

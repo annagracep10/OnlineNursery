@@ -56,6 +56,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(createResponse, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(ProductException.class)
+    public ResponseEntity<CreateResponse> handleProductException(ProductException ex) {
+        CreateResponse createResponse = new CreateResponse(ex.getMessage(), HttpStatus.BAD_REQUEST.value(),null);
+        return new ResponseEntity<>(createResponse, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<CreateResponse> handleGlobalException(Exception ex, WebRequest request) {
         CreateResponse createResponse = new CreateResponse("An unexpected error occurred: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value(),null);

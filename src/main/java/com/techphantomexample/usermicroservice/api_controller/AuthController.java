@@ -36,7 +36,6 @@ public class AuthController {
     @Autowired
     private UserService userService;
 
-
     @PostMapping("login")
     public ResponseEntity<AuthResponseDto> login(@RequestBody LoginDto loginDto){
         Authentication authentication = authenticationManager.authenticate(

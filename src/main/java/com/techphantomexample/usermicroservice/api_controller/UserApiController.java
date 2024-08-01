@@ -30,24 +30,4 @@ public class UserApiController {
         return new ResponseEntity<>(createResponse, HttpStatus.OK);
     }
 
-    @DeleteMapping("/delete/{userId}")
-    public ResponseEntity<CreateResponse> deleteUser(@PathVariable int userId) {
-        String response = userService.deleteUser(userId);
-        CreateResponse createResponse = new CreateResponse(response, HttpStatus.OK.value(), null);
-        return new ResponseEntity<>(createResponse, HttpStatus.OK);
-    }
-
-    @GetMapping("/list")
-    public ResponseEntity<List<UserEntity>> getAllUsers() {
-        List<UserEntity> users = userService.getAllUsers();
-        return new ResponseEntity<>(users, HttpStatus.OK);
-    }
-
-    @GetMapping("/{userId}")
-    public ResponseEntity<UserEntity> getUserById(@PathVariable int userId) {
-        UserEntity user = userService.getUser(userId);
-        return new ResponseEntity<>(user, HttpStatus.OK);
-    }
-
-
 }

@@ -1,7 +1,7 @@
 package com.techphantomexample.usermicroservice.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.techphantomexample.usermicroservice.entity.Order;
+import com.techphantomexample.usermicroservice.entity.Orders;
 import com.techphantomexample.usermicroservice.entity.OrderItem;
 import com.techphantomexample.usermicroservice.entity.OrderStatus;
 import com.techphantomexample.usermicroservice.exception.NotFoundException;
@@ -10,13 +10,9 @@ import com.techphantomexample.usermicroservice.repository.OrderRepository;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -31,20 +27,16 @@ public class OrderService {
     @Autowired
     ProductUpdateService productUpdateService;
 
-    public Order saveOrder(Order order) {
+    public Orders saveOrder(Orders order) {
         return orderRepository.save(order);
     }
 
-    public List<Order> findOrdersByUserId(int userId) {
-        List<Order> orders = orderRepository.findByUserId(userId);
-        if (orders.isEmpty()) {
-            throw new NotFoundException("No orders found for user with ID: " + userId);
-        }
-        return orders;
+    public List<Orders> findOrdersByUserId(int userId) {
+        return orderRepository.findByUserId(userId);
     }
 
-    public Order cancelOrder(int orderId) throws JsonProcessingException {
-        Order order = orderRepository.findById(orderId)
+    public Orders cancelOrder(int orderId) throws JsonProcessingException {
+        Orders order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new NotFoundException("Order not found with id: " + orderId));
 
         for (OrderItem item : order.getItems()) {
@@ -56,5 +48,12 @@ public class OrderService {
         return order;
     }
 
+    public Orders findByRazorpayOrderId(String razorpayOrderId) {
+        Orders order = orderRepository.findByRazorpayOrderId(razorpayOrderId);
+        return order;
+    }
 
+    public Orders findProcessingOrderByUserId(int userId) {
+        return orderRepository.findByUserIdAndStatus(userId, OrderStatus.PROCESSING);
+    }
 }

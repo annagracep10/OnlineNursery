@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "nurseryOrders")
-public class Order {
+public class Orders {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -23,9 +23,19 @@ public class Order {
     @JoinColumn(name = "order_id")
     private List<OrderItem> items;
 
+    private double totalAmount;
+
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private OrderStatus status = OrderStatus.ORDER_RECEIVED;
+    private OrderStatus status ;
+
+    @Column(name = "razorpay_order_id")
+    private String razorpayOrderId;
+
+    @Column(name = "razorpay_order_currency")
+    private String razorpayOrderCurrency;
+
+    @Column(name = "razorpay_order_amount_Paisa")
+    private Integer razorpayOrderAmount;
 }
 
 

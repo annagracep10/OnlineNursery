@@ -16,7 +16,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -36,13 +38,15 @@ public class UserApiController {
     }
 
     @PostMapping("/change-password")
-    public ResponseEntity<String> changePassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
-        String response = userService.changePassword(changePasswordRequest.getUserId(), changePasswordRequest.getCurrentPassword(), changePasswordRequest.getNewPassword());
-        if (response.equals("User not found.") || response.equals("Current password is incorrect.")) {
-            log.info("Current password is incorrect.");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    public ResponseEntity<Map<String, String>> changePassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
+        Map<String, String> response = new HashMap<>();
+        String result = userService.changePassword(changePasswordRequest.getUserId(), changePasswordRequest.getCurrentPassword(), changePasswordRequest.getNewPassword());
+
+        response.put("message", result);
+
+        if (result.equals("User not found.") || result.equals("Current password is incorrect.")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
         return ResponseEntity.ok(response);
     }
-
 }

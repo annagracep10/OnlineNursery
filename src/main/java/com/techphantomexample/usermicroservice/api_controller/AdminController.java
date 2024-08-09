@@ -70,11 +70,7 @@ public class AdminController {
             if (file == null || file.isEmpty()) {
                 return ResponseEntity.badRequest().body("File is null or empty");
             }
-
-            // Convert MultipartFile to byte array
             byte[] fileBytes = file.getBytes();
-
-            // Prepare data to send to the Product Microservice
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
@@ -90,7 +86,6 @@ public class AdminController {
 
             HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
-            // Send the file to the Product Microservice
             String url = productServiceBaseUrl + "/upload";
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
 

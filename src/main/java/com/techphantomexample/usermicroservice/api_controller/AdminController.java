@@ -63,37 +63,31 @@ public class AdminController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/upload")
-    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file,
-                                             @RequestParam("productId") int productId,
-                                             @RequestParam("productType") String productType) {
+    public ResponseEntity<String> uploadFile(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("productId") int productId,
+            @RequestParam("productType") String productType) {
+        if (file.isEmpty()) {
+            return ResponseEntity.badRequest().body("File is empty");
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        body.add("file", file.getResource());
+        body.add("productId", productId);
+        body.add("productType", productType);
+
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+
+        String url = productServiceBaseUrl + "/upload";
         try {
-            if (file == null || file.isEmpty()) {
-                return ResponseEntity.badRequest().body("File is null or empty");
-            }
-            byte[] fileBytes = file.getBytes();
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-
-            MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-            body.add("file", new ByteArrayResource(fileBytes) {
-                @Override
-                public String getFilename() {
-                    return file.getOriginalFilename();
-                }
-            });
-            body.add("productId", productId);
-            body.add("productType", productType);
-
-            HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
-
-            String url = productServiceBaseUrl + "/upload";
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
-
             return ResponseEntity.ok("File uploaded successfully!");
-        } catch (IOException e) {
-            return ResponseEntity.status(500).body("Error processing file: " + e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("Unexpected error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Unexpected error: " + e.getMessage());
         }
     }
 

@@ -5,16 +5,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class BaseProductDTO {
+@NoArgsConstructor
+public class PlanterRequest {
 
-    private int id;
     private String name;
     private String description;
     private double price;
     private String category;
     private int quantity;
-    private byte[] image;
-
+    private String material;
+    private String dimensions;
+    private String color;
 }

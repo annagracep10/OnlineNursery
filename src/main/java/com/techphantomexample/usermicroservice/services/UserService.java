@@ -15,6 +15,6 @@ public interface UserService
     public UserEntity getUser(int userId);
     public List<UserEntity> getAllUsers();
     public Cart getCartByUserId(int userId);
-    CreateResponse loginUser(Login login);
     int getUserIdByEmail(String userEmail);
+    String changePassword(int userId, String currentPassword, String newPassword);
 }

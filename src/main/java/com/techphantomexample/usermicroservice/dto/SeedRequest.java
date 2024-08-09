@@ -5,16 +5,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class BaseProductDTO {
-
-    private int id;
+@NoArgsConstructor
+public class SeedRequest {
     private String name;
     private String description;
     private double price;
     private String category;
     private int quantity;
-    private byte[] image;
-
+    private String seedType;
+    private int germinationTime;
+    private String season;
 }

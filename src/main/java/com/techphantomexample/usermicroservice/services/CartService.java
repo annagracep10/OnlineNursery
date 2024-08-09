@@ -1,11 +1,11 @@
 package com.techphantomexample.usermicroservice.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.razorpay.Order;
+import com.razorpay.RazorpayClient;
+import com.razorpay.RazorpayException;
 import com.techphantomexample.usermicroservice.dto.*;
-import com.techphantomexample.usermicroservice.entity.Cart;
-import com.techphantomexample.usermicroservice.entity.CartItem;
-import com.techphantomexample.usermicroservice.entity.Order;
-import com.techphantomexample.usermicroservice.entity.OrderItem;
+import com.techphantomexample.usermicroservice.entity.*;
 import com.techphantomexample.usermicroservice.exception.NotFoundException;
 import com.techphantomexample.usermicroservice.messege.SendOrderMessage;
 import com.techphantomexample.usermicroservice.model.CartResponse;
@@ -14,6 +14,7 @@ import com.techphantomexample.usermicroservice.repository.CartRepository;
 import com.techphantomexample.usermicroservice.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import org.json.JSONObject;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,9 +24,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -43,8 +42,7 @@ public class CartService {
     @Autowired
     private CartItemRepository cartItemRepository;
 
-    @Autowired
-    private SendOrderMessage sendOrderMessage;
+
 
     @Autowired
     private ModelMapper modelMapper;
@@ -62,7 +60,12 @@ public class CartService {
     private String productServiceBaseUrl;
 
     @Autowired
-    ProductUpdateService productUpdateService;
+    private ProductUpdateService productUpdateService;
+
+    @Autowired
+    private RazorPayOrderService razorPayOrderService;
+
+
 
     public CartResponse addItemToCart(int userId, CartItemDTO cartItemDto) {
         Cart cart = userService.getCartByUserId(userId);
@@ -145,8 +148,12 @@ public class CartService {
     public CartResponse checkout(int userId) throws JsonProcessingException {
         Cart cart = userService.getCartByUserId(userId);
         if (cart != null) {
-            Order order = new Order();
-            order.setUserId(userId);
+            Orders order = orderService.findProcessingOrderByUserId(userId);
+            if (order == null) {
+                order = new Orders();
+                order.setUserId(userId);
+                order.setStatus(OrderStatus.PROCESSING);
+            }
             if(!cart.getItems().isEmpty()){
                 List<OrderItem> orderItems = cart.getItems().stream()
                         .map(cartItem -> {
@@ -160,11 +167,20 @@ public class CartService {
                         })
                         .collect(Collectors.toList());
                 order.setItems(orderItems);
+
+                double totalAmount = orderItems.stream()
+                        .mapToDouble(item -> item.getPrice() * item.getQuantity())
+                        .sum();
+                order.setTotalAmount(totalAmount);
+                order.setStatus(OrderStatus.PROCESSING);
                 orderService.saveOrder(order);
-                sendOrderMessage.sendOrderAsJson(order);
-                cartItemRepository.deleteAll(cart.getItems());
-                cart.getItems().clear();
-                cartRepository.save(cart);
+
+                RazorpayOrderResponse razorpayOrderResponse = razorPayOrderService.createRazorpayOrder(totalAmount, order.getId());
+                order.setRazorpayOrderId(razorpayOrderResponse.getId());
+                order.setRazorpayOrderCurrency(razorpayOrderResponse.getCurrency());
+                order.setRazorpayOrderAmount(razorpayOrderResponse.getAmount());
+                orderService.saveOrder(order);
+
                 return new CartResponse("Checkout Success",HttpStatus.OK.value(), order);
             }
             else
@@ -174,4 +190,12 @@ public class CartService {
         return new CartResponse("No such cart found", HttpStatus.BAD_REQUEST.value(), null);
     }
 
+    public void clearCart(int userId) {
+        Cart cart = userService.getCartByUserId(userId);
+        if (cart!=null) {
+            cart.getItems().clear();
+            cartItemRepository.deleteAll(cart.getItems());
+            cartRepository.save(cart);
+        }
+    }
 }

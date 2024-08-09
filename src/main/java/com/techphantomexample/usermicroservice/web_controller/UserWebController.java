@@ -32,17 +32,17 @@ public class UserWebController {
         return "login";
     }
 
-    @PostMapping("/login")
-    public String loginUser(@ModelAttribute Login login, HttpSession session, Model model) {
-        CreateResponse response = userService.loginUser(login);
-        if (response.getStatus() == 200) {
-            session.setAttribute("user", response.getUser());
-            return "redirect:/user/dashboard";
-        } else {
-            model.addAttribute("error", response.getMessage());
-            return "login";
-        }
-    }
+//    @PostMapping("/login")
+//    public String loginUser(@ModelAttribute Login login, HttpSession session, Model model) {
+//        CreateResponse response = userService.loginUser(login);
+//        if (response.getStatus() == 200) {
+//            session.setAttribute("user", response.getUser());
+//            return "redirect:/user/dashboard";
+//        } else {
+//            model.addAttribute("error", response.getMessage());
+//            return "login";
+//        }
+//    }
 
     @GetMapping("/logout")
     public String logout(HttpSession session) {

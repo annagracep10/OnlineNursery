@@ -1,8 +1,6 @@
 package com.techphantomexample.usermicroservice.api_controller;
 
-import com.techphantomexample.usermicroservice.dto.PlantDTO;
-import com.techphantomexample.usermicroservice.dto.PlanterDTO;
-import com.techphantomexample.usermicroservice.dto.SeedDTO;
+import com.techphantomexample.usermicroservice.dto.*;
 import com.techphantomexample.usermicroservice.entity.UserEntity;
 import com.techphantomexample.usermicroservice.model.CreateResponse;
 import com.techphantomexample.usermicroservice.model.ProductResponse;
@@ -11,14 +9,20 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -28,6 +32,7 @@ public class AdminController {
 
     @Autowired
     private UserService userService;
+
     @Autowired
     private RestTemplate restTemplate;
 
@@ -57,20 +62,50 @@ public class AdminController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @PostMapping("/plant")
-    public ResponseEntity<?> createPlant(@RequestBody PlantDTO plant) {
+    @PostMapping("/upload")
+    public ResponseEntity<String> uploadFile(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("productId") int productId,
+            @RequestParam("productType") String productType) {
+        if (file.isEmpty()) {
+            return ResponseEntity.badRequest().body("File is empty");
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        body.add("file", file.getResource());
+        body.add("productId", productId);
+        body.add("productType", productType);
+
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+
+        String url = productServiceBaseUrl + "/upload";
         try {
-            String url = productServiceBaseUrl + "/plant";
-            ResponseEntity<ProductResponse> response = restTemplate.postForEntity(url, plant, ProductResponse.class);
-            return response;
-        } catch (HttpClientErrorException ex) {
-            return handleException(ex);
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
+            return ResponseEntity.ok("File uploaded successfully!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Unexpected error: " + e.getMessage());
         }
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
+    @PostMapping("/plant")
+    public ResponseEntity<?> createPlant(@RequestBody PlantRequest plant) {
+        try {
+            String url = productServiceBaseUrl + "/plant";
+             restTemplate.postForObject(url, plant, PlantRequest.class);
+        } catch (HttpClientErrorException ex) {
+            return handleException(ex);
+        }
+        return null;
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/plant/{id}")
-    public ResponseEntity<?> updatePlant(@PathVariable int id, @RequestBody PlantDTO plant) {
+    public ResponseEntity<?> updatePlant(@PathVariable int id, @RequestBody PlantRequest plant) {
         try {
             String url = productServiceBaseUrl + "/plant/" + id;
             restTemplate.put(url, plant);
@@ -94,7 +129,7 @@ public class AdminController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/planter")
-    public ResponseEntity<?> createPlanter(@RequestBody PlanterDTO planter) {
+    public ResponseEntity<?> createPlanter(@RequestBody PlanterRequest planter) {
         try {
             String url = productServiceBaseUrl + "/planter";
             ResponseEntity<ProductResponse> response = restTemplate.postForEntity(url, planter, ProductResponse.class);
@@ -106,7 +141,7 @@ public class AdminController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/planter/{id}")
-    public ResponseEntity<?> updatePlanter(@PathVariable int id, @RequestBody PlanterDTO planter) {
+    public ResponseEntity<?> updatePlanter(@PathVariable int id, @RequestBody PlanterRequest planter) {
         try {
             String url = productServiceBaseUrl + "/planter/" + id;
             restTemplate.put(url, planter);
@@ -130,7 +165,7 @@ public class AdminController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/seed")
-    public ResponseEntity<?> createSeed(@RequestBody SeedDTO seed) {
+    public ResponseEntity<?> createSeed(@RequestBody SeedRequest seed) {
         try {
             String url = productServiceBaseUrl + "/seed";
             ResponseEntity<ProductResponse> response = restTemplate.postForEntity(url, seed, ProductResponse.class);
@@ -142,7 +177,7 @@ public class AdminController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/seed/{id}")
-    public ResponseEntity<?> updateSeed(@PathVariable int id, @RequestBody SeedDTO seed) {
+    public ResponseEntity<?> updateSeed(@PathVariable int id, @RequestBody SeedRequest seed) {
         try {
             String url = productServiceBaseUrl + "/seed/" + id;
             restTemplate.put(url, seed);

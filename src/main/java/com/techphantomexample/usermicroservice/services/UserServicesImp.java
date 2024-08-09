@@ -1,13 +1,13 @@
 package com.techphantomexample.usermicroservice.services;
 import com.techphantomexample.usermicroservice.entity.Cart;
-import com.techphantomexample.usermicroservice.model.CreateResponse;
 import com.techphantomexample.usermicroservice.exception.UserOperationException;
-import com.techphantomexample.usermicroservice.model.Login;
 import com.techphantomexample.usermicroservice.entity.UserEntity;
 import com.techphantomexample.usermicroservice.repository.CartRepository;
 import com.techphantomexample.usermicroservice.repository.UserRepository;
+import com.techphantomexample.usermicroservice.validator.PasswordValidator;
 import com.techphantomexample.usermicroservice.validator.UserValidator;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.mindrot.jbcrypt.BCrypt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @AllArgsConstructor
+@NoArgsConstructor
 @Service
 public class UserServicesImp implements UserService
 {
@@ -27,32 +28,8 @@ public class UserServicesImp implements UserService
     @Autowired
     CartRepository cartRepository;
 
-    @Override
-    public CreateResponse loginUser(Login login)  {
-        if ( login.getUserEmail().isEmpty() || login.getUserPassword().isEmpty()) {
-            log.error("All fields are required for login");
-            return new CreateResponse("All fields are required", 400, null);
-        }
-        else{
-            UserEntity user = userRepository.findByUserEmail(login.getUserEmail());
-            if (user != null) {
-                String password = login.getUserPassword();
-                String encodedPassword = user.getUserPassword();
-                boolean isPwdRight = BCrypt.checkpw(password, encodedPassword);
-                if (isPwdRight) {
-                    log.info("User logged in successfully: {}", user.getUserEmail());
-                    return new CreateResponse("Login Success", 200, user);
-                } else {
-                    log.error("Incorrect password for user: {}", user.getUserEmail());
-                    return new CreateResponse("Password does not match", 401, null);
-                }
-            } else {
-                log.error("No user found with email: {}", login.getUserEmail());
-                return new CreateResponse("Email does not exist", 401, null);
-            }
-        }
-
-    }
+    @Autowired
+    PasswordValidator passwordValidator;
 
     @Override
     public String createUser(UserEntity user) {
@@ -117,6 +94,27 @@ public class UserServicesImp implements UserService
 
     public int getUserIdByEmail(String email) {
         return userRepository.findByUserEmail(email).getUserId();
+    }
+
+    @Override
+    public String changePassword(int userId, String currentPassword, String newPassword) {
+        UserEntity user = userRepository.findById(userId).orElse(null);
+        if (user == null) {
+            return "User not found.";
+        }
+
+        if (!BCrypt.checkpw(currentPassword, user.getUserPassword())) {
+            return "Current password is incorrect.";
+        }
+
+        PasswordValidator.isValidPassword(newPassword);
+
+        String hashedNewPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt());
+
+        user.setUserPassword(hashedNewPassword);
+        userRepository.save(user);
+
+        return "Password changed successfully.";
     }
 
 

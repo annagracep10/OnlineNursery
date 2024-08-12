@@ -30,6 +30,9 @@ public class UserApiController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private AuthController authController;
+
     @PutMapping("/update/{userId}")
     public ResponseEntity<CreateResponse> updateUser(@PathVariable int userId, @RequestBody UserEntity user) {
         String response = userService.updateUser(userId, user);
@@ -39,8 +42,9 @@ public class UserApiController {
 
     @PostMapping("/change-password")
     public ResponseEntity<Map<String, String>> changePassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
+        int userId = authController.getCurrentUserId();
         Map<String, String> response = new HashMap<>();
-        String result = userService.changePassword(changePasswordRequest.getUserId(), changePasswordRequest.getCurrentPassword(), changePasswordRequest.getNewPassword());
+        String result = userService.changePassword(userId, changePasswordRequest.getCurrentPassword(), changePasswordRequest.getNewPassword());
 
         response.put("message", result);
 

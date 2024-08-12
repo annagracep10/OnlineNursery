@@ -21,6 +21,8 @@ public class UserEntity {
     private    String userEmail;
     private String userPassword;
     private String userRole;
+    private long phone;
+    private String address;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonManagedReference

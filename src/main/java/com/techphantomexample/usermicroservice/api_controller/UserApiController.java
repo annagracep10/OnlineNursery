@@ -3,7 +3,6 @@ package com.techphantomexample.usermicroservice.api_controller;
 import com.techphantomexample.usermicroservice.dto.ChangePasswordRequest;
 import com.techphantomexample.usermicroservice.entity.UserEntity;
 import com.techphantomexample.usermicroservice.model.CreateResponse;
-import com.techphantomexample.usermicroservice.model.Login;
 import com.techphantomexample.usermicroservice.services.UserService;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -12,12 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.security.Principal;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @AllArgsConstructor
@@ -29,7 +24,6 @@ public class UserApiController {
     private static final Logger log = LoggerFactory.getLogger(UserApiController.class);
     @Autowired
     private UserService userService;
-
     @Autowired
     private AuthController authController;
 

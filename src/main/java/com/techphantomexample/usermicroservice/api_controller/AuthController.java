@@ -7,6 +7,8 @@ import com.techphantomexample.usermicroservice.entity.UserEntity;
 import com.techphantomexample.usermicroservice.model.CreateResponse;
 import com.techphantomexample.usermicroservice.repository.UserRepository;
 import com.techphantomexample.usermicroservice.security.JwtGenerator;
+import com.techphantomexample.usermicroservice.services.OTPUtil;
+import com.techphantomexample.usermicroservice.services.ResetPasswordService;
 import com.techphantomexample.usermicroservice.services.UserService;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -19,6 +21,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @AllArgsConstructor
 @RestController
@@ -35,6 +40,8 @@ public class AuthController {
     private JwtGenerator jwtGenerator;
     @Autowired
     private UserService userService;
+    @Autowired
+    private ResetPasswordService resetPasswordService;
 
     @PostMapping("login")
     public ResponseEntity<AuthResponseDto> login(@RequestBody LoginDto loginDto){
@@ -65,6 +72,40 @@ public class AuthController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
         return userService.getUserIdByEmail(userEmail);
+    }
+
+    @PostMapping("/request-password-reset")
+    public ResponseEntity<?> generateOtp(@RequestParam("email") String email) {
+        try {
+            UserEntity user = userRepository.findByUserEmail(email);
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+            }
+            String otp = OTPUtil.generateOTP();
+            resetPasswordService.storeOtpForEmail(email, otp);
+            resetPasswordService.sendOtpEmail(email, otp);
+            return ResponseEntity.ok("OTP sent successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to generate OTP: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<Map<String, String>> resetPassword(@RequestParam("email") String email,
+                                                             @RequestParam("otp") String otp,
+                                                             @RequestParam("newPassword") String newPassword) {
+        Map<String, String> response = new HashMap<>();
+
+        boolean isOtpValid = resetPasswordService.verifyOtp(email, otp);
+        if (!isOtpValid) {
+            response.put("message", "Invalid or expired OTP.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
+
+        String result = resetPasswordService.resetPassword(email, newPassword);
+        response.put("message", result);
+
+        return ResponseEntity.ok(response);
     }
 
 }

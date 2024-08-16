@@ -75,20 +75,25 @@ public class AuthController {
     }
 
     @PostMapping("/request-password-reset")
-    public ResponseEntity<?> generateOtp(@RequestParam("email") String email) {
+    public ResponseEntity<Map<String, String>> generateOtp(@RequestParam("email") String email) {
+        Map<String, String> response = new HashMap<>();
         try {
             UserEntity user = userRepository.findByUserEmail(email);
             if (user == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+                response.put("message", "User not found");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
             }
             String otp = OTPUtil.generateOTP();
             resetPasswordService.storeOtpForEmail(email, otp);
             resetPasswordService.sendOtpEmail(email, otp);
-            return ResponseEntity.ok("OTP sent successfully");
+            response.put("message", "OTP sent successfully");
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to generate OTP: " + e.getMessage());
+            response.put("message", "Failed to generate OTP: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
+
 
     @PostMapping("/reset-password")
     public ResponseEntity<Map<String, String>> resetPassword(@RequestParam("email") String email,

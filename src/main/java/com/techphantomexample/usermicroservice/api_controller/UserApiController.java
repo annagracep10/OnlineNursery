@@ -4,6 +4,7 @@ import com.techphantomexample.usermicroservice.dto.ChangePasswordRequest;
 import com.techphantomexample.usermicroservice.entity.UserEntity;
 import com.techphantomexample.usermicroservice.model.CreateResponse;
 import com.techphantomexample.usermicroservice.services.UserService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
@@ -28,7 +29,7 @@ public class UserApiController {
     private AuthController authController;
 
     @PutMapping("/update/{userId}")
-    public ResponseEntity<CreateResponse> updateUser(@PathVariable int userId, @RequestBody UserEntity user) {
+    public ResponseEntity<CreateResponse> updateUser(@PathVariable int userId, @Valid @RequestBody UserEntity user) {
         String response = userService.updateUser(userId, user);
         CreateResponse createResponse = new CreateResponse(response, HttpStatus.OK.value(), user);
         return new ResponseEntity<>(createResponse, HttpStatus.OK);

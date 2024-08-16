@@ -2,6 +2,7 @@ package com.techphantomexample.usermicroservice.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,7 +22,8 @@ public class UserEntity {
     private    String userEmail;
     private String userPassword;
     private String userRole;
-    private long phone;
+    @Pattern(regexp = "\\d{10}", message = "Phone number must be exactly 10 digits")
+    private String phone;
     private String address;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)

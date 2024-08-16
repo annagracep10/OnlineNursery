@@ -51,8 +51,7 @@ public class UserServicesImp implements UserService
         UserValidator.validateUser(newUserDetails,userRepository);
         existingUser.setUserFullName(newUserDetails.getUserFullName());
         existingUser.setUserEmail(newUserDetails.getUserEmail());
-        existingUser.setPhone(newUserDetails.getPhone());
-        existingUser.setAddress(newUserDetails.getAddress());
+        existingUser.setUserPassword(BCrypt.hashpw(newUserDetails.getUserPassword(), BCrypt.gensalt()));
         existingUser.setUserRole(newUserDetails.getUserRole());
 
         userRepository.save(existingUser);

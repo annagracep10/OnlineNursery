@@ -94,7 +94,6 @@ public class AuthController {
         }
     }
 
-
     @PostMapping("/reset-password")
     public ResponseEntity<Map<String, String>> resetPassword(@RequestParam("email") String email,
                                                              @RequestParam("otp") String otp,

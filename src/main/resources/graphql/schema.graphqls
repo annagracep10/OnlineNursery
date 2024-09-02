@@ -1,0 +1,9 @@
+type Product {
+    productId: Int
+    productName: String
+    totalQuantity: Int
+}
+
+type Query {
+    getTopProducts(limit: Int): [Product]
+}

@@ -44,6 +44,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/product/**").permitAll()
                 .requestMatchers("/api/admin/**").hasAuthority("ADMIN")
+                .requestMatchers("/graphql").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .httpBasic();
